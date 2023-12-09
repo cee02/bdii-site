@@ -3,7 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+
+
+form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        label, input, select {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .component-list {
+            margin-top: 10px;
+        }
+
+        .component-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+.sidebar {
+            height: 100%;
+            width: 60px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #333;
+            overflow-x: hidden;
+            padding-top: 20px;
+            transition: 0.5s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .sidebar:hover {
+            width: 250px;
+        }
+
+        .menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .menu-text {
+            display: none;
+        }
+
+        .menu a {
+            text-decoration: none;
+            color: white;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            transition: 0.3s;
+        }
+
+        .menu i {
+            margin-right: 10px;
+            display: inline;
+        }
+
+        .menu a:hover {
+            background-color: rgba(57, 91, 141, 0.973);
+        }
+
+        .sidebar:hover .menu-text {
+            display: inline;
+        }
+
+        .user-profile {
+            text-align: center;
+            padding-bottom: 20px;
+        }
+
+        .user-profile img {
+            width: 50px;
+            border-radius: 50%;
+        }
+
+
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
@@ -52,20 +160,140 @@
     <title>Registrar Encomenda</title>
 </head>
 <body>
-    <form action="processar_encomenda.php" method="post">
-        <label for="produto">Produto:</label>
-        <input type="text" id="produto" name="produto" required>
+
+    <div class="sidebar" id="sidebar">
+        <div class="user-profile">
+            <i class="fas fa-user"></i>
+            <p>Nome do Usuário</p>
+        </div>
+        
+        </div>
+        <ul class="menu">
+            <li><a href="{% url 'dashboard' %}"><i class="fas fa-chart-line"></i><span class="menu-text">Dashboard</span></a></li>
+            <li><a href="{% url 'registo_encomenda' %}"><i class="fas fa-clipboard-list"></i><span class="menu-text">Registo Encomenda</span></a></li>
+            <li><a href="#"><i class="fas fa-cogs"></i><span class="menu-text">Produção de Equipamentos</span></a></li>
+            <li><a href="#"><i class="fas fa-plus"></i><span class="menu-text">Registar Equipamentos</span></a></li>
+            <li><a href="#"><i class="fas fa-shopping-cart"></i><span class="menu-text">Vendas de Equipamentos</span></a></li>
+            <li><a href="#"><i class="fas fa-users"></i><span class="menu-text">Gestão de Clientes</span></a></li>
+            <br>
+            <li><a href="#"><i class="fas fa-sign-out-alt"></i><span class="menu-text">Logout</span></a></li>
+        </ul>
+    </div>
+
+
+
+
+
+    <form id="encomendaForm">
+        <h2>Registo da Encomenda</h2>
+        <label for="numero">Número:</label>
+        <select id="numero" name="numero">
+            <!-- Opções do dropdown -->
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <!-- Adicione mais opções conforme necessário -->
+        </select>
+
+        <label for="ficheiros">Ficheiros (permitir anexar mais de um):</label>
+        <input type="file" id="ficheiros" name="ficheiros" multiple>
+
+        <button type="button" onclick="guardarEncomenda()">Guardar</button>
+    </form>
+
+    <form id="faturaForm">
+        <h2>Registo da Fatura da Encomenda</h2>
+        <label for="idCompra">ID de Compra:</label>
+        <select id="idCompra" name="idCompra">
+            <!-- Opções do dropdown -->
+            <option value="A001">A001</option>
+            <option value="A002">A002</option>
+            <option value="A003">A003</option>
+            <!-- Adicione mais opções conforme necessário -->
+        </select>
+
+        <label for="nomeFornecedor">Nome do Fornecedor:</label>
+        <input type="text" id="nomeFornecedor" name="nomeFornecedor">
+
+        <label for="dataHora">Data/Hora Emissão:</label>
+        <input type="datetime-local" id="dataHora" name="dataHora">
+
+        <label for="valorTotal">Valor Total:</label>
+        <input type="text" id="valorTotal" name="valorTotal">
 
         <label for="quantidade">Quantidade:</label>
-        <input type="number" id="quantidade" name="quantidade" required>
+        <input type="text" id="quantidade" name="quantidade">
 
-        <label for="cliente">Cliente:</label>
-        <input type="text" id="cliente" name="cliente" required>
-
-        <label for="endereco">Endereço de Entrega:</label>
-        <textarea id="endereco" name="endereco" rows="4" required></textarea>
-
-        <button type="submit">Registrar Encomenda</button>
+        <button type="button" onclick="guardarFatura()">Guardar</button>
     </form>
+
+    <form id="guiaRemessaForm">
+        <h2>Registo Guia de Remessa para Stock</h2>
+        <label for="numeroRemessa">Número:</label>
+        <select id="numeroRemessa" name="numeroRemessa">
+            <!-- Opções do dropdown -->
+            <option value="R001">R001</option>
+            <option value="R002">R002</option>
+            <option value="R003">R003</option>
+            <!-- Adicione mais opções conforme necessário -->
+        </select>
+
+        <label for="fornecedorRemessa">Fornecedor:</label>
+        <input type="text" id="fornecedorRemessa" name="fornecedorRemessa">
+
+        <div class="component-list">
+            <label>Componentes:</label>
+            <div id="componentes" class="component-item">
+                <input type="text" name="componente[]" placeholder="Nome do componente">
+                <button type="button" onclick="removerComponente(this)">Remover</button>
+            </div>
+            <button type="button" onclick="adicionarComponente()">Adicionar Componente</button>
+        </div>
+
+        <button type="button" onclick="registarGuiaRemessa()">Registar</button>
+    </form>
+
+
+
+
+
+
+
+
+
+    <script>
+        function adicionarComponente() {
+            var componentesDiv = document.getElementById('componentes');
+            var novoComponente = document.createElement('div');
+            novoComponente.className = 'component-item';
+            novoComponente.innerHTML = `
+                <input type="text" name="componente[]" placeholder="Nome do componente">
+                <button type="button" onclick="removerComponente(this)">Remover</button>
+            `;
+            componentesDiv.appendChild(novoComponente);
+        }
+
+        function removerComponente(button) {
+            var componenteDiv = button.parentNode;
+            componenteDiv.parentNode.removeChild(componenteDiv);
+        }
+
+        function guardarEncomenda() {
+            // Lógica para guardar a encomenda
+            console.log('Encomenda guardada!');
+        }
+
+        function guardarFatura() {
+            // Lógica para guardar a fatura
+            console.log('Fatura guardada!');
+        }
+
+        function registarGuiaRemessa() {
+            // Lógica para registar a guia de remessa
+            console.log('Guia de remessa registada!');
+        }
+    </script>
+
+
 </body>
 </html>
