@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Existing styles for the sidebar */
+        .sidebar {
+            height: 100%;
+            width: 60px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #333;
+            overflow-x: hidden;
+            padding-top: 20px;
+            transition: 0.5s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .sidebar:hover {
+            width: 250px;
+        }
+
+        .menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .menu-text {
+            display: none;
+        }
+
+        .menu a {
+            text-decoration: none;
+            color: white;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            transition: 0.3s;
+        }
+
+        .menu i {
+            margin-right: 10px;
+            display: inline;
+        }
+
+        .menu a:hover {
+            background-color: rgba(57, 91, 141, 0.973);
+        }
+
+        .sidebar:hover .menu-text {
+            display: inline;
+        }
+
+        .user-profile {
+            text-align: center;
+            padding-bottom: 20px;
+        }
+
+        .user-profile img {
+            width: 50px;
+            border-radius: 50%;
+        }
+
+        /* Additional styles for new sections */
+        .content-section {
+            margin: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        i {
+            cursor: pointer;
+            color: #333;
+            font-size: 18px;
+            margin-right: 10px;
+        }
+    </style>
+    <title>Registrar Encomenda</title>
+</head>
+
+<body>
+
+    <div class="sidebar" id="sidebar">
+        <!-- Existing user profile section -->
+        <div class="user-profile">
+            <i class="fas fa-user"></i>
+            <p>Nome do Usuário</p>
+        </div>
+
+        <!-- Existing menu items -->
+        <ul class="menu">
+            <li><a href="{% url 'dashboard' %}"><i class="fas fa-chart-line"></i><span class="menu-text">Dashboard</span></a></li>
+            <li><a href="{% url 'registo_encomenda' %}"><i class="fas fa-clipboard-list"></i><span class="menu-text">Registo Encomenda</span></a></li>
+            <!-- Add more menu items as needed -->
+        </ul>
+    </div>
+
+    <!-- Example for Components Available in Stock -->
+    <div id="componentsStock" class="content-section">
+        <h2>Lista de Componentes Disponíveis em Stock</h2>
+        <!-- Add a table for components with details and add to assembly icons -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Detalhes</th>
+                    <th>Adicionar à Montagem</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Add rows for components -->
+                <tr>
+                    <td>Componente 1</td>
+                    <td><i class="fas fa-eye" onclick="showDetails('Componente 1')"></i></td>
+                    <td><i class="fas fa-shopping-basket" onclick="addToAssembly('Componente 1')"></i></td>
+                </tr>
+                <!-- Add more rows as needed -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Example for Equipment Assembly List -->
+    <div id="assemblyList" class="content-section">
+        <h2>Lista de Montagem</h2>
+        <!-- Add a table for the assembly list with remove buttons -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Remover</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Display added components in assembly -->
+                <!-- Add rows dynamically using JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Example for Equipment List -->
+    <div id="equipmentList" class="content-section">
+        <h2>Lista de Equipamentos</h2>
+        <!-- Add a table for equipment list with progress and ready for storage indicators -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Progresso</th>
+                    <th>Pronto para Armazenar</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Display equipment details -->
+                <!-- Add rows dynamically using JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Add your JavaScript functions here for handling interactions and dynamic content
+        function showDetails(componentName) {
+            // Logic to display details popup for the selected component
+        }
+
+        function addToAssembly(componentName) {
+            // Logic to add the selected component to the assembly list
+        }
+    </script>
+
+</body>
+
+</html>

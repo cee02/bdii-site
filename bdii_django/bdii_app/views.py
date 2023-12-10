@@ -6,3 +6,6 @@ def dashboard(request):
 
 def registo_encomenda(request):
     return render(request, 'registo_encomenda.html')
+
+def producao_equipamentos(request):
+    return render(request, 'producao_equipamentos.html')
