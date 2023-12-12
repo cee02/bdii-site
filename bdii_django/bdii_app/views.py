@@ -9,3 +9,12 @@ def registo_encomenda(request):
 
 def producao_equipamentos(request):
     return render(request, 'producao_equipamentos.html')
+
+def registar_equipamento(request):
+    return render(request, 'registar_equipamento.html')
+
+def vendas_equipamentos(request):
+    return render(request, 'vendas_equipamentos.html')
+
+def gestao_clientes(request):
+    return render(request, 'gestao_clientes.html')

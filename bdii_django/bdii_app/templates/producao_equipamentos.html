@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* Existing styles for the sidebar */
-        .sidebar {
+      
+      .sidebar {
             height: 100%;
             width: 60px;
             position: fixed;
@@ -33,7 +33,7 @@
         }
 
         .menu-text {
-            display: none;
+            display: none; /* Hide text content by default */
         }
 
         .menu a {
@@ -46,8 +46,8 @@
         }
 
         .menu i {
-            margin-right: 10px;
-            display: inline;
+            margin-right: 10px; /* Add some space between icon and text */
+            display: inline; /* Show icons */
         }
 
         .menu a:hover {
@@ -55,7 +55,7 @@
         }
 
         .sidebar:hover .menu-text {
-            display: inline;
+            display: inline; /* Show text content on sidebar hover */
         }
 
         .user-profile {
@@ -67,7 +67,6 @@
             width: 50px;
             border-radius: 50%;
         }
-
         /* Additional styles for new sections */
         .content-section {
             margin: 20px;
@@ -91,9 +90,14 @@
 
         i {
             cursor: pointer;
-            color: #333;
+            color: #ffffff;
             font-size: 18px;
             margin-right: 10px;
+        }
+
+        body {
+            margin: 200px;
+            font-family: 'Arial', sans-serif;
         }
     </style>
     <title>Registrar Encomenda</title>
@@ -112,7 +116,12 @@
         <ul class="menu">
             <li><a href="{% url 'dashboard' %}"><i class="fas fa-chart-line"></i><span class="menu-text">Dashboard</span></a></li>
             <li><a href="{% url 'registo_encomenda' %}"><i class="fas fa-clipboard-list"></i><span class="menu-text">Registo Encomenda</span></a></li>
-            <!-- Add more menu items as needed -->
+            <li><a href="{% url 'producao_equipamentos' %}"><i class="fas fa-cogs"></i><span class="menu-text">Produção de Equipamentos</span></a></li>
+            <li><a href="{% url 'registar_equipamento' %}"><i class="fas fa-plus"></i><span class="menu-text">Registar Equipamentos</span></a></li>
+            <li><a href="{% url 'vendas_equipamentos' %}"><i class="fas fa-shopping-cart"></i><span class="menu-text">Vendas de Equipamentos</span></a></li>
+            <li><a href="{% url 'gestao_clientes' %}"><i class="fas fa-users"></i><span class="menu-text">Gestão de Clientes</span></a></li>
+            <br>
+            <li><a href="#"><i class="fas fa-sign-out-alt"></i><span class="menu-text">Logout</span></a></li>
         </ul>
     </div>
 
