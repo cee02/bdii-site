@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <title>Registo de Vendas</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .section {
+      margin-bottom: 20px;
+    }
+
+    .section h2 {
+      color: #333;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #555;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      background-color: #000000;
+      color: #fff;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #000000;
+    }
+
+    .history-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .history-item {
+      background-color: #f9f9f9;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+    }
+
+    .history-item:hover {
+      background-color: #eaeaea;
+    }
+
+    .eye-icon {
+      margin-right: 10px;
+      cursor: pointer;
+    }
+
+
+/* Side bar */
+
+.sidebar {
+            height: 100%;
+            width: 60px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #333;
+            overflow-x: hidden;
+            padding-top: 20px;
+            transition: 0.5s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .sidebar:hover {
+            width: 250px;
+        }
+
+        .menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .menu-text {
+            display: none; /* Hide text content by default */
+        }
+
+        .menu a {
+            text-decoration: none;
+            color: white;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            transition: 0.3s;
+        }
+
+        .menu i {
+            margin-right: 10px; /* Add some space between icon and text */
+            display: inline; /* Show icons */
+        }
+
+        .menu a:hover {
+            background-color: rgba(57, 91, 141, 0.973);
+        }
+
+        .sidebar:hover .menu-text {
+            display: inline; /* Show text content on sidebar hover */
+        }
+
+        .user-profile {
+            text-align: center;
+            padding-bottom: 20px;
+        }
+
+        .user-profile img {
+            width: 50px;
+            border-radius: 50%;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </style>
+</head>
+<body>
+
+    <div class="sidebar" id="sidebar">
+        <div class="user-profile">
+          <i class="fas fa-user"></i>
+          <p>Nome do Usuário</p>
+      </div>
+          <ul class="menu">
+              <li><a href="{% url 'dashboard' %}"><i class="fas fa-chart-line"></i><span class="menu-text">Dashboard</span></a></li>
+              <li><a href="{% url 'registo_encomenda' %}"><i class="fas fa-clipboard-list"></i><span class="menu-text">Registo Encomenda</span></a></li>
+              <li><a href="{% url 'producao_equipamentos' %}"><i class="fas fa-cogs"></i><span class="menu-text">Produção de Equipamentos</span></a></li>
+              <li><a href="{% url 'registar_equipamento' %}"><i class="fas fa-plus"></i><span class="menu-text">Registar Equipamentos</span></a></li>
+              <li><a href="{% url 'vendas_equipamentos' %}"><i class="fas fa-shopping-cart"></i><span class="menu-text">Vendas de Equipamentos</span></a></li>
+              <li><a href="{% url 'gestao_clientes' %}"><i class="fas fa-users"></i><span class="menu-text">Gestão de Clientes</span></a></li>
+              <br>
+              <li><a href="#"><i class="fas fa-sign-out-alt"></i><span class="menu-text">Logout</span></a></li>
+          </ul>
+      </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <div class="container">
+    <!-- Registo das Vendas -->
+    <div class="section">
+      <h2>Registo das Vendas</h2>
+      <div class="form-group">
+        <label for="id">ID:</label>
+        <select id="id" name="id">
+          <!-- Opções para o dropdown -->
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="nomeCliente">Nome do Cliente:</label>
+        <input type="text" id="nomeCliente" name="nomeCliente">
+      </div>
+      <div class="form-group">
+        <label for="contacto">Contacto:</label>
+        <input type="text" id="contacto" name="contacto">
+      </div>
+      <div class="form-group">
+        <label for="valor">Valor:</label>
+        <input type="text" id="valor" name="valor">
+      </div>
+      <div class="form-group">
+        <label for="dataVenda">Data de Venda:</label>
+        <input type="date" id="dataVenda" name="dataVenda">
+      </div>
+      <button>Guardar</button>
+    </div>
+
+    <!-- Envio da Fatura ao Cliente -->
+    <div class="section">
+      <h2>Envio da Fatura ao Cliente</h2>
+      <div class="form-group">
+        <label for="idVenda">ID de Venda:</label>
+        <select id="idVenda" name="idVenda">
+          <!-- Opções para o dropdown -->
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="nomeClienteFatura">Nome do Cliente:</label>
+        <input type="text" id="nomeClienteFatura" name="nomeClienteFatura">
+      </div>
+      <div class="form-group">
+        <label for="dataHoraEmissao">Data/hora de Emissão:</label>
+        <input type="datetime-local" id="dataHoraEmissao" name="dataHoraEmissao">
+      </div>
+      <div class="form-group">
+        <label for="tipoEquipamento">Tipo de Equipamento:</label>
+        <input type="text" id="tipoEquipamento" name="tipoEquipamento">
+      </div>
+      <div class="form-group">
+        <label for="valorTotal">Valor Total:</label>
+        <input type="text" id="valorTotal" name="valorTotal">
+      </div>
+      <div class="form-group">
+        <label for="nif">NIF:</label>
+        <input type="text" id="nif" name="nif">
+      </div>
+      <div class="form-group">
+        <label for="quantidade">Quantidade:</label>
+        <input type="text" id="quantidade" name="quantidade">
+      </div>
+      <button>Enviar Fatura</button>
+    </div>
+
+    <!-- Histórico de Vendas -->
+    <div class="section">
+      <h2>Histórico de Vendas</h2>
+      <div class="form-group">
+        <label for="ordenarLista">Ordenar Lista:</label>
+        <select id="ordenarLista" name="ordenarLista">
+          <!-- Opções para o dropdown (alfabética, etc.) -->
+        </select>
+      </div>
+      <ul class="history-list">
+        <!-- Lista de histórico -->
+        <li class="history-item">
+          <span class="eye-icon">&#128065;</span>
+          Item 1
+        </li>
+        <li class="history-item">
+          <span class="eye-icon">&#128065;</span>
+          Item 2
+        </li>
+        <!-- Adicione mais itens conforme necessário -->
+      </ul>
+    </div>
+  </div>
+
+</body>
+</html>
