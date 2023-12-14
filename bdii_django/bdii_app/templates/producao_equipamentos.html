@@ -128,23 +128,21 @@
     <!-- Example for Components Available in Stock -->
     <div id="componentsStock" class="content-section">
         <h2>Lista de Componentes Disponíveis em Stock</h2>
-        <!-- Add a table for components with details and add to assembly icons -->
+        <!-- Add a table for components with details -->
         <table>
             <thead>
                 <tr>
                     <th>Nome</th>
                     <th>Detalhes</th>
-                    <th>Adicionar à Montagem</th>
                 </tr>
             </thead>
             <tbody>
-                <!-- Add rows for components -->
-                <tr>
-                    <td>Componente 1</td>
-                    <td><i class="fas fa-eye" onclick="showDetails('Componente 1')"></i></td>
-                    <td><i class="fas fa-shopping-basket" onclick="addToAssembly('Componente 1')"></i></td>
-                </tr>
-                <!-- Add more rows as needed -->
+                {% for componente in componentes_em_stock %}
+                    <tr>
+                        <td>{{ componente.nome }}</td>
+                        <td><i class="fas fa-eye" onclick="showDetails('{{ componente.nome }}')"></i></td>
+                    </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
@@ -198,5 +196,10 @@
     </script>
 
 </body>
-
+<script>
+    function showDetails(componenteNome) {
+        // Implemente a lógica para mostrar os detalhes do componente com o nome 'componenteNome'
+        alert('Detalhes do componente: ' + componenteNome);
+    }
+</script>
 </html>

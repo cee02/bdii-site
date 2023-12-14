@@ -76,8 +76,12 @@ WSGI_APPLICATION = 'bdii_django.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'projeto_bdii',         
+        'USER': 'postgres',      
+        'PASSWORD': 'ola!"#456',    
+        'HOST': 'localhost',                
+        'PORT': '5432',             
     }
 }
 
