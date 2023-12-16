@@ -41,7 +41,7 @@
     </style>
 </head>
 <body>
-    <form>
+    <form id="loginForm" onsubmit="return handleLogin()">
         <h2>Login</h2>
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required>
@@ -51,5 +51,16 @@
 
         <button type="submit">Login</button>
     </form>
+    <script>
+        function handleLogin() {
+            // Perform any login logic here (e.g., validation, authentication)
+
+            // Redirect to the dashboard.html page
+            window.location.href = '/dashboard';
+
+            // Prevent the form from submitting the traditional way
+            return false;
+        }
+    </script>
 </body>
 </html>

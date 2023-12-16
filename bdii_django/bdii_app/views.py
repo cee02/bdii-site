@@ -1,6 +1,6 @@
-from django.shortcuts import render
-from django.shortcuts import render
-from .models import Componente
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login
+from .models import Componente, Cliente
 
 def login(request):
     return render(request, 'login.html')
@@ -20,6 +20,10 @@ def producao_equipamentos(request):
     # Renderizar a página com a lista de componentes em stock
     return render(request, 'producao_equipamentos.html', context)
 
+def gestao_clientes(request):
+    clientes = Cliente.objects.all()  # Consulta todos os clientes
+    print('Clientes:', clientes) #LOg temporário
+    return render(request, 'gestao_clientes.html', {'clientes': clientes})
 
 def registar_equipamento(request):
     return render(request, 'registar_equipamento.html')
@@ -27,5 +31,4 @@ def registar_equipamento(request):
 def vendas_equipamentos(request):
     return render(request, 'vendas_equipamentos.html')
 
-def gestao_clientes(request):
-    return render(request, 'gestao_clientes.html')
+
