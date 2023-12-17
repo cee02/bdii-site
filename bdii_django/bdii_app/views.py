@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login
 from .models import Componente, Cliente
 
@@ -24,6 +24,14 @@ def gestao_clientes(request):
     clientes = Cliente.objects.all()  # Consulta todos os clientes
     print('Clientes:', clientes) #LOg temporário
     return render(request, 'gestao_clientes.html', {'clientes': clientes})
+
+def remove_cliente(request, cliente_id):
+    cliente = get_object_or_404(Cliente, id=cliente_id)
+    if request.method == 'POST':
+        cliente.delete()
+        return redirect('gestao_clientes')
+    return render(request, 'gestao_clientes.html', {'clientes': Cliente.objects.all()})
+
 
 def registar_equipamento(request):
     return render(request, 'registar_equipamento.html')

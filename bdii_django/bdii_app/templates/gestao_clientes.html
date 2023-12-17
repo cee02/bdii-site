@@ -55,32 +55,42 @@
     }
 
     .confirmation-modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      justify-content: center;
-      align-items: center;
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
     }
 
     .confirmation-box {
-      background-color: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      text-align: center;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
     }
 
     .confirmation-box button {
-      margin-top: 10px;
+        margin-top: 10px;
     }
 
     .client-details {
-      display: none;
-      margin-top: 20px;
-    }
+  display: none;
+  position: fixed; /* Change to fixed position */
+  top: 50%; /* Move it to the middle vertically */
+  left: 50%; /* Move it to the middle horizontally */
+  transform: translate(-50%, -50%); /* Center it precisely */
+  margin-top: 20px;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  border: 2px solid black;
+}
+
 
     /* sidebar */
 
@@ -151,7 +161,7 @@
   <div class="container">
     <ul class="client-list">
       {% for cliente in clientes %}
-        <li class="client-item" data-id="{{ cliente.id }}" data-nome="{{ cliente.nome }}" data-endereco="{{ cliente.endereco }}" data-telefone="{{ cliente.telefone }}">
+        <li class="client-item" data-id="{{ cliente.id }}" data-nome="{{ cliente.nome }}" data-endereco="{{ cliente.endereco }}" data-telefone="{{ cliente.telefone }}" data-email="{{ cliente.email }}" data-contribuinte="{{ cliente.contribuinte }}">
           <span>{{ cliente.nome }}</span>
           <div>
             <button class="details-button" onclick="showDetails(this)">Detalhes</button>
@@ -179,11 +189,12 @@
     </ul>
   </div>
   <!-- Modal de Confirmação -->
-  <div class="confirmation-modal" id="confirmationModal">
-    <div class="confirmation-box">
-      <p>Tem certeza que deseja remover este cliente?</p>
-      <button onclick="removeClient()">Sim</button>
-      <button onclick="hideConfirmation()">Cancelar</button>
+    <div class="confirmation-modal" id="confirmationModal">
+      <div class="confirmation-box">
+        <input type="hidden" id="clientIdInput">
+        <p>Tem certeza que deseja remover este cliente?</p>
+        <button onclick="removeClient()">Sim</button>
+        <button onclick="hideConfirmation()">Cancelar</button>
     </div>
   </div>
 
@@ -191,9 +202,11 @@
   <div class="client-details" id="clientDetails">
     <h2>Detalhes do Cliente</h2>
     <p><strong>Nome:</strong> <span id="clientName"></span></p>
-    <p><strong>endereco:</strong> <span id="clientEndereco"></span></p>
-    <p><strong>Telefone:</strong> <span id="clientelefone"></span></p>
-    
+    <p><strong>Endereco:</strong> <span id="clientEndereco"></span></p>
+    <p><strong>Telefone:</strong> <span id="clientTelefone"></span></p>
+    <p><strong>Email:</strong> <span id="clientEmail"></span></p>
+    <p><strong>Contribuinte:</strong> <span id="clienteContribuinte"></span></p>
+
     <h3>Encomendas do Cliente</h3>
     <ul id="clientOrders" class="client-orders">
       <!-- Lista de encomendas do cliente -->
@@ -204,21 +217,24 @@
 </div>
 
 <script>
-  function showDetails(button) {
+ function showDetails(button) {
   const listItem = button.closest('.client-item');
-  const clientId = listItem.dataset.id;
   const clientNome = listItem.dataset.nome;
   const clientEndereco = listItem.dataset.endereco;
   const clientTelefone = listItem.dataset.telefone;
-
+  const clientEmail = listItem.dataset.email;
+  const clienteContribuinte = listItem.dataset.contribuinte;
   // Preencher os detalhes do cliente
   document.getElementById('clientName').innerText = clientNome;
   document.getElementById('clientEndereco').innerText = clientEndereco;
-  document.getElementById('clientTelefone').innerText = clientTelefone.toString();
+  document.getElementById('clientTelefone').innerText = clientTelefone;
+  document.getElementById('clientEmail').innerText = clientEmail;
+  document.getElementById('clienteContribuinte').innerText = clienteContribuinte;
 
   // Exibir a seção de detalhes do cliente
   document.getElementById('clientDetails').style.display = 'block';
 }
+
 
   function hideDetails() {
     // Ocultar a seção de detalhes do cliente
@@ -226,22 +242,25 @@
   }
 
   function showConfirmation(clientId) {
-    // Exibir o modal de confirmação
-    document.getElementById('confirmationModal').style.display = 'flex';
-  }
+        // Exibir o modal de confirmação
+        document.getElementById('confirmationModal').style.display = 'flex';
+        // Set the client ID in a hidden input for later use
+        document.getElementById('clientIdInput').value = clientId;
+    }
 
-  function hideConfirmation() {
-    // Ocultar o modal de confirmação
-    document.getElementById('confirmationModal').style.display = 'none';
-  }
+    function hideConfirmation() {
+        // Ocultar o modal de confirmação
+        document.getElementById('confirmationModal').style.display = 'none';
+    }
 
-  function removeClient() {
-    // Remover o cliente (lógica de remoção, pode ser implementada de acordo com as suas necessidades)
-    console.log('Cliente removido');
-
-    // Ocultar o modal de confirmação
-    hideConfirmation();
-  }
+    function removeClient() {
+        // Get the client ID from the hidden input
+        const clientId = document.getElementById('clientIdInput').value;
+        // Implement your logic to remove the client using AJAX or Django form submission
+        console.log('Removing client with ID:', clientId);
+        // Ocultar o modal de confirmação
+        hideConfirmation();
+    }
 </script>
 
 </body>
