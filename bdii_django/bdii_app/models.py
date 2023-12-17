@@ -16,7 +16,8 @@ class Cliente(models.Model):
         db_table = 'cliente'
 
     def __str__(self):
-        return self.nome
+        return f"{self.nome} - {self.endereco} - {self.telefone} - {self.email} - {self.contribuinte}"
+      
         
 
         

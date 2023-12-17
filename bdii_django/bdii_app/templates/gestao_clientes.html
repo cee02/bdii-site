@@ -25,11 +25,61 @@
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
 
-    .client-list {
-      list-style: none;
-      flex: 1;
-      padding: 0;
-      color: black;
+    .client-item {
+      background-color: #f9f9f9;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .client-item:hover {
+      background-color: #eaeaea;
+    }
+
+    .details-button,
+    .remove-button {
+      background-color: #4caf50;
+      color: #fff;
+      padding: 8px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .details-button:hover,
+    .remove-button:hover {
+      background-color: #45a049;
+    }
+
+    .confirmation-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .confirmation-box {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .confirmation-box button {
+      margin-top: 10px;
+    }
+
+    .client-details {
+      display: none;
+      margin-top: 20px;
     }
 
     /* sidebar */
@@ -101,15 +151,15 @@
   <div class="container">
     <ul class="client-list">
       {% for cliente in clientes %}
-        <li class="client-item">
+        <li class="client-item" data-id="{{ cliente.id }}" data-nome="{{ cliente.nome }}" data-endereco="{{ cliente.endereco }}" data-telefone="{{ cliente.telefone }}">
           <span>{{ cliente.nome }}</span>
           <div>
-            <button class="details-button" onclick="showDetails('{{ cliente.id }}')">Detalhes</button>
+            <button class="details-button" onclick="showDetails(this)">Detalhes</button>
             <button class="remove-button" onclick="showConfirmation('{{ cliente.id }}')">Remover</button>
           </div>
         </li>
       {% endfor %}
-    </ul>
+   </ul>
   </div>
 
   <div class="sidebar" id="sidebar">
@@ -128,5 +178,71 @@
       <li><a href="#"><i class="fas fa-sign-out-alt"></i><span class="menu-text">Logout</span></a></li>
     </ul>
   </div>
+  <!-- Modal de Confirmação -->
+  <div class="confirmation-modal" id="confirmationModal">
+    <div class="confirmation-box">
+      <p>Tem certeza que deseja remover este cliente?</p>
+      <button onclick="removeClient()">Sim</button>
+      <button onclick="hideConfirmation()">Cancelar</button>
+    </div>
+  </div>
+
+  <!-- Detalhes do Cliente -->
+  <div class="client-details" id="clientDetails">
+    <h2>Detalhes do Cliente</h2>
+    <p><strong>Nome:</strong> <span id="clientName"></span></p>
+    <p><strong>endereco:</strong> <span id="clientEndereco"></span></p>
+    <p><strong>Telefone:</strong> <span id="clientelefone"></span></p>
+    
+    <h3>Encomendas do Cliente</h3>
+    <ul id="clientOrders" class="client-orders">
+      <!-- Lista de encomendas do cliente -->
+    </ul>
+
+    <button onclick="hideDetails()">Fechar</button>
+  </div>
+</div>
+
+<script>
+  function showDetails(button) {
+  const listItem = button.closest('.client-item');
+  const clientId = listItem.dataset.id;
+  const clientNome = listItem.dataset.nome;
+  const clientEndereco = listItem.dataset.endereco;
+  const clientTelefone = listItem.dataset.telefone;
+
+  // Preencher os detalhes do cliente
+  document.getElementById('clientName').innerText = clientNome;
+  document.getElementById('clientEndereco').innerText = clientEndereco;
+  document.getElementById('clientTelefone').innerText = clientTelefone.toString();
+
+  // Exibir a seção de detalhes do cliente
+  document.getElementById('clientDetails').style.display = 'block';
+}
+
+  function hideDetails() {
+    // Ocultar a seção de detalhes do cliente
+    document.getElementById('clientDetails').style.display = 'none';
+  }
+
+  function showConfirmation(clientId) {
+    // Exibir o modal de confirmação
+    document.getElementById('confirmationModal').style.display = 'flex';
+  }
+
+  function hideConfirmation() {
+    // Ocultar o modal de confirmação
+    document.getElementById('confirmationModal').style.display = 'none';
+  }
+
+  function removeClient() {
+    // Remover o cliente (lógica de remoção, pode ser implementada de acordo com as suas necessidades)
+    console.log('Cliente removido');
+
+    // Ocultar o modal de confirmação
+    hideConfirmation();
+  }
+</script>
+
 </body>
 </html>
