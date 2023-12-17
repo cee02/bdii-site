@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login
-from .models import Componente, Cliente
+from .models import Cliente, Armazem
 
 def login(request):
     return render(request, 'login.html')
@@ -12,7 +12,7 @@ def registo_encomenda(request):
 
 def producao_equipamentos(request):
     # Obter os componentes em stock usando a view do PostgreSQL
-    componentes_em_stock = Componente.objects.raw('SELECT * FROM read_componentes_em_stock;')
+    componentes_em_stock = Armazem.objects.raw('SELECT * FROM read_componentes_em_stock;')
 
     # Passar os componentes para o contexto
     context = {'componentes_em_stock': componentes_em_stock}
