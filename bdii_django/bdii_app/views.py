@@ -55,6 +55,37 @@ def gestao_clientes(request):
     else:
         # Lidar com o caso em que a conexão com o banco de dados falha
         return render(request, 'error_page.html', {'error_message': 'Failed to connect to the database'})
+    
+def producao_equipamentos(request):
+    # Obter conexão com o banco de dados
+    print("Entrando na view producao_equipamentos")
+    connection = get_database_connection()
+    if connection:
+        try:
+            # Criar um cursor a partir da conexão
+            cursor = connection.cursor()
+            print("Chamando a função get_componentes_data_function")
+            # Chamar a procedure usando SELECT
+            cursor.callproc('get_componentes_data_function')
+
+            # Recuperar os resultados da procedure
+            results = cursor.fetchall()
+            print("Resultados da função:", results)
+            print(results)
+            # Fechar o cursor
+            cursor.close()
+
+            # Fechar a conexão
+            close_database_connection(connection)
+
+            # Passar os resultados para o contexto da renderização
+            return render(request, 'producao_equipamentos.html', {'componentes': results})
+        except Exception as e:
+            # Lidar com exceções, se houver algum problema durante a execução da procedure
+            return render(request, 'error_page.html', {'error_message': str(e)})
+    else:
+        # Lidar com o caso em que a conexão com o banco de dados falha
+        return render(request, 'error_page.html', {'error_message': 'Failed to connect to the database'})    
 
 def login(request):
     return render(request, 'login.html')
@@ -81,8 +112,3 @@ def registar_equipamento(request):
 
 def vendas_equipamentos(request):
     return render(request, 'vendas_equipamentos.html')
-
-
-def producao_equipamentos(request):
-
-     return render(request, 'producao_equipamentos.html')
