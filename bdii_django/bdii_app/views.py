@@ -4,11 +4,14 @@ from django.db import connection
 import psycopg2
 from django.db import OperationalError
 
+def error_page(request, error_message):
+    return render(request, 'error_page.html', {'error_message': error_message})
+
 def get_database_connection():
     dbname = 'projeto_bdii'
     user = 'postgres'
-    password = 'computador123@A'
-    port = '5433'
+    password = 'ola123456'
+    port = '5432'
 
     try:
         connection = psycopg2.connect(dbname=dbname, user=user, password=password, port=port)
@@ -24,20 +27,33 @@ def close_database_connection(connection):
 
 # View functions
 def gestao_clientes(request):
+    # Obter conexão com o banco de dados
     connection = get_database_connection()
 
     if connection:
-        with connection.cursor() as cursor:
-            # Use SELECT to execute the stored procedure without fetching any result
-            cursor.execute('SELECT get_cliente_data()')
-            
-            # Commit the transaction to apply changes
-            connection.commit()
+        try:
+            # Criar um cursor a partir da conexão
+            cursor = connection.cursor()
 
-        close_database_connection(connection)
-        return render(request, 'gestao_clientes.html')
+            # Chamar a procedure usando SELECT
+            cursor.callproc('get_cliente_data_function')
+
+            # Recuperar os resultados da procedure
+            results = cursor.fetchall()
+            print(results)
+            # Fechar o cursor
+            cursor.close()
+
+            # Fechar a conexão
+            close_database_connection(connection)
+
+            # Passar os resultados para o contexto da renderização
+            return render(request, 'gestao_clientes.html', {'clientes': results})
+        except Exception as e:
+            # Lidar com exceções, se houver algum problema durante a execução da procedure
+            return render(request, 'error_page.html', {'error_message': str(e)})
     else:
-        # Handle the case when the database connection fails
+        # Lidar com o caso em que a conexão com o banco de dados falha
         return render(request, 'error_page.html', {'error_message': 'Failed to connect to the database'})
 
 def login(request):
