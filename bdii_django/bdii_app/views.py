@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login
-from .models import Cliente, Armazem
+from .models import Cliente, Armazem, EquipamentoArmazenamento
 
 def login(request):
     return render(request, 'login.html')
@@ -13,9 +13,14 @@ def registo_encomenda(request):
 def producao_equipamentos(request):
     # Obter os componentes em stock usando a view do PostgreSQL
     componentes_em_stock = Armazem.objects.raw('SELECT * FROM read_componentes_em_stock;')
-
     # Passar os componentes para o contexto
-    context = {'componentes_em_stock': componentes_em_stock}
+    context = {'componentes_em_stock': componentes_em_stock}    
+
+    equipment_list = EquipamentoArmazenamento.objects.filter(pronto_para_armazenar=True, id_armazem=0)
+
+    context = {
+        'equipment_list': equipment_list,
+    }
 
     # Renderizar a página com a lista de componentes em stock
     return render(request, 'producao_equipamentos.html', context)

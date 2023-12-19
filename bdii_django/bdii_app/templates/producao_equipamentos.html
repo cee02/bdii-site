@@ -165,21 +165,22 @@
         </table>
     </div>
 
-    <!-- Example for Equipment List -->
     <div id="equipmentList" class="content-section">
         <h2>Lista de Equipamentos</h2>
-        <!-- Add a table for equipment list with progress and ready for storage indicators -->
         <table>
             <thead>
                 <tr>
                     <th>Nome</th>
-                    <th>Progresso</th>
                     <th>Pronto para Armazenar</th>
                 </tr>
             </thead>
             <tbody>
-                <!-- Display equipment details -->
-                <!-- Add rows dynamically using JavaScript -->
+                {% for equipment in equipment_list %}
+                    <tr>
+                        <td>{{ equipment.equipamentoID.nome }}</td>
+                        <td>{{ equipment.pronto_para_armazenar }}</td>
+                    </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
