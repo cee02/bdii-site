@@ -64,14 +64,21 @@ def producao_equipamentos(request):
         try:
             # Criar um cursor a partir da conexão
             cursor = connection.cursor()
-            print("Chamando a função get_componentes_data_function")
-            # Chamar a procedure usando SELECT
+
+            # Chamar a procedure usando SELECT para a função get_componentes_data_function
             cursor.callproc('get_componentes_data_function')
 
             # Recuperar os resultados da procedure
-            results = cursor.fetchall()
-            print("Resultados da função:", results)
-            print(results)
+            componentes_results = cursor.fetchall()
+            print("Resultados da função get_componentes_data_function:", componentes_results)
+
+            # Chamar a procedure usando SELECT para a função get_equipamentos_data_function
+            cursor.callproc('get_equipamentos_data_function')
+
+            # Recuperar os resultados da procedure
+            equipamentos_results = cursor.fetchall()
+            print("Resultados da função get_equipamentos_data_function:", equipamentos_results)
+
             # Fechar o cursor
             cursor.close()
 
@@ -79,13 +86,14 @@ def producao_equipamentos(request):
             close_database_connection(connection)
 
             # Passar os resultados para o contexto da renderização
-            return render(request, 'producao_equipamentos.html', {'componentes': results})
+            return render(request, 'producao_equipamentos.html', {'componentes': componentes_results, 'equipamentos': equipamentos_results})
         except Exception as e:
             # Lidar com exceções, se houver algum problema durante a execução da procedure
             return render(request, 'error_page.html', {'error_message': str(e)})
     else:
         # Lidar com o caso em que a conexão com o banco de dados falha
-        return render(request, 'error_page.html', {'error_message': 'Failed to connect to the database'})    
+        return render(request, 'error_page.html', {'error_message': 'Failed to connect to the database'})
+
 
 def login(request):
     return render(request, 'login.html')
