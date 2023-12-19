@@ -182,16 +182,16 @@
   <div class="container">
     <ul class="client-list">
         {% for cliente in clientes %}
-            <li class="client-item" data-id="{{ cliente.id }}" data-nome="{{ cliente.nome }}" data-endereco="{{ cliente.endereco }}" data-telefone="{{ cliente.telefone }}" data-email="{{ cliente.email }}" data-contribuinte="{{ cliente.contribuinte }}">
-                <span>{{ cliente.nome }}</span>
+            <li class="client-item" data-id="{{ cliente.0 }}" data-nome="{{ cliente.1 }}" data-endereco="{{ cliente.2 }}" data-telefone="{{ cliente.3 }}" data-email="{{ cliente.4 }}" data-contribuinte="{{ cliente.5 }}">
+                <span>{{ cliente.1 }}</span>
                 <div>
                     <button class="details-button" onclick="showDetails(this)">Detalhes</button>
-                    <button class="remove-button" onclick="showConfirmation('{{ cliente.id }}')">Remover</button>
+                    <button class="remove-button" onclick="showConfirmation('{{ cliente.0 }}')">Remover</button>
                 </div>
             </li>
         {% endfor %}
     </ul>
-</div>
+  </div>
 
   <div class="sidebar" id="sidebar">
     <div class="user-profile">
@@ -210,12 +210,12 @@
     </ul>
   </div>
   <!-- Modal de Confirmação -->
-    <div class="confirmation-modal" id="confirmationModal">
-      <div class="confirmation-box">
-        <input type="hidden" id="clientIdInput">
-        <p>Tem certeza que deseja remover este cliente?</p>
-        <button onclick="removeClient()">Sim</button>
-        <button onclick="hideConfirmation()">Cancelar</button>
+  <div class="confirmation-modal" id="confirmationModal">
+    <div class="confirmation-box">
+      <input type="hidden" id="clientIdInput">
+      <p>Tem certeza que deseja remover este cliente?</p>
+      <button onclick="removeClient()">Sim</button>
+      <button onclick="hideConfirmation()">Cancelar</button>
     </div>
   </div>
 
@@ -230,12 +230,14 @@
 
     <h3>Encomendas do Cliente</h3>
     <ul id="clientOrders" class="client-orders">
-      <!-- Lista de encomendas do cliente -->
+        {% comment %} Exemplo de como você pode exibir as encomendas do cliente {% endcomment %}
+        {% for order in client_orders %}
+            <li>{{ order.id }} - {{ order.product }} - {{ order.quantity }}</li>
+        {% endfor %}
     </ul>
 
     <button onclick="hideDetails()">Fechar</button>
   </div>
-</div>
 
 <script>
  function showDetails(button) {
