@@ -11,6 +11,6 @@ urlpatterns = [
     path('registar_equipamento/', views.registar_equipamento, name='registar_equipamento'),
     path('vendas_equipamentos/', views.vendas_equipamentos, name='vendas_equipamentos'),
     path('gestao_clientes/', views.gestao_clientes, name='gestao_clientes'),
-    path('remove_cliente/<int:cliente_id>/', views.remove_cliente, name='remove_cliente'),
+
 ]
 

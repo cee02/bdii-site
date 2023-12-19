@@ -181,17 +181,17 @@
 <body>
   <div class="container">
     <ul class="client-list">
-      {% for cliente in clientes %}
-        <li class="client-item" data-id="{{ cliente.id }}" data-nome="{{ cliente.nome }}" data-endereco="{{ cliente.endereco }}" data-telefone="{{ cliente.telefone }}" data-email="{{ cliente.email }}" data-contribuinte="{{ cliente.contribuinte }}">
-          <span>{{ cliente.nome }}</span>
-          <div>
-            <button class="details-button" onclick="showDetails(this)">Detalhes</button>
-            <button class="remove-button" onclick="showConfirmation('{{ cliente.id }}')">Remover</button>
-          </div>
-        </li>
-      {% endfor %}
-   </ul>
-  </div>
+        {% for cliente in clientes %}
+            <li class="client-item" data-id="{{ cliente.id }}" data-nome="{{ cliente.nome }}" data-endereco="{{ cliente.endereco }}" data-telefone="{{ cliente.telefone }}" data-email="{{ cliente.email }}" data-contribuinte="{{ cliente.contribuinte }}">
+                <span>{{ cliente.nome }}</span>
+                <div>
+                    <button class="details-button" onclick="showDetails(this)">Detalhes</button>
+                    <button class="remove-button" onclick="showConfirmation('{{ cliente.id }}')">Remover</button>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
 
   <div class="sidebar" id="sidebar">
     <div class="user-profile">

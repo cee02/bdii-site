@@ -1,6 +1,44 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login
-from .models import Cliente, Armazem, EquipamentoArmazenamento
+from django.db import connection
+import psycopg2
+from django.db import OperationalError
+
+def get_database_connection():
+    dbname = 'projeto_bdii'
+    user = 'postgres'
+    password = 'computador123@A'
+    port = '5433'
+
+    try:
+        connection = psycopg2.connect(dbname=dbname, user=user, password=password, port=port)
+        return connection
+    except OperationalError as e:
+        print("OperationalError:", e)
+        return None
+
+# Function to close the database connection
+def close_database_connection(connection):
+    if connection:
+        connection.close()
+
+# View functions
+def gestao_clientes(request):
+    connection = get_database_connection()
+
+    if connection:
+        with connection.cursor() as cursor:
+            # Use SELECT to execute the stored procedure without fetching any result
+            cursor.execute('SELECT get_cliente_data()')
+            
+            # Commit the transaction to apply changes
+            connection.commit()
+
+        close_database_connection(connection)
+        return render(request, 'gestao_clientes.html')
+    else:
+        # Handle the case when the database connection fails
+        return render(request, 'error_page.html', {'error_message': 'Failed to connect to the database'})
 
 def login(request):
     return render(request, 'login.html')
@@ -10,33 +48,17 @@ def dashboard(request):
 def registo_encomenda(request):
     return render(request, 'registo_encomenda.html')
 
-def producao_equipamentos(request):
-    # Obter os componentes em stock usando a view do PostgreSQL
-    componentes_em_stock = Armazem.objects.raw('SELECT * FROM read_componentes_em_stock;')
-    # Passar os componentes para o contexto
-    context = {'componentes_em_stock': componentes_em_stock}    
-
-    equipment_list = EquipamentoArmazenamento.objects.filter(pronto_para_armazenar=True, id_armazem=0)
+def get_armazem_data(request):
+    with connection.cursor() as cursor:
+        # Call the stored procedure
+        cursor.callproc('get_armazem_data', [])
+        armazem_data = cursor.fetchall()
 
     context = {
-        'equipment_list': equipment_list,
+        'armazem_data': armazem_data,
     }
 
-    # Renderizar a página com a lista de componentes em stock
-    return render(request, 'producao_equipamentos.html', context)
-
-def gestao_clientes(request):
-    clientes = Cliente.objects.all()  # Consulta todos os clientes
-    print('Clientes:', clientes) #LOg temporário
-    return render(request, 'gestao_clientes.html', {'clientes': clientes})
-
-def remove_cliente(request, cliente_id):
-    cliente = get_object_or_404(Cliente, id=cliente_id)
-    if request.method == 'POST':
-        cliente.delete()
-        return redirect('gestao_clientes')
-    return render(request, 'gestao_clientes.html', {'clientes': Cliente.objects.all()})
-
+    return render(request, '.html', context)
 
 def registar_equipamento(request):
     return render(request, 'registar_equipamento.html')
@@ -45,3 +67,6 @@ def vendas_equipamentos(request):
     return render(request, 'vendas_equipamentos.html')
 
 
+def producao_equipamentos(request):
+
+     return render(request, 'producao_equipamentos.html')
