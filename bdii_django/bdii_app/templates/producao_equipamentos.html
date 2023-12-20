@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  
 
   <title>Lista de Componentes</title>
   <style>
@@ -17,6 +18,8 @@
     .container {
       max-width: 600px;
       margin: 20px auto;
+      margin-left: 200px;
+      margin-top: 60px;
     }
 
     .component-table {
@@ -83,6 +86,7 @@
       border: none;
       border-radius: 4px;
       cursor: pointer;
+      margin-right: 240px;
     }
 
     .details-button:hover,
@@ -200,6 +204,11 @@
       align-items: center;
     }
 
+    .basket-icon {
+    color: #3498db; /* Cor azul para o ícone de cesto (pode ajustar conforme necessário) */
+    cursor: pointer;
+    margin-left: 10px; /* Espaço entre o botão "Detalhes" e o ícone de cesto */
+  }
     .sidebar:hover {
       width: 250px;
     }
@@ -263,6 +272,7 @@
     align-items: center;
     cursor: pointer;
     margin-bottom: 15px;
+    margin-left: -130px;
 }
 .checkbox-container input {
     margin-right: 5px; /* Adjust the space between the checkbox and label */
@@ -315,13 +325,13 @@
       <table class="component-table">
         <tbody class="component-list">
           {% for componente in componentes %}
-            <tr class="component-item" data-id="{{ componente.0 }}" data-nome="{{ componente.1 }}" data-descricao="{{ componente.2 }}" data-preco="{{ componente.3 }}">
-              <td><span>{{ componente.1 }}</span></td>
-              <td>
-                <button class="details-button" onclick="showDetailscomponent(this)">Detalhes</button>
-                <button class="remove-button" onclick="showConfirmation('{{ componente.0 }}')">Remover</button>
-              </td>
-            </tr>
+          <tr class="component-item" data-id="{{ componente.0 }}" data-nome="{{ componente.1 }}" data-descricao="{{ componente.2 }}" data-preco="{{ componente.3 }}">
+            <td><span>{{ componente.1 }}</span></td>
+            <td>
+              <button class="details-button" onclick="showDetailscomponent(this)" style="margin-right: 150px;">Detalhes</button>
+              <i class="fas fa-shopping-basket basket-icon" onclick="showAssemblyList('{{ componente.0 }}')" style="margin-right: 50px;"></i>
+            </td>
+          </tr>
           {% endfor %}
         </tbody>
       </table>
@@ -336,22 +346,22 @@
             <tbody class="equipment-list">
                 <tr>
                     <td>
-                        <h3 style="margin-left: 10px; display: inline-block;">Descrição</h3>
-                        <h3 style="margin-left: 100px; display: inline-block;">Pronto para Armazenar</h3>
+                        <h4 style="margin-left: 10px; display: inline-block;">Descrição</h4>
+                        <h4 style="margin-left: 280px; display: inline-block;">Pronto para Armazenar</h4>
                     </td>
                 </tr>
                 {% for equipamento in equipamentos %}
                     <tr class="equipment-item" data-id="{{ equipamento.0 }}" data-tipo="{{ equipamento.1 }}" data-descricao="{{ equipamento.2 }}" data-preco="{{ equipamento.3 }}">
                         <td><span>{{ equipamento.1 }}</span></td>
                         <td>
-                         <label class="checkbox-container">
-        <input type="checkbox" id="prontoParaArmazenar{{ equipamento.0 }}" {% if equipamento.4 %}checked{% endif %} disabled>
-        <span class="checkmark"></span>
-    </label>
+                          <button class="details-button" onclick="showDetailsequipment(this)" style="margin-left: 170px;">Detalhes</button>
                       </td>
                         <td>
-                            <button class="details-button" onclick="showDetailsequipment(this)">Detalhes</button>
-                        </td>
+                         <label class="checkbox-container">
+        <input type="checkbox" id="prontoParaArmazenar{{ equipamento.0 }}" {% if equipamento.4 %}checked{% endif %} disabled>
+    </label>
+                      </td>
+                        
                     </tr>
                 {% endfor %}
             </tbody>
@@ -359,8 +369,12 @@
     </div>
 </div>
 
-
-  
+<div class="confirmation-modal" id="assemblyListModal">
+  <div class="confirmation-box">
+    <h2>Lista de Montagem</h2>
+    <button onclick="hideAssemblyList()">Fechar</button>
+  </div>
+</div>
 
   <!-- Detalhes do Componente -->
   <div class="component-details" id="componentDetails">
