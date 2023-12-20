@@ -10,8 +10,8 @@ def error_page(request, error_message):
 def get_database_connection():
     dbname = 'projeto_bdii'
     user = 'postgres'
-    password = 'ola123456'
-    port = '5432'
+    password = 'computador123@A'
+    port = '5433'
 
     try:
         connection = psycopg2.connect(dbname=dbname, user=user, password=password, port=port)
@@ -72,12 +72,12 @@ def producao_equipamentos(request):
             componentes_results = cursor.fetchall()
             print("Resultados da função get_componentes_data_function:", componentes_results)
 
-            # Chamar a procedure usando SELECT para a função get_equipamentos_data_function
-            cursor.callproc('get_equipamentos_data_function')
+            # Chamar a procedure usando SELECT para a função get_equipamentos_prontos_para_armazenar
+            cursor.callproc('get_equipamentos_prontos_para_armazenar')
 
             # Recuperar os resultados da procedure
             equipamentos_results = cursor.fetchall()
-            print("Resultados da função get_equipamentos_data_function:", equipamentos_results)
+            print("Resultados da função get_equipamentos_prontos_para_armazenar:", equipamentos_results)
 
             # Fechar o cursor
             cursor.close()

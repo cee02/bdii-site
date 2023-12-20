@@ -15,7 +15,7 @@
     }
 
     .container {
-      max-width: 700px;
+      max-width: 600px;
       margin: 20px auto;
     }
 
@@ -258,6 +258,36 @@
       font-weight: bold;
       margin-bottom: 10px;
     }
+    .checkbox-container {
+      display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin-bottom: 15px;
+}
+.checkbox-container input {
+    margin-right: 5px; /* Adjust the space between the checkbox and label */
+}
+    .checkmark {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 20px;
+        width: 20px;
+        background-color: #eee;
+        border-radius: 3px;
+    }
+
+    .checkbox-container input:checked + .checkmark:after {
+        content: '';
+        position: absolute;
+        left: 7px;
+        top: 3px;
+        width: 5px;
+        height: 10px;
+        border: solid white;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+    }
 
   </style>
 </head>
@@ -298,35 +328,39 @@
     </div>
   </div>
 
-  <!-- Seção de Equipamentos -->
+  <!-- Secção de Equipamentos -->
   <div class="container">
-    <div class="table-title">Lista de Equipamentos em Stock</div>
+    <div class="table-title">Lista de Equipamentos</div>
     <div class="scrollable-container">
-    <table class="equipment-table">
-        <tbody class="equipment-list">
-        {% for equipamento in equipamentos %}
-            <tr class="equipment-item" data-id="{{ equipamento.0 }}" data-tipo="{{ equipamento.1 }}" data-descricao="{{ equipamento.2 }}" data-preco="{{ equipamento.3 }}">
-            <td><span>{{ equipamento.1 }}</span></td>
-            <td>
-                <button class="details-button" onclick="showDetailsequipment(this)">Detalhes</button>
-                <button class="remove-button" onclick="showConfirmation('{{ equipamento.0 }}')">Remover</button>
-            </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+        <table class="equipment-table">
+            <tbody class="equipment-list">
+                <tr>
+                    <td>
+                        <h3 style="margin-left: 10px; display: inline-block;">Descrição</h3>
+                        <h3 style="margin-left: 100px; display: inline-block;">Pronto para Armazenar</h3>
+                    </td>
+                </tr>
+                {% for equipamento in equipamentos %}
+                    <tr class="equipment-item" data-id="{{ equipamento.0 }}" data-tipo="{{ equipamento.1 }}" data-descricao="{{ equipamento.2 }}" data-preco="{{ equipamento.3 }}">
+                        <td><span>{{ equipamento.1 }}</span></td>
+                        <td>
+                         <label class="checkbox-container">
+        <input type="checkbox" id="prontoParaArmazenar{{ equipamento.0 }}" {% if equipamento.4 %}checked{% endif %} disabled>
+        <span class="checkmark"></span>
+    </label>
+                      </td>
+                        <td>
+                            <button class="details-button" onclick="showDetailsequipment(this)">Detalhes</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
-   </div>
+</div>
 
-  <!-- Modal de Confirmação -->
-  <div class="confirmation-modal" id="confirmationModal">
-    <div class="confirmation-box">
-      <input type="hidden" id="componentIdInput">
-      <p>Tem certeza que deseja remover este componente?</p>
-      <button onclick="removeComponent()">Sim</button>
-      <button onclick="hideConfirmation()">Cancelar</button>
-    </div>
-  </div>
+
+  
 
   <!-- Detalhes do Componente -->
   <div class="component-details" id="componentDetails">

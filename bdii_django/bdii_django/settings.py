@@ -79,8 +79,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'projeto_bdii',         
         'USER': 'postgres',      
-        'PASSWORD': 'ola123456', # Mudem as credenciais consoante              
-        'PORT': '5432',   
+        'PASSWORD': 'computador123@A', # Mudem as credenciais consoante              
+        'PORT': '5433',   
          'OPTIONS': {
             'client_encoding': 'UTF-8',
         },          
