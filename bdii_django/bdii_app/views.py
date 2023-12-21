@@ -94,6 +94,42 @@ def producao_equipamentos(request):
         # Lidar com o caso em que a conexão com o banco de dados falha
         return render(request, 'error_page.html', {'error_message': 'Failed to connect to the database'})
 
+def delete_cliente(request, cliente_id):
+    # Obter conexão com o banco de dados
+    connection = get_database_connection()
+
+    if connection:
+        try:
+            # Criar um cursor a partir da conexão
+            cursor = connection.cursor()
+
+            # Chamar a procedure para excluir o cliente pelo ID
+            cursor.callproc('delete_cliente', [cliente_id])
+
+            # Commit para efetivar a exclusão
+            connection.commit()
+
+            # Chamar a procedure usando SELECT
+            cursor.callproc('get_cliente_data_function')
+
+            # Recuperar os resultados da procedure
+            results = cursor.fetchall()
+
+            # Fechar o cursor
+            cursor.close()
+
+            # Fechar a conexão
+            close_database_connection(connection)
+
+            # Passar os resultados para o contexto da renderização
+            return render(request, 'gestao_clientes.html', {'clientes': results})
+        except Exception as e:
+            # Lidar com exceções, se houver algum problema durante a execução da procedure
+            return render(request, 'error_page.html', {'error_message': str(e)})
+    else:
+        # Lidar com o caso em que a conexão com o banco de dados falha
+        return render(request, 'error_page.html', {'error_message': 'Failed to connect to the database'})    
+
 
 def login(request):
     return render(request, 'login.html')
