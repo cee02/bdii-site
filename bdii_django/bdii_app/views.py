@@ -103,22 +103,14 @@ def delete_cliente(request, cliente_id):
             # Criar um cursor a partir da conexão
             cursor = connection.cursor()
 
-            # Chamar a procedure para excluir o cliente pelo ID
             cursor.callproc('delete_cliente', [cliente_id])
-
-            # Commit para efetivar a exclusão
             connection.commit()
-
             # Chamar a procedure usando SELECT
             cursor.callproc('get_cliente_data_function')
 
             # Recuperar os resultados da procedure
             results = cursor.fetchall()
-
-            # Fechar o cursor
             cursor.close()
-
-            # Fechar a conexão
             close_database_connection(connection)
 
             # Passar os resultados para o contexto da renderização
