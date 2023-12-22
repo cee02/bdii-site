@@ -299,6 +299,52 @@
         transform: rotate(45deg);
     }
 
+    .right-container {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 400px;
+  height: 80%;
+  background-color: #fff;
+  border: 2px solid #3498db; 
+  border-right: 2px solid #f4f4f4; 
+  overflow-y: scroll;
+  margin-right: 100px;
+  margin-top: 50px;
+  
+}
+
+.assembly-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.assembly-item {
+  padding: 10px;
+  border-bottom: 1px solid #ddd; 
+}
+.table-title1{
+  margin-top: 10px;
+    text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #3498db; 
+}
+.remove-button {
+  background-color: #3498db;
+  color: #fff;
+  padding: 8px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.remove-button:hover {
+  background-color: #03548b;
+}
   </style>
 </head>
 <body>
@@ -319,6 +365,7 @@
     </ul>
   </div>
 
+ <!-- Secção de Componentes -->
   <div class="container">
     <div class="table-title">Lista de Componentes em Stock</div>
     <div class="scrollable-container">
@@ -329,13 +376,20 @@
             <td><span>{{ componente.1 }}</span></td>
             <td>
               <button class="details-button" onclick="showDetailscomponent(this)" style="margin-right: 150px;">Detalhes</button>
-              <i class="fas fa-shopping-basket basket-icon" onclick="showAssemblyList('{{ componente.0 }}')" style="margin-right: 50px;"></i>
+              <i class="fas fa-shopping-basket basket-icon" onclick="showAssemblyList('{{ componente.0 }}', '{{ componente.1 }}')" style="margin-right: 50px;"></i>
             </td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
+  </div>
+
+  <div class="right-container">
+    <div class="table-title1">Lista de Montagem</div>
+    <ul class="assembly-list" id="assemblyList">
+      <!-- Assembly list items will be dynamically added here -->
+    </ul>
   </div>
 
   <!-- Secção de Equipamentos -->
@@ -369,12 +423,6 @@
     </div>
 </div>
 
-<div class="confirmation-modal" id="assemblyListModal">
-  <div class="confirmation-box">
-    <h2>Lista de Montagem</h2>
-    <button onclick="hideAssemblyList()">Fechar</button>
-  </div>
-</div>
 
   <!-- Detalhes do Componente -->
   <div class="component-details" id="componentDetails">
@@ -388,7 +436,7 @@
 
   <!-- Detalhes do Equipamento -->
   <div class="equipment-details" id="equipmentDetails">
-    <h2>Detalhes do Componente</h2>
+    <h2>Detalhes do Equipamento</h2>
     <p><strong>Tipo:</strong> <span id="equipmentTipo"></span></p>
     <p><strong>Descrição:</strong> <span id="equipmentDescricao"></span></p>
     <p><strong>Preço:</strong> <span id="equipmentPreco"></span></p>
@@ -455,6 +503,48 @@
       // Ocultar o modal de confirmação
       hideConfirmation();
     }
+
+function showAssemblyList(componentId, componentName) {
+  const assemblyList = document.getElementById('assemblyList');
+  // Crie um identificador único para cada item da lista
+  const itemId = `assemblyItem_${componentId}`;
+  
+  // Adicione o item à lista de montagem
+  const listItem = document.createElement('li');
+  listItem.id = itemId;
+  listItem.classList.add('assembly-item');
+  listItem.innerHTML = `<span>Component ID: ${componentId}</span><br><span>Name: ${componentName}</span>`;
+  
+  // Adicione o botão de remoção
+  const removeButton = document.createElement('button');
+  removeButton.innerText = 'Remover';
+  removeButton.classList.add('remove-button');  
+  removeButton.onclick = function() {
+    removeAssemblyItem(itemId);
+  };
+  
+  listItem.appendChild(removeButton);
+  assemblyList.appendChild(listItem);
+
+  // Mostre o modal da lista de montagem
+  document.getElementById('assemblyListModal').style.display = 'flex';
+    }
+    
+    function removeAssemblyItem(itemId) {
+  // Remova o item da lista de montagem pelo identificador único
+  const assemblyItem = document.getElementById(itemId);
+  if (assemblyItem) {
+    assemblyItem.remove();
+  }
+}
+
+  function hideAssemblyList() {
+    // Hide the assembly list modal
+    document.getElementById('assemblyListModal').style.display = 'none';
+    // Clear the assembly list
+    document.getElementById('assemblyList').innerHTML = '';
+  }
+
   </script>
 
 </body>
