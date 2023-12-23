@@ -8,10 +8,10 @@ def error_page(request, error_message):
     return render(request, 'error_page.html', {'error_message': error_message})
 
 def get_database_connection():
-    dbname = 'projeto_bdii'
+    dbname = 'TrabFinalBD2'
     user = 'postgres'
-    password = 'computador123@A'
-    port = '5433'
+    password = '20216'
+    port = '5432'
 
     try:
         connection = psycopg2.connect(dbname=dbname, user=user, password=password, port=port)
@@ -148,3 +148,52 @@ def registar_equipamento(request):
 
 def vendas_equipamentos(request):
     return render(request, 'vendas_equipamentos.html')
+
+def registar_equipamento(request): # listar componentes
+    # Obter conexão com o banco de dados
+    print("Entrando na view registo_equipamentos")
+    connection = get_database_connection()
+    if connection:
+        try:
+            # Criar um cursor a partir da conexão
+            cursor = connection.cursor()
+
+            # Chamar a procedure usando SELECT para a função get_componentes_data_function
+            cursor.callproc('get_componentes_data_function')
+
+            # Recuperar os resultados da procedure
+            componentes_results = cursor.fetchall()
+            print("Resultados da função get_componentes_data_function:", componentes_results)
+
+            # Chamar a procedure usando SELECT para a função get_equipamentos_prontos_para_armazenar
+            cursor.callproc('get_equipamentos_prontos_para_armazenar')
+
+            # Recuperar os resultados da procedure
+            equipamentos_results = cursor.fetchall()
+            print("Resultados da função get_equipamentos_prontos_para_armazenar:", equipamentos_results)
+
+            # Fechar o cursor
+            cursor.close()
+
+            # Fechar a conexão
+            close_database_connection(connection)
+
+            # Passar os resultados para o contexto da renderização
+            return render(request, 'registar_equipamento.html', {'componentes': componentes_results, 'equipamentos': equipamentos_results})
+        except Exception as e:
+            # Lidar com exceções, se houver algum problema durante a execução da procedure
+            return render(request, 'error_page.html', {'error_message': str(e)})
+    else:
+        # Lidar com o caso em que a conexão com o banco de dados falha
+        return render(request, 'error_page.html', {'error_message': 'Failed to connect to the database'})
+    
+def fazerregisto_equipamento(request): #registar equipamento (ainda nao pinta)
+    if request.method == 'POST':
+        form = EquipamentoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('registar_equipamento') 
+    else:
+        form = EquipamentoForm()
+
+    return render(request, 'registar_equipamento.html', {'form': form})
