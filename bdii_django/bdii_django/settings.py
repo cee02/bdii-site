@@ -77,10 +77,10 @@ WSGI_APPLICATION = 'bdii_django.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'TrabFinalBD2',         
+        'NAME': 'projeto_bdii',         
         'USER': 'postgres',      
-        'PASSWORD': '20216', # Mudem as credenciais consoante              
-        'PORT': '5432',   
+        'PASSWORD': 'computador123@A', # Mudem as credenciais consoante              
+        'PORT': '5433',   
          'OPTIONS': {
             'client_encoding': 'UTF-8',
         },          

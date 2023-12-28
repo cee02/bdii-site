@@ -8,10 +8,10 @@ def error_page(request, error_message):
     return render(request, 'error_page.html', {'error_message': error_message})
 
 def get_database_connection():
-    dbname = 'TrabFinalBD2'
+    dbname = 'projeto_bdii'
     user = 'postgres'
-    password = '20216'
-    port = '5432'
+    password = 'computador123@A'
+    port = '5433'
 
     try:
         connection = psycopg2.connect(dbname=dbname, user=user, password=password, port=port)
