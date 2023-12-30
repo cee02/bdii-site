@@ -18,6 +18,7 @@
     
     .container {
       max-width: 700px;
+      max-height: 500px;
       margin: 20px auto;
     }
 
@@ -132,11 +133,12 @@
       display: none;
       position: fixed;
       top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      right: 0;
+      transform: translate(0, -50%);
       margin-top: 20px;
       background-color: #fff;
-      padding: 20px;
+      width: 25%;
+      padding: 10px;
       border-radius: 8px;
       text-align: left;
       border: 2px solid #3498db;
@@ -226,23 +228,26 @@
       border-radius: 50%;
     }
 
+  
   </style>
 </head>
 <body>
-  <div class="container">
-    <ul class="client-list">
-        {% for cliente in clientes %}
-            <li class="client-item" data-id="{{ cliente.0 }}" data-nome="{{ cliente.1 }}" data-endereco="{{ cliente.2 }}" data-telefone="{{ cliente.3 }}" data-email="{{ cliente.4 }}" data-contribuinte="{{ cliente.5 }}">
-                <span>{{ cliente.1 }}</span>
-                <div>
-                    <button class="details-button" onclick="showDetails(this)">Detalhes</button>
-                    <button class="remove-button" onclick="showConfirmation('{{ cliente.0 }}', '{{ cliente.1 }}')">Remover</button>
 
-                </div>
-            </li>
-        {% endfor %}
-    </ul>
-  </div>
+    <div class="container">
+      <ul class="client-list">
+          {% for cliente in clientes %}
+              <li class="client-item" data-id="{{ cliente.0 }}" data-nome="{{ cliente.1 }}" data-endereco="{{ cliente.2 }}" data-telefone="{{ cliente.3 }}" data-email="{{ cliente.4 }}" data-contribuinte="{{ cliente.5 }}">
+                  <span>{{ cliente.1 }}</span>
+                  <div>
+                      <button class="details-button" onclick="showDetails(this)">Detalhes</button>
+                      <button class="remove-button" onclick="showConfirmation('{{ cliente.0 }}', '{{ cliente.1 }}')">Remover</button>
+
+                  </div>
+              </li>
+          {% endfor %}
+      </ul>
+    </div>
+  
 
   <div class="sidebar" id="sidebar">
     <div class="user-profile">
@@ -291,23 +296,28 @@
   </div>
 
 <script>
- function showDetails(button) {
-  const listItem = button.closest('.client-item');
-  const clientNome = listItem.dataset.nome;
-  const clientEndereco = listItem.dataset.endereco;
-  const clientTelefone = listItem.dataset.telefone;
-  const clientEmail = listItem.dataset.email;
-  const clienteContribuinte = listItem.dataset.contribuinte;
-  // Preencher os detalhes do cliente
-  document.getElementById('clientName').innerText = clientNome;
-  document.getElementById('clientEndereco').innerText = clientEndereco;
-  document.getElementById('clientTelefone').innerText = clientTelefone;
-  document.getElementById('clientEmail').innerText = clientEmail;
-  document.getElementById('clienteContribuinte').innerText = clienteContribuinte;
-
-  // Exibir a seção de detalhes do cliente
-  document.getElementById('clientDetails').style.display = 'block';
+function showDetails(button) {
+    const listItem = button.closest('.client-item');
+    const clientDetails = document.getElementById('clientDetails');
+    // Retrieve client details from the dataset
+    const clientNome = listItem.dataset.nome;
+    const clientEndereco = listItem.dataset.endereco;
+    const clientTelefone = listItem.dataset.telefone;
+    const clientEmail = listItem.dataset.email;
+    const clienteContribuinte = listItem.dataset.contribuinte;
+    // Preencher os detalhes do cliente
+    document.getElementById('clientName').innerText = clientNome;
+    document.getElementById('clientEndereco').innerText = clientEndereco;
+    document.getElementById('clientTelefone').innerText = clientTelefone;
+    document.getElementById('clientEmail').innerText = clientEmail;
+    document.getElementById('clienteContribuinte').innerText = clienteContribuinte;
+    // Set the position to the right of the client list
+    const clientListRect = listItem.getBoundingClientRect();
+    clientDetails.style.left = `${clientListRect.right + 10}px`; // Adjust the value as needed
+    // Exibir a seção de detalhes do cliente
+    clientDetails.style.display = 'block';
 }
+
 
 
   function hideDetails() {
