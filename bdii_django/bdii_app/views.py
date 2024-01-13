@@ -7,10 +7,9 @@ from django.db import OperationalError
 def error_page(request, error_message):
     return render(request, 'error_page.html', {'error_message': error_message})
 
-def get_database_connection():
+def get_database_connection(username, password):
     dbname = 'projeto_bdii'
-    user = 'postgres'
-    password = 'computador123@A'
+    user = username
     port = '5433'
 
     try:
@@ -19,6 +18,7 @@ def get_database_connection():
     except OperationalError as e:
         print("OperationalError:", e)
         return None
+
 
 # Function to close the database connection
 def close_database_connection(connection):

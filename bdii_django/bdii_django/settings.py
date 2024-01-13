@@ -76,14 +76,8 @@ WSGI_APPLICATION = 'bdii_django.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'projeto_bdii',         
-        'USER': 'postgres',      
-        'PASSWORD': 'computador123@A', # Mudem as credenciais consoante              
-        'PORT': '5433',   
-         'OPTIONS': {
-            'client_encoding': 'UTF-8',
-        },          
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
