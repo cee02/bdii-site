@@ -41,39 +41,26 @@
     </style>
 </head>
 <body>
-    <form id="loginForm" onsubmit="handleLogin(event)">
+    <form id="loginForm" onsubmit="return handleLogin()">
         <h2>Login</h2>
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required>
-        
+
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required>
 
         <button type="submit">Login</button>
     </form>
     <script>
-    console.log("Script loaded.");
-    
-    function handleLogin(event) {
-    event.preventDefault();
-    var username = document.getElementById('username').value;
-    var password = document.getElementById('password').value;
+        function handleLogin() {
+            // Perform any login logic here (e.g., validation, authentication)
 
-    // Chamar get_database_connection com as credenciais fornecidas
-    var connection = get_database_connection(username, password);
+            // Redirect to the dashboard.html page
+            window.location.href = '/dashboard';
 
-    if (connection) {
-        // Se a conexão for bem-sucedida, redirecione para a página do painel
-        console.log("Login successful. Redirecting to dashboard.");
-        window.location.href = '/dashboard';
-    } else {
-        // Se a conexão falhar, exiba uma mensagem de erro ou tome outras medidas necessárias
-        alert('Falha ao autenticar. Verifique suas credenciais.');
-    }
-
-    // Impedir o formulário de ser enviado da maneira tradicional
-    return false;
-}
+            // Prevent the form from submitting the traditional way
+            return false;
+        }
     </script>
 </body>
 </html>
