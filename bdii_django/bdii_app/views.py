@@ -19,7 +19,7 @@ def get_database_connection(user_type):
         user = 'aluno3_b'
         password = 'aluno'
         port = '5433'
-    elif user_type == 'aluno3_c':   #user
+    elif user_type == 'aluno3_c':   
         dbname = 'projeto_bdii'
         user = 'aluno3_c'
         password = 'aluno'
@@ -140,6 +140,10 @@ def delete_cliente(request, cliente_id):
 
 def login(request):
     return render(request, 'login.html')
+
+def logout(request):
+    return render(request, 'login.html')
+
 def dashboard(request):
     return render(request, 'dashboard.html')
 
