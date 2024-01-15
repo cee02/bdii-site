@@ -7,11 +7,26 @@ from django.db import OperationalError
 def error_page(request, error_message):
     return render(request, 'error_page.html', {'error_message': error_message})
 
-def get_database_connection():
-    dbname = 'projeto_bdii'
-    user = 'postgres'
-    password = 'computador123@A'
-    port = '5433'
+def get_database_connection(user_type):
+    # Coloquem os users com as mesmas credenciais
+    if user_type == 'aluno3_a':     #admin
+        dbname = 'projeto_bdii'
+        user = 'aluno3_a'
+        password = 'aluno'
+        port = '5433'
+    elif user_type == 'aluno3_b':   #gestor
+        dbname = 'projeto_bdii'
+        user = 'aluno3_b'
+        password = 'aluno'
+        port = '5433'
+    elif user_type == 'aluno3_c':   #user
+        dbname = 'projeto_bdii'
+        user = 'aluno3_c'
+        password = 'aluno'
+        port = '5433'
+    else:
+        # Condição padrão ou erro, dependendo dos requisitos do seu aplicativo
+        raise ValueError("User não reconhecido")
 
     try:
         connection = psycopg2.connect(dbname=dbname, user=user, password=password, port=port)
@@ -28,7 +43,7 @@ def close_database_connection(connection):
 # View functions
 def gestao_clientes(request):
     # Obter conexão com o banco de dados
-    connection = get_database_connection()
+    connection = get_database_connection(user_type='aluno3_a')
 
     if connection:
         try:
@@ -59,7 +74,7 @@ def gestao_clientes(request):
 def producao_equipamentos(request):
     # Obter conexão com o banco de dados
     print("Entrando na view producao_equipamentos")
-    connection = get_database_connection()
+    connection = get_database_connection(user_type='aluno3_a')
     if connection:
         try:
             # Criar um cursor a partir da conexão
@@ -96,7 +111,7 @@ def producao_equipamentos(request):
 
 def delete_cliente(request, cliente_id):
     # Obter conexão com o banco de dados
-    connection = get_database_connection()
+    connection = get_database_connection(user_type='aluno3_a')
 
     if connection:
         try:
@@ -152,7 +167,7 @@ def vendas_equipamentos(request):
 def registar_equipamento(request): # listar componentes
     # Obter conexão com o banco de dados
     print("Entrando na view registo_equipamentos")
-    connection = get_database_connection()
+    connection = get_database_connection(user_type='aluno3_a')
     if connection:
         try:
             # Criar um cursor a partir da conexão

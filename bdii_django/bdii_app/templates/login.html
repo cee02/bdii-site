@@ -53,14 +53,21 @@
     </form>
     <script>
         function handleLogin() {
-            // Perform any login logic here (e.g., validation, authentication)
-
-            // Redirect to the dashboard.html page
+        var username = document.getElementById("username").value;
+        var password = document.getElementById("password").value
+        if ((username === 'aluno3_a' && password === 'aluno') || 
+            (username === 'aluno3_b' && password === 'aluno') ||
+            (username === 'aluno3_c' && password === 'aluno')) {
+            // Usuário e senha válidos, redirecionar para o dashboard
             window.location.href = '/dashboard';
-
-            // Prevent the form from submitting the traditional way
-            return false;
+        } else {
+            // Usuário ou senha inválidos, você pode exibir uma mensagem de erro ou lidar de outra forma
+            alert('Credenciais inválidas. Tente novamente.');
         }
+
+        // Impedir que o formulário seja enviado da maneira tradicional
+        return false;
+    }
     </script>
 </body>
 </html>
