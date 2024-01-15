@@ -6,45 +6,66 @@
     <title>Login</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a1a1a;
             margin: 0;
             display: flex;
             align-items: center;
             justify-content: center;
             height: 100vh;
-            background: url("./Imagens/img.jpg");
-            background-size: cover; 
-            background-position: center; 
+            background-size: cover;
+            background-position: center;
             background-repeat: no-repeat;
+            color: #fff;
         }
+
         form {
-            background-color: #fff;
+            background-color: rgba(255, 255, 255, 0.9);
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
         }
+
         label {
             display: block;
             margin-bottom: 8px;
+            color: #333;
         }
+
         input {
             width: 100%;
-            padding: 8px;
+            padding: 10px;
             margin-bottom: 16px;
             box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
         }
+
         button {
-            background-color: #333;
+            background-color: #3b8acb;
             color: #fff;
-            padding: 10px 15px;
+            padding: 12px 20px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #185c94;
+        }
+
+        h2 {
+            color: #3b8acb;
         }
     </style>
 </head>
 <body>
+    <img src="../Imagens/img.jpg" alt="">
     <form id="loginForm" onsubmit="return handleLogin()">
         <h2>Login</h2>
         <label for="username">Username:</label>
@@ -56,22 +77,24 @@
         <button type="submit">Login</button>
     </form>
     <script>
-        function handleLogin() {
-        var username = document.getElementById("username").value;
-        var password = document.getElementById("password").value
-        if ((username === 'aluno3_a' && password === 'aluno') || 
-            (username === 'aluno3_b' && password === 'aluno') ||
-            (username === 'aluno3_c' && password === 'aluno')) {
-            // Usuário e senha válidos, redirecionar para o dashboard
-            window.location.href = '/dashboard';
-        } else {
-            // Usuário ou senha inválidos, você pode exibir uma mensagem de erro ou lidar de outra forma
-            alert('Credenciais inválidas. Tente novamente.');
-        }
+       function handleLogin() {
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+            if (
+                (username === 'aluno3_a' && password === 'aluno') ||
+                (username === 'aluno3_b' && password === 'aluno') ||
+                (username === 'aluno3_c' && password === 'aluno')
+            ) {
+                // Usuário e senha válidos, redirecionar para o dashboard
+                window.location.href = '/dashboard';
+            } else {
+                // Usuário ou senha inválidos, você pode exibir uma mensagem de erro ou lidar de outra forma
+                alert('Credenciais inválidas. Tente novamente.');
+            }
 
-        // Impedir que o formulário seja enviado da maneira tradicional
-        return false;
-    }
+            // Impedir que o formulário seja enviado da maneira tradicional
+            return false;
+        }
     </script>
 </body>
 </html>

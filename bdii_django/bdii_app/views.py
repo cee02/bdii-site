@@ -19,7 +19,7 @@ def get_database_connection(user_type):
         user = 'aluno3_b'
         password = 'aluno'
         port = '5433'
-    elif user_type == 'aluno3_c':   
+    elif user_type == 'aluno3_c':   #user
         dbname = 'projeto_bdii'
         user = 'aluno3_c'
         password = 'aluno'
@@ -138,14 +138,15 @@ def delete_cliente(request, cliente_id):
         return render(request, 'error_page.html', {'error_message': 'Failed to connect to the database'})    
 
 
-def login(request):
+def user_login(request):
     return render(request, 'login.html')
 
 def logout(request):
     return render(request, 'login.html')
 
 def dashboard(request):
-    return render(request, 'dashboard.html')
+    user_name = request.user.username
+    return render(request, 'dashboard.html', {'user_name': user_name})
 
 def registo_encomenda(request):
     return render(request, 'registo_encomenda.html')
