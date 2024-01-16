@@ -139,10 +139,6 @@ def delete_cliente(request, cliente_id):
 
 def user_login(request):
     return render(request, 'login.html')
-
-def logout(request):
-    return render(request, 'login.html')
-
 def dashboard(request):
     user_name = request.user.username
     return render(request, 'dashboard.html', {'user_name': user_name})
