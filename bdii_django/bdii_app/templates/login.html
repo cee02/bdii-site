@@ -7,17 +7,21 @@
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #1a1a1a;
+            background: rgb(0,121,255);
+            background: linear-gradient(180deg, rgba(0,121,255,1) 0%, rgba(255,255,255,1) 71%);
             margin: 0;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
+            height: 70vh;
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            color: #fff;
+            
+        
         }
+        
 
         form {
             background-color: rgba(255, 255, 255, 0.9);
@@ -65,7 +69,9 @@
     </style>
 </head>
 <body>
-    <img src="../Imagens/img.jpg" alt="">
+    {% load static %}
+<img src="{% static 'logo-no-background.svg' %}" style="width: 500px; height: 500px; margin-left: 10px;">
+
     <form id="loginForm" onsubmit="return handleLogin()">
         <h2>Login</h2>
         <label for="username">Username:</label>

@@ -13,17 +13,17 @@ def get_database_connection(user_type):
         dbname = 'projeto_bdii'
         user = 'aluno3_a'
         password = 'aluno'
-        port = '5433'
+        port = '5432'
     elif user_type == 'aluno3_b':   #gestor
         dbname = 'projeto_bdii'
         user = 'aluno3_b'
         password = 'aluno'
-        port = '5433'
+        port = '5432'
     elif user_type == 'aluno3_c':   #user
         dbname = 'projeto_bdii'
         user = 'aluno3_c'
         password = 'aluno'
-        port = '5433'
+        port = '5432'
     else:
         # Condição padrão ou erro, dependendo dos requisitos do seu aplicativo
         raise ValueError("User não reconhecido")
