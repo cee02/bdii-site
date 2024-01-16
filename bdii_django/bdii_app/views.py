@@ -7,6 +7,7 @@ from django.db import OperationalError
 def error_page(request, error_message):
     return render(request, 'error_page.html', {'error_message': error_message})
 
+<<<<<<< HEAD
 def get_database_connection(user_type):
     # Coloquem os users com as mesmas credenciais
     if user_type == 'aluno3_a':     #admin
@@ -27,6 +28,13 @@ def get_database_connection(user_type):
     else:
         # Condição padrão ou erro, dependendo dos requisitos do seu aplicativo
         raise ValueError("User não reconhecido")
+=======
+def get_database_connection():
+    dbname = 'projeto_bdii'
+    user = 'postgres'
+    password = 'computador123@A'
+    port = '5433'
+>>>>>>> parent of 628a719 (Autenticação 1.0)
 
     try:
         connection = psycopg2.connect(dbname=dbname, user=user, password=password, port=port)
@@ -43,7 +51,7 @@ def close_database_connection(connection):
 # View functions
 def gestao_clientes(request):
     # Obter conexão com o banco de dados
-    connection = get_database_connection(user_type='aluno3_a')
+    connection = get_database_connection()
 
     if connection:
         try:
@@ -74,7 +82,7 @@ def gestao_clientes(request):
 def producao_equipamentos(request):
     # Obter conexão com o banco de dados
     print("Entrando na view producao_equipamentos")
-    connection = get_database_connection(user_type='aluno3_a')
+    connection = get_database_connection()
     if connection:
         try:
             # Criar um cursor a partir da conexão
@@ -111,7 +119,7 @@ def producao_equipamentos(request):
 
 def delete_cliente(request, cliente_id):
     # Obter conexão com o banco de dados
-    connection = get_database_connection(user_type='aluno3_a')
+    connection = get_database_connection()
 
     if connection:
         try:
@@ -172,7 +180,7 @@ def vendas_equipamentos(request):
 def registar_equipamento(request): # listar componentes
     # Obter conexão com o banco de dados
     print("Entrando na view registo_equipamentos")
-    connection = get_database_connection(user_type='aluno3_a')
+    connection = get_database_connection()
     if connection:
         try:
             # Criar um cursor a partir da conexão

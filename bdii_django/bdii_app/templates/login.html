@@ -83,6 +83,7 @@
         <button type="submit">Login</button>
     </form>
     <script>
+<<<<<<< HEAD
        function handleLogin() {
             var username = document.getElementById("username").value;
             var password = document.getElementById("password").value;
@@ -99,6 +100,15 @@
             }
 
             // Impedir que o formulário seja enviado da maneira tradicional
+=======
+        function handleLogin() {
+            // Perform any login logic here (e.g., validation, authentication)
+
+            // Redirect to the dashboard.html page
+            window.location.href = '/dashboard';
+
+            // Prevent the form from submitting the traditional way
+>>>>>>> parent of 628a719 (Autenticação 1.0)
             return false;
         }
     </script>
