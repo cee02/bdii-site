@@ -47,6 +47,7 @@ def close_database_connection(connection):
 
 # View functions
 def gestao_clientes(request):
+    
     # Obter conexão com o banco de dados
     username = request.session.get('username')
     password = request.session.get('password')
@@ -54,6 +55,7 @@ def gestao_clientes(request):
     print(password)
     connection = get_database_connection(username, password)
     
+    user_name = request.session.get('username', 'Guest') # para o nome no menu lateral
 
     if connection:
         try:
@@ -73,7 +75,7 @@ def gestao_clientes(request):
             close_database_connection(connection)
 
             # Passar os resultados para o contexto da renderização
-            return render(request, 'gestao_clientes.html', {'clientes': results})
+            return render(request, 'gestao_clientes.html', {'clientes': results, 'user_name': user_name})
         except Exception as e:
             # Lidar com exceções, se houver algum problema durante a execução da procedure
             return render(request, 'error_page.html', {'error_message': str(e)})
@@ -89,6 +91,9 @@ def producao_equipamentos(request):
     print(username)
     print(password)
     connection = get_database_connection(username, password)
+
+    user_name = request.session.get('username', 'Guest') # para o nome no menu lateral
+    
     if connection:
         try:
             # Criar um cursor a partir da conexão
@@ -115,7 +120,7 @@ def producao_equipamentos(request):
             close_database_connection(connection)
 
             # Passar os resultados para o contexto da renderização
-            return render(request, 'producao_equipamentos.html', {'componentes': componentes_results, 'equipamentos': equipamentos_results})
+            return render(request, 'producao_equipamentos.html', {'componentes': componentes_results, 'equipamentos': equipamentos_results, 'user_name': user_name})
         except Exception as e:
             # Lidar com exceções, se houver algum problema durante a execução da procedure
             return render(request, 'error_page.html', {'error_message': str(e)})
@@ -130,6 +135,8 @@ def delete_cliente(request, cliente_id):
     print(username)
     print(password)
     connection = get_database_connection(username, password)
+
+    user_name = request.session.get('username', 'Guest') # para o nome no menu lateral
 
     if connection:
         try:
@@ -147,7 +154,7 @@ def delete_cliente(request, cliente_id):
             close_database_connection(connection)
 
             # Passar os resultados para o contexto da renderização
-            return render(request, 'gestao_clientes.html', {'clientes': results})
+            return render(request, 'gestao_clientes.html', {'clientes': results, 'user_name': user_name})
         except Exception as e:
             # Lidar com exceções, se houver algum problema durante a execução da procedure
             return render(request, 'error_page.html', {'error_message': str(e)})
@@ -168,6 +175,7 @@ def user_login(request):
             print(username, password)
             request.session['username'] = username
             request.session['password'] = password
+
             # Credenciais válidas, redirecionar para o dashboard
             return redirect('/dashboard')
             
@@ -183,11 +191,12 @@ def logout(request):
     return render(request, 'login.html')
 
 def dashboard(request):
- 
-    return render(request, 'dashboard.html')
+    user_name = request.session.get('username', 'Guest') # para o nome no menu lateral
+    return render(request, 'dashboard.html', {'user_name': user_name})
 
 def registo_encomenda(request):
-    return render(request, 'registo_encomenda.html')
+    user_name = request.session.get('username', 'Guest') # para o nome no menu lateral
+    return render(request, 'registo_encomenda.html', {'user_name': user_name})
 
 def get_armazem_data(request):
     with connection.cursor() as cursor:
@@ -202,19 +211,25 @@ def get_armazem_data(request):
     return render(request, '.html', context)
 
 def registar_equipamento(request):
-    return render(request, 'registar_equipamento.html')
+    user_name = request.session.get('username', 'Guest') # para o nome no menu lateral
+    return render(request, 'registar_equipamento.html', {'user_name': user_name})
 
 def vendas_equipamentos(request):
-    return render(request, 'vendas_equipamentos.html')
+    user_name = request.session.get('username', 'Guest') # para o nome no menu lateral
+    return render(request, 'vendas_equipamentos.html', {'user_name': user_name})
 
 def registar_equipamento(request): # listar componentes
     # Obter conexão com o banco de dados
+    user_name = request.session.get('username', 'Guest') 
     print("Entrando na view registo_equipamentos")
     username = request.session.get('username')
     password = request.session.get('password')
     print(username)
     print(password)
     connection = get_database_connection(username, password)
+
+    user_name = request.session.get('username', 'Guest') # para o nome no menu lateral
+    
     if connection:
         try:
             # Criar um cursor a partir da conexão
@@ -241,7 +256,7 @@ def registar_equipamento(request): # listar componentes
             close_database_connection(connection)
 
             # Passar os resultados para o contexto da renderização
-            return render(request, 'registar_equipamento.html', {'componentes': componentes_results, 'equipamentos': equipamentos_results})
+            return render(request, 'registar_equipamento.html', {'componentes': componentes_results, 'equipamentos': equipamentos_results, 'user_name': user_name})
         except Exception as e:
             # Lidar com exceções, se houver algum problema durante a execução da procedure
             return render(request, 'error_page.html', {'error_message': str(e)})

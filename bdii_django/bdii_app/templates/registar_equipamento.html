@@ -17,7 +17,7 @@
 
         .sidebar {
             height: 100%;
-            width: 60px;
+            width: 90px;
             position: fixed;
             top: 0;
             left: 0;
@@ -211,7 +211,7 @@
     <div class="sidebar" id="sidebar">
         <div class="user-profile">
             <i class="fas fa-user"></i>
-            <p></p>
+            <p>Welcome, {{ user_name }}</p>
         </div>
         <ul class="menu">
           <li><a href="{% url 'bdii_dashboard' %}"><i class="fas fa-chart-line"></i><span class="menu-text">Dashboard</span></a></li>

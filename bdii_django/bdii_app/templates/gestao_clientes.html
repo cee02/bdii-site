@@ -125,24 +125,21 @@
       cursor: pointer;
     }
 
-
-
-
-
     .client-details {
-      display: none;
-      position: fixed;
-      top: 50%;
-      right: 0;
-      transform: translate(0, -50%);
-      margin-top: 20px;
-      background-color: #fff;
-      width: 25%;
-      padding: 10px;
-      border-radius: 8px;
-      text-align: left;
-      border: 2px solid #3498db;
-    }
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(0, -50%);
+  margin-top: 50px; /* Adjust this value as needed */
+  background-color: #fff;
+  width: 25%;
+  padding: 10px;
+  border-radius: 8px;
+  text-align: left;
+  border: 2px solid #3498db;
+}
+
 
     .client-details h2 {
       color: #333;
@@ -169,7 +166,7 @@
 
     .sidebar {
       height: 100%;
-      width: 60px;
+      width: 90px;
       position: fixed;
       top: 0;
       left: 0;
@@ -253,7 +250,7 @@
   <div class="sidebar" id="sidebar">
     <div class="user-profile">
       <i class="fas fa-user"></i>
-      <p></p>
+      <p>Welcome, {{ user_name }}</p>
     </div>
     <ul class="menu">
       <li><a href="{% url 'bdii_dashboard' %}"><i class="fas fa-chart-line"></i><span class="menu-text">Dashboard</span></a></li>
