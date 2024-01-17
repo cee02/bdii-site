@@ -7,32 +7,38 @@ from django.db import OperationalError
 def error_page(request, error_message):
     return render(request, 'error_page.html', {'error_message': error_message})
 
-def get_database_connection(user_type):
-    # Coloquem os users com as mesmas credenciais
-    if user_type == 'aluno3_a':     #admin
-        dbname = 'projeto_bdii'
-        user = 'aluno3_a'
-        password = 'aluno'
-        port = '5433'
-    elif user_type == 'aluno3_b':   #gestor
-        dbname = 'projeto_bdii'
-        user = 'aluno3_b'
-        password = 'aluno'
-        port = '5433'
-    elif user_type == 'aluno3_c':   #user
-        dbname = 'projeto_bdii'
-        user = 'aluno3_c'
-        password = 'aluno'
-        port = '5433'
-    else:
-        # Condição padrão ou erro, dependendo dos requisitos do seu aplicativo
-        raise ValueError("User não reconhecido")
+def get_database_connection(username, password):
+    # Map user profiles to database configurations
+    database_configurations = {
+        'aluno3_a': {'dbname': 'projeto_bdii', 'user': 'aluno3_a', 'password': 'aluno', 'port': '5433'},
+        'aluno3_b': {'dbname': 'projeto_bdii', 'user': 'aluno3_b', 'password': 'aluno', 'port': '5433'},
+        'aluno3_c': {'dbname': 'projeto_bdii', 'user': 'aluno3_c', 'password': 'aluno', 'port': '5433'},
+    }
+
     try:
-        connection = psycopg2.connect(dbname=dbname, user=user, password=password, port=port)
+        # Get the database configurations based on the username
+        db_config = database_configurations.get(username)
+
+        if not db_config:
+            raise ValueError("Perfil de usuário não reconhecido")
+
+        # Add 'user' and 'password' to the database configurations
+        db_config['user'] = username
+        db_config['password'] = password
+
+        # Connect to the database using the profile-specific configurations
+        connection = psycopg2.connect(
+            dbname=db_config['dbname'],
+            user=db_config['user'],
+            password=db_config['password'],
+            port=db_config['port']
+        )
+
         return connection
     except OperationalError as e:
         print("OperationalError:", e)
         return None
+    
 
 # Function to close the database connection
 def close_database_connection(connection):
@@ -42,7 +48,12 @@ def close_database_connection(connection):
 # View functions
 def gestao_clientes(request):
     # Obter conexão com o banco de dados
-    connection = get_database_connection(user_type='aluno3_a')
+    username = request.session.get('username')
+    password = request.session.get('password')
+    print(username)
+    print(password)
+    connection = get_database_connection(username, password)
+    
 
     if connection:
         try:
@@ -50,7 +61,7 @@ def gestao_clientes(request):
             cursor = connection.cursor()
 
             # Chamar a procedure usando SELECT
-            cursor.callproc('get_cliente_data_function')
+            cursor.execute('SELECT * FROM get_cliente_data_function()')
 
             # Recuperar os resultados da procedure
             results = cursor.fetchall()
@@ -73,21 +84,25 @@ def gestao_clientes(request):
 def producao_equipamentos(request):
     # Obter conexão com o banco de dados
     print("Entrando na view producao_equipamentos")
-    connection = get_database_connection()
+    username = request.session.get('username')
+    password = request.session.get('password')
+    print(username)
+    print(password)
+    connection = get_database_connection(username, password)
     if connection:
         try:
             # Criar um cursor a partir da conexão
             cursor = connection.cursor()
 
             # Chamar a procedure usando SELECT para a função get_componentes_data_function
-            cursor.callproc('get_componentes_data_function')
+            cursor.execute('SELECT * FROM get_componentes_data_function()')
 
             # Recuperar os resultados da procedure
             componentes_results = cursor.fetchall()
             print("Resultados da função get_componentes_data_function:", componentes_results)
 
             # Chamar a procedure usando SELECT para a função get_equipamentos_prontos_para_armazenar
-            cursor.callproc('get_equipamentos_prontos_para_armazenar')
+            cursor.execute('SELECT * FROM get_equipamentos_prontos_para_armazenar()')
 
             # Recuperar os resultados da procedure
             equipamentos_results = cursor.fetchall()
@@ -110,17 +125,21 @@ def producao_equipamentos(request):
 
 def delete_cliente(request, cliente_id):
     # Obter conexão com o banco de dados
-    connection = get_database_connection(user_type='aluno3_a')
+    username = request.session.get('username')
+    password = request.session.get('password')
+    print(username)
+    print(password)
+    connection = get_database_connection(username, password)
 
     if connection:
         try:
             # Criar um cursor a partir da conexão
             cursor = connection.cursor()
 
-            cursor.callproc('delete_cliente', [cliente_id])
+            cursor.execute('SELECT delete_cliente(%s)', [cliente_id])
             connection.commit()
             # Chamar a procedure usando SELECT
-            cursor.callproc('get_cliente_data_function')
+            cursor.execute('SELECT * FROM get_cliente_data_function()')
 
             # Recuperar os resultados da procedure
             results = cursor.fetchall()
@@ -136,16 +155,36 @@ def delete_cliente(request, cliente_id):
         # Lidar com o caso em que a conexão com o banco de dados falha
         return render(request, 'error_page.html', {'error_message': 'Failed to connect to the database'})    
 
-
 def user_login(request):
-    return render(request, 'login.html')
+    if request.method == 'GET':
+        # Get login credentials from the URL or request.GET
+        username = request.GET.get('username')
+        password = request.GET.get('password')
+        
+        # Realizar a autenticação (substitua isso pela sua lógica de autenticação)
+        if (username == 'aluno3_a' and password == 'aluno') or \
+           (username == 'aluno3_b' and password == 'aluno') or \
+           (username == 'aluno3_c' and password == 'aluno'):
+            print(username, password)
+            request.session['username'] = username
+            request.session['password'] = password
+            # Credenciais válidas, redirecionar para o dashboard
+            return redirect('/dashboard')
+            
+        else:
+            # Credenciais inválidas, renderizar a página de login com uma mensagem de erro
+            return render(request, 'login.html', {'error_message': 'Credenciais inválidas. Tente novamente.'})
+    else:
+        # Se o método não for GET, renderizar a página de login
+        return render(request, 'login.html')
 
 def logout(request):
+    logout(request)
     return render(request, 'login.html')
 
 def dashboard(request):
-    user_name = request.user.username
-    return render(request, 'dashboard.html', {'user_name': user_name})
+ 
+    return render(request, 'dashboard.html')
 
 def registo_encomenda(request):
     return render(request, 'registo_encomenda.html')
@@ -171,21 +210,25 @@ def vendas_equipamentos(request):
 def registar_equipamento(request): # listar componentes
     # Obter conexão com o banco de dados
     print("Entrando na view registo_equipamentos")
-    connection = get_database_connection()
+    username = request.session.get('username')
+    password = request.session.get('password')
+    print(username)
+    print(password)
+    connection = get_database_connection(username, password)
     if connection:
         try:
             # Criar um cursor a partir da conexão
             cursor = connection.cursor()
 
             # Chamar a procedure usando SELECT para a função get_componentes_data_function
-            cursor.callproc('get_componentes_data_function')
+            cursor.execute('SELECT * FROM get_componentes_data_function()')
 
             # Recuperar os resultados da procedure
             componentes_results = cursor.fetchall()
             print("Resultados da função get_componentes_data_function:", componentes_results)
 
             # Chamar a procedure usando SELECT para a função get_equipamentos_prontos_para_armazenar
-            cursor.callproc('get_equipamentos_prontos_para_armazenar')
+            cursor.execute('SELECT * FROM get_equipamentos_prontos_para_armazenar()')
 
             # Recuperar os resultados da procedure
             equipamentos_results = cursor.fetchall()

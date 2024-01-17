@@ -72,42 +72,16 @@
     {% load static %}
 <img src="{% static 'logo-no-background.svg' %}" style="width: 500px; height: 500px; margin-left: 10px;">
 
-    <form id="loginForm" onsubmit="return handleLogin()">
+<form action="{% url 'user_login' %}" method="get">
         <h2>Login</h2>
         <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
+        <input type="text" name="username" required>
 
         <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
+        <input type="password" name="password" required>
 
         <button type="submit">Login</button>
     </form>
-    <script>
-       function handleLogin() {
-        var username = document.getElementById("username").value;
-        var password = document.getElementById("password").value
-        if ((username === 'aluno3_a' && password === 'aluno') || 
-            (username === 'aluno3_b' && password === 'aluno') ||
-            (username === 'aluno3_c' && password === 'aluno')) {
-            // Usuário e senha válidos, redirecionar para o dashboard
-            window.location.href = '/dashboard';
-            } else {
-                // Usuário ou senha inválidos, você pode exibir uma mensagem de erro ou lidar de outra forma
-                alert('Credenciais inválidas. Tente novamente.');
-            }
-            return false;
-    }
-
-            // Impedir que o formulário seja enviado da maneira tradicional
-        function handleLogin() {
-            // Perform any login logic here (e.g., validation, authentication)
-
-            // Redirect to the dashboard.html page
-            window.location.href = '/dashboard';
-
-            // Prevent the form from submitting the traditional way
-            return false;
-        }
-    </script>
+   
 </body>
 </html>
