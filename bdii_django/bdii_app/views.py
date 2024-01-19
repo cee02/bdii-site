@@ -137,7 +137,7 @@ def insert_componentes_to_db(username, password, componentes_data):
         connection = get_database_connection(username, password)
 
         cursor = connection.cursor()
-
+        print("JSON Data:", componentes_data)
         cursor.execute('SELECT * FROM inserir_componentes_json(%s)', [json.dumps(componentes_data)])
 
         connection.commit()
@@ -171,7 +171,7 @@ def importar_componentes(request):
 
     if isinstance(result, HttpResponse):
         return result
-
+    print("Dados importados com sucesso!")
     return HttpResponse("Dados importados com sucesso!")
 
 

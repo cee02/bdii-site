@@ -1,102 +1,142 @@
 [
-    {
-      "ID": 1,
-      "nome": "CPU TurboTech X1000",
-      "descricao": "Processador de alto desempenho para multitarefas intensivas."
-    },
-    {
-      "ID": 2,
-      "nome": "GPU UltraVision V500",
-      "descricao": "Placa de vídeo dedicada para gráficos impressionantes em jogos e design."
-    },
-    {
-      "ID": 3,
-      "nome": "Placa-Mãe MegaConnect Z370",
-      "descricao": "Placa-mãe avançada com suporte a overclock e conectividade rápida."
-    },
-    {
-      "ID": 4,
-      "nome": "Memória FlashSpeed DDR4 16GB",
-      "descricao": "Módulo de memória de alta velocidade para execução rápida de aplicativos."
-    },
-    {
-      "ID": 5,
-      "nome": "Armazenamento SolidSwift 500GB SSD",
-      "descricao": "Unidade de estado sólido para inicialização rápida e transferência de dados eficiente."
-    },
-    {
-      "ID": 6,
-      "nome": "Fonte de Alimentação PowerFlow 750W",
-      "descricao": "Fonte de alimentação eficiente e estável para suportar configurações de alto desempenho."
-    },
-    {
-      "ID": 7,
-      "nome": "Cooler FrostChill 120",
-      "descricao": "Sistema de refrigeração líquida para manter a temperatura do processador baixa durante operações intensivas."
-    },
-    {
-      "ID": 8,
-      "nome": "Gabinete AeroMax RGB",
-      "descricao": "Gabinete espaçoso com iluminação RGB para uma aparência estilosa e fluxo de ar otimizado."
-    },
-    {
-      "ID": 9,
-      "nome": "Monitor CrystalView 27\"",
-      "descricao": "Monitor de alta resolução com cores vibrantes para uma experiência visual imersiva."
-    },
-    {
-      "ID": 10,
-      "nome": "Teclado Gamer RapidFire",
-      "descricao": "Teclado mecânico com resposta rápida para jogos e digitação eficiente."
-    },
-    {
-      "ID": 11,
-      "nome": "Mouse PrecisionGrip X500",
-      "descricao": "Mouse ergonômico com sensor de precisão para movimentos suaves e precisos."
-    },
-    {
-      "ID": 12,
-      "nome": "Placa de Som SonicWave 7.1",
-      "descricao": "Placa de som avançada para áudio imersivo e posicionamento preciso."
-    },
-    {
-      "ID": 13,
-      "nome": "Webcam HD ProView 1080p",
-      "descricao": "Câmera web de alta definição para videoconferências nítidas e streaming de qualidade."
-    },
-    {
-      "ID": 14,
-      "nome": "Wi-Fi UltraConnect 6",
-      "descricao": "Adaptador Wi-Fi de última geração para conexões rápidas e estáveis."
-    },
-    {
-      "ID": 15,
-      "nome": "Headset SonicBlast 3D",
-      "descricao": "Headset com som surround 3D para uma experiência de áudio envolvente."
-    },
-    {
-      "ID": 16,
-      "nome": "Mousepad SpeedGlide XL",
-      "descricao": "Mousepad grande e de baixo atrito para movimentos suaves do mouse."
-    },
-    {
-      "ID": 17,
-      "nome": "Hub USB PowerHub 4",
-      "descricao": "Hub USB de alta potência para conexão de vários dispositivos com facilidade."
-    },
-    {
-      "ID": 18,
-      "nome": "Impressora LaserJet Pro X200",
-      "descricao": "Impressora a laser rápida e eficiente para documentos de alta qualidade."
-    },
-    {
-      "ID": 19,
-      "nome": "Scanner ScanSwift 600",
-      "descricao": "Scanner de alta resolução para digitalização rápida e precisa de documentos."
-    },
-    {
-      "ID": 20,
-      "nome": "Backup Drive SafeVault 2TB",
-      "descricao": "Unidade de backup de grande capacidade para manter seus dados seguros e protegidos."
-    }
-  ]
+  {
+    "ID": 1,
+    "nome": "Processador Intel Core i5",
+    "descricao": "Processador de quatro nucleos para desempenho solido",
+    "preco": 249.99,
+    "quantidade": 15
+  },
+  {
+    "ID": 2,
+    "nome": "Placa de Video AMD Radeon RX 570",
+    "descricao": "Placa de video para jogos em alta definicao",
+    "preco": 179.99,
+    "quantidade": 10
+  },
+  {
+    "ID": 3,
+    "nome": "Memoria RAM Corsair Vengeance 16GB",
+    "descricao": "Modulo de memoria para melhorar a velocidade do sistema",
+    "preco": 89.99,
+    "quantidade": 20
+  },
+  {
+    "ID": 4,
+    "nome": "Placa-mae ASUS Prime B450M",
+    "descricao": "Placa-mae compacta com suporte a processadores Ryzen",
+    "preco": 129.99,
+    "quantidade": 8
+  },
+  {
+    "ID": 5,
+    "nome": "SSD Kingston A2000 500GB",
+    "descricao": "Unidade de estado solido para armazenamento rapido",
+    "preco": 69.99,
+    "quantidade": 12
+  },
+  {
+    "ID": 6,
+    "nome": "Fonte de Alimentacao EVGA 600W",
+    "descricao": "Fonte confiavel para alimentar seu sistema",
+    "preco": 49.99,
+    "quantidade": 15
+  },
+  {
+    "ID": 7,
+    "nome": "Gabinete NZXT H510",
+    "descricao": "Gabinete elegante com bom fluxo de ar",
+    "preco": 79.99,
+    "quantidade": 7
+  },
+  {
+    "ID": 8,
+    "nome": "Cooler Master Hyper 212",
+    "descricao": "Cooler eficiente para manter a temperatura baixa",
+    "preco": 34.99,
+    "quantidade": 18
+  },
+  {
+    "ID": 9,
+    "nome": "Teclado Mecanico Corsair K70",
+    "descricao": "Teclado mecanico para uma experiencia de digitacao premium",
+    "preco": 129.99,
+    "quantidade": 9
+  },
+  {
+    "ID": 10,
+    "nome": "Mouse Logitech G502",
+    "descricao": "Mouse de alto desempenho para jogos",
+    "preco": 59.99,
+    "quantidade": 14
+  },
+  {
+    "ID": 11,
+    "nome": "Monitor ASUS VG248QE",
+    "descricao": "Monitor de alta taxa de atualizacao para jogos suaves",
+    "preco": 249.99,
+    "quantidade": 6
+  },
+  {
+    "ID": 12,
+    "nome": "Caixas de Som Logitech Z313",
+    "descricao": "Sistema de som 2.1 para uma experiencia de audio imersiva",
+    "preco": 59.99,
+    "quantidade": 11
+  },
+  {
+    "ID": 13,
+    "nome": "Webcam Logitech C920",
+    "descricao": "Webcam de alta definicao para videoconferencias",
+    "preco": 79.99,
+    "quantidade": 8
+  },
+  {
+    "ID": 14,
+    "nome": "Roteador TP-Link Archer C7",
+    "descricao": "Roteador de alta velocidade para uma conectividade estavel",
+    "preco": 89.99,
+    "quantidade": 10
+  },
+  {
+    "ID": 15,
+    "nome": "Impressora HP LaserJet Pro M404dn",
+    "descricao": "Impressora a laser rapida e confiavel",
+    "preco": 199.99,
+    "quantidade": 5
+  },
+  {
+    "ID": 16,
+    "nome": "HD Externo Seagate Expansion 2TB",
+    "descricao": "Unidade de disco externa para armazenamento adicional",
+    "preco": 79.99,
+    "quantidade": 13
+  },
+  {
+    "ID": 17,
+    "nome": "Cadeira Gamer DXRacer Formula Series",
+    "descricao": "Cadeira ergonomica para sessoes prolongadas de jogos",
+    "preco": 299.99,
+    "quantidade": 4
+  },
+  {
+    "ID": 18,
+    "nome": "Tapete para Mouse Corsair MM300",
+    "descricao": "Tapete de alta qualidade para precisao nos movimentos do mouse",
+    "preco": 24.99,
+    "quantidade": 20
+  },
+  {
+    "ID": 19,
+    "nome": "Luminaria LED Philips Hue",
+    "descricao": "Luminaria inteligente com controle de cores",
+    "preco": 129.99,
+    "quantidade": 7
+  },
+  {
+    "ID": 20,
+    "nome": "Ventoinha RGB DeepCool RF120",
+    "descricao": "Ventoinha colorida para personalizar a refrigeracao do seu gabinete",
+    "preco": 19.99,
+    "quantidade": 25
+  }
+]
