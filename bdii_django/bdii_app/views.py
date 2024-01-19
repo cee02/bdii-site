@@ -3,6 +3,8 @@ from django.contrib.auth import authenticate, login
 from django.db import connection
 import psycopg2
 from django.db import OperationalError
+from django.http import HttpResponse
+import json
 
 def error_page(request, error_message):
     return render(request, 'error_page.html', {'error_message': error_message})
@@ -127,6 +129,51 @@ def producao_equipamentos(request):
     else:
         # Lidar com o caso em que a conexão com o banco de dados falha
         return render(request, 'error_page.html', {'error_message': 'Failed to connect to the database'})
+    
+
+    
+def insert_componentes_to_db(username, password, componentes_data):
+    try:
+        connection = get_database_connection(username, password)
+
+        cursor = connection.cursor()
+
+        cursor.execute('SELECT * FROM inserir_componentes_json(%s)', [json.dumps(componentes_data)])
+
+        connection.commit()
+
+        print("Dados inseridos com sucesso!")
+
+    except OperationalError as e:
+        print("OperationalError:", e)
+        return HttpResponse("Falha ao inserir dados no banco de dados.", status=500)
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
+
+
+def importar_componentes(request):
+    # Caminho para o arquivo JSON
+    json_file_path = '\Projeto_BDII/bdii-site/bdii_django/bdii_app/componentes.json'
+
+    # Lê o conteúdo do arquivo JSON
+    with open(json_file_path, 'r') as file:
+        componentes_data = json.load(file)
+
+    # Obtenha as credenciais do usuário da sessão
+    username = request.session.get('username')
+    password = request.session.get('password')
+
+    # Insira os componentes no banco de dados
+    result = insert_componentes_to_db(username, password, componentes_data)
+
+    if isinstance(result, HttpResponse):
+        return result
+
+    return HttpResponse("Dados importados com sucesso!")
+
 
 def delete_cliente(request, cliente_id):
     # Obter conexão com o banco de dados
@@ -192,6 +239,7 @@ def logout(request):
 
 def dashboard(request):
     user_name = request.session.get('username', 'Guest') # para o nome no menu lateral
+    importar_componentes(request)
     return render(request, 'dashboard.html', {'user_name': user_name})
 
 def registo_encomenda(request):

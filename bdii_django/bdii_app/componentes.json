@@ -1,0 +1,102 @@
+[
+    {
+      "ID": 1,
+      "nome": "CPU TurboTech X1000",
+      "descricao": "Processador de alto desempenho para multitarefas intensivas."
+    },
+    {
+      "ID": 2,
+      "nome": "GPU UltraVision V500",
+      "descricao": "Placa de vídeo dedicada para gráficos impressionantes em jogos e design."
+    },
+    {
+      "ID": 3,
+      "nome": "Placa-Mãe MegaConnect Z370",
+      "descricao": "Placa-mãe avançada com suporte a overclock e conectividade rápida."
+    },
+    {
+      "ID": 4,
+      "nome": "Memória FlashSpeed DDR4 16GB",
+      "descricao": "Módulo de memória de alta velocidade para execução rápida de aplicativos."
+    },
+    {
+      "ID": 5,
+      "nome": "Armazenamento SolidSwift 500GB SSD",
+      "descricao": "Unidade de estado sólido para inicialização rápida e transferência de dados eficiente."
+    },
+    {
+      "ID": 6,
+      "nome": "Fonte de Alimentação PowerFlow 750W",
+      "descricao": "Fonte de alimentação eficiente e estável para suportar configurações de alto desempenho."
+    },
+    {
+      "ID": 7,
+      "nome": "Cooler FrostChill 120",
+      "descricao": "Sistema de refrigeração líquida para manter a temperatura do processador baixa durante operações intensivas."
+    },
+    {
+      "ID": 8,
+      "nome": "Gabinete AeroMax RGB",
+      "descricao": "Gabinete espaçoso com iluminação RGB para uma aparência estilosa e fluxo de ar otimizado."
+    },
+    {
+      "ID": 9,
+      "nome": "Monitor CrystalView 27\"",
+      "descricao": "Monitor de alta resolução com cores vibrantes para uma experiência visual imersiva."
+    },
+    {
+      "ID": 10,
+      "nome": "Teclado Gamer RapidFire",
+      "descricao": "Teclado mecânico com resposta rápida para jogos e digitação eficiente."
+    },
+    {
+      "ID": 11,
+      "nome": "Mouse PrecisionGrip X500",
+      "descricao": "Mouse ergonômico com sensor de precisão para movimentos suaves e precisos."
+    },
+    {
+      "ID": 12,
+      "nome": "Placa de Som SonicWave 7.1",
+      "descricao": "Placa de som avançada para áudio imersivo e posicionamento preciso."
+    },
+    {
+      "ID": 13,
+      "nome": "Webcam HD ProView 1080p",
+      "descricao": "Câmera web de alta definição para videoconferências nítidas e streaming de qualidade."
+    },
+    {
+      "ID": 14,
+      "nome": "Wi-Fi UltraConnect 6",
+      "descricao": "Adaptador Wi-Fi de última geração para conexões rápidas e estáveis."
+    },
+    {
+      "ID": 15,
+      "nome": "Headset SonicBlast 3D",
+      "descricao": "Headset com som surround 3D para uma experiência de áudio envolvente."
+    },
+    {
+      "ID": 16,
+      "nome": "Mousepad SpeedGlide XL",
+      "descricao": "Mousepad grande e de baixo atrito para movimentos suaves do mouse."
+    },
+    {
+      "ID": 17,
+      "nome": "Hub USB PowerHub 4",
+      "descricao": "Hub USB de alta potência para conexão de vários dispositivos com facilidade."
+    },
+    {
+      "ID": 18,
+      "nome": "Impressora LaserJet Pro X200",
+      "descricao": "Impressora a laser rápida e eficiente para documentos de alta qualidade."
+    },
+    {
+      "ID": 19,
+      "nome": "Scanner ScanSwift 600",
+      "descricao": "Scanner de alta resolução para digitalização rápida e precisa de documentos."
+    },
+    {
+      "ID": 20,
+      "nome": "Backup Drive SafeVault 2TB",
+      "descricao": "Unidade de backup de grande capacidade para manter seus dados seguros e protegidos."
+    }
+  ]
