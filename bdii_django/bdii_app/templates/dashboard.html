@@ -144,7 +144,11 @@
         input[type="submit"]:hover {
             background-color: #555;
         }
-      
+        .table-container {
+        max-height: 300px; /* Adjust the max-height as needed */
+        overflow-y: auto;
+    }
+
     
     </style>
     
@@ -194,6 +198,28 @@
                     </tr>
                 </tbody>
             </table>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Equipamento</th>
+                        <th>Quantidade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Equipamento 1</td>
+                        <td>20 unidades</td>
+                    </tr>
+                    <tr>
+                        <td>Equipamento 2</td>
+                        <td>10 unidades</td>
+                    </tr>
+                    <tr>
+                        <td>Equipamento 3</td>
+                        <td>10 unidades</td>
+                    </tr>
+                </tbody>
+            </table>
         </section>
         <section class="saidas">
             <h2>Saidas de stock recentes</h2>
@@ -222,28 +248,24 @@
         </section>
         <section class="componentes-em-low-stock">
             <h2>Componentes em Low Stock</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Componente</th>
-                        <th>Quantidade</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Componente 1</td>
-                        <td>20 unidades</td>
-                    </tr>
-                    <tr>
-                        <td>Componente 2</td>
-                        <td>10 unidades</td>
-                    </tr>
-                    <tr>
-                        <td>Componente 3</td>
-                        <td>10 unidades</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Componente</th>
+                            <th>Quantidade</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for component in low_stock_components_data %}
+                            <tr>
+                                <td>{{ component.0 }}</td>
+                                <td>{{ component.1 }} unidades</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </section>
         <section class="relatorio-status-inventario">
             <h2>Relatório Status Inventário</h2>

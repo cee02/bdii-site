@@ -5,6 +5,7 @@ import psycopg2
 from django.db import OperationalError
 from django.http import HttpResponse
 import json
+from django.db import connections
 
 def error_page(request, error_message):
     return render(request, 'error_page.html', {'error_message': error_message})
@@ -239,8 +240,14 @@ def logout(request):
 
 def dashboard(request):
     user_name = request.session.get('username', 'Guest') # para o nome no menu lateral
-    importar_componentes(request)
-    return render(request, 'dashboard.html', {'user_name': user_name})
+    importar_componentes(request)                       # A chamar o IMPORTAR COMPONENTES
+
+    with connections['default'].cursor() as cursor:
+        cursor.execute("SELECT * FROM low_stock_components")
+        low_stock_components_data = cursor.fetchall()
+
+    return render(request, 'dashboard.html', {'user_name': user_name, 'low_stock_components_data': low_stock_components_data})
+
 
 def registo_encomenda(request):
     user_name = request.session.get('username', 'Guest') # para o nome no menu lateral
