@@ -13,9 +13,9 @@ def error_page(request, error_message):
 def get_database_connection(username, password):
     # Map user profiles to database configurations
     database_configurations = {
-        'aluno3_a': {'dbname': 'projeto_bdii', 'user': 'aluno3_a', 'password': 'aluno', 'port': '5433'},
-        'aluno3_b': {'dbname': 'projeto_bdii', 'user': 'aluno3_b', 'password': 'aluno', 'port': '5433'},
-        'aluno3_c': {'dbname': 'projeto_bdii', 'user': 'aluno3_c', 'password': 'aluno', 'port': '5433'},
+        'aluno3_a': {'dbname': 'projeto_bdii', 'user': 'aluno3_a', 'password': 'aluno', 'port': '5432'},
+        'aluno3_b': {'dbname': 'projeto_bdii', 'user': 'aluno3_b', 'password': 'aluno', 'port': '5432'},
+        'aluno3_c': {'dbname': 'projeto_bdii', 'user': 'aluno3_c', 'password': 'aluno', 'port': '5432'},
     }
 
     try:
@@ -157,22 +157,28 @@ def insert_componentes_to_db(username, password, componentes_data):
 
 def importar_componentes(request):
     # Caminho para o arquivo JSON
-    json_file_path = '\Projeto_BDII/bdii-site/bdii_django/bdii_app/componentes.json'
+    json_file_path = 'D:\\Universidade\\BDII\\Projeto_BDII\\bdii-site\\bdii_django\\bdii_app\\componentes.json'
 
-    # Lê o conteúdo do arquivo JSON
-    with open(json_file_path, 'r') as file:
-        componentes_data = json.load(file)
+    try:
+        # Lê o conteúdo do arquivo JSON
+        with open(json_file_path, 'r') as file:
+            componentes_data = json.load(file)
 
-    # Obtenha as credenciais do usuário da sessão
-    username = request.session.get('username')
-    password = request.session.get('password')
+        # Obtenha as credenciais do usuário da sessão
+        username = request.session.get('username')
+        password = request.session.get('password')
 
-    # Insira os componentes no banco de dados
-    result = insert_componentes_to_db(username, password, componentes_data)
+        # Insira os componentes no banco de dados
+        result = insert_componentes_to_db(username, password, componentes_data)
 
-    if isinstance(result, HttpResponse):
-        return result
-    print("Dados importados com sucesso!")
+        if isinstance(result, HttpResponse):
+            return result
+        print("Dados importados com sucesso!")
+
+    except Exception as e:
+        # Handle exceptions related to file reading or database insertion
+        print(f"An error occurred during import: {str(e)}")
+
     return HttpResponse("Dados importados com sucesso!")
 
 
@@ -211,10 +217,10 @@ def delete_cliente(request, cliente_id):
         return render(request, 'error_page.html', {'error_message': 'Failed to connect to the database'})    
 
 def user_login(request):
-    if request.method == 'GET':
-        # Get login credentials from the URL or request.GET
-        username = request.GET.get('username')
-        password = request.GET.get('password')
+    if request.method == 'POST':
+        # Get login credentials from the POST data
+        username = request.POST.get('username')
+        password = request.POST.get('password')
         
         # Realizar a autenticação (substitua isso pela sua lógica de autenticação)
         if (username == 'aluno3_a' and password == 'aluno') or \
@@ -231,7 +237,7 @@ def user_login(request):
             # Credenciais inválidas, renderizar a página de login com uma mensagem de erro
             return render(request, 'login.html', {'error_message': 'Credenciais inválidas. Tente novamente.'})
     else:
-        # Se o método não for GET, renderizar a página de login
+        # Se o método não for POST, renderizar a página de login
         return render(request, 'login.html')
 
 def logout(request):
@@ -240,13 +246,21 @@ def logout(request):
 
 def dashboard(request):
     user_name = request.session.get('username', 'Guest') # para o nome no menu lateral
-    importar_componentes(request)                       # A chamar o IMPORTAR COMPONENTES
+    
+    try:
+        importar_componentes(request)  # A chamar o IMPORTAR COMPONENTES
 
-    with connections['default'].cursor() as cursor:
-        cursor.execute("SELECT * FROM low_stock_components")
-        low_stock_components_data = cursor.fetchall()
+        with connections['default'].cursor() as cursor:
+            cursor.execute("SELECT * FROM low_stock_components")
+            low_stock_components_data = cursor.fetchall()
+
+    except Exception as e:
+        # Handle exceptions (e.g., database connection error, file not found, etc.)
+        print(f"An error occurred: {str(e)}")
+        low_stock_components_data = []
 
     return render(request, 'dashboard.html', {'user_name': user_name, 'low_stock_components_data': low_stock_components_data})
+
 
 
 def registo_encomenda(request):

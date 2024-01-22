@@ -70,10 +70,16 @@
 </head>
 <body>
     {% load static %}
-<img src="{% static 'logo-no-background.svg' %}" style="width: 500px; height: 500px; margin-left: 10px;">
+    <img src="{% static 'logo-no-background.svg' %}" style="width: 500px; height: 500px; margin-left: 10px;">
 
-<form action="{% url 'user_login' %}" method="get">
+    <form action="{% url 'user_login' %}" method="post">
+        {% csrf_token %}
         <h2>Login</h2>
+        
+        {% if error_message %}
+            <p style="color: red;">{{ error_message }}</p>
+        {% endif %}
+        
         <label for="username">Username:</label>
         <input type="text" name="username" required>
 
@@ -82,6 +88,5 @@
 
         <button type="submit">Login</button>
     </form>
-   
 </body>
 </html>
