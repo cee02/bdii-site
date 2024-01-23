@@ -184,18 +184,12 @@
                     </tr>
                 </thead>
                 <tbody>
+                    {% for component in componente_entrada_stock_recente %}
                     <tr>
-                        <td>Componente 1</td>
-                        <td>20 unidades</td>
+                        <td>{{ component.0 }}</td>
+                        <td>{{ component.1 }} unidades</td>
                     </tr>
-                    <tr>
-                        <td>Componente 2</td>
-                        <td>10 unidades</td>
-                    </tr>
-                    <tr>
-                        <td>Componente 3</td>
-                        <td>10 unidades</td>
-                    </tr>
+                    {% end for %}
                 </tbody>
             </table>
             <table>
@@ -205,19 +199,13 @@
                         <th>Quantidade</th>
                     </tr>
                 </thead>
+                {% for equipment in equipamento_entrada_stock_recente %}
                 <tbody>
                     <tr>
-                        <td>Equipamento 1</td>
-                        <td>20 unidades</td>
+                        <td>{{ equipment.0 }}</td>
+                        <td>{{ equipment.1 }} unidades</td>
                     </tr>
-                    <tr>
-                        <td>Equipamento 2</td>
-                        <td>10 unidades</td>
-                    </tr>
-                    <tr>
-                        <td>Equipamento 3</td>
-                        <td>10 unidades</td>
-                    </tr>
+                    {% end for %}
                 </tbody>
             </table>
         </section>
@@ -231,18 +219,12 @@
                     </tr>
                 </thead>
                 <tbody>
+                    {% for component in saida_stock_recente_data %}
                     <tr>
-                        <td>Componente 1</td>
-                        <td>20 unidades</td>
+                        <td>{{ component.0 }}</td>
+                        <td>{{ component.1 }} unidades</td>
                     </tr>
-                    <tr>
-                        <td>Componente 2</td>
-                        <td>10 unidades</td>
-                    </tr>
-                    <tr>
-                        <td>Componente 3</td>
-                        <td>10 unidades</td>
-                    </tr>
+                    {% end for %}
                 </tbody>
             </table>
         </section>
