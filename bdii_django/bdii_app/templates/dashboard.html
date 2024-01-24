@@ -108,6 +108,7 @@
         th {
             background-color: #333;
             color: white;
+            width: 50px;
         }
 
         h2 {
@@ -144,10 +145,35 @@
         input[type="submit"]:hover {
             background-color: #555;
         }
+       
+th:nth-child(1), td:nth-child(1) {
+    width: 30%; /* Adjust the width as needed */
+}
+
+th:nth-child(2), td:nth-child(2) {
+    width: 30%; /* Adjust the width as needed */
+}
+
+th:nth-child(3), td:nth-child(3) {
+    width: 20%; /* Adjust the width as needed */
+}
+
+th:nth-child(4), td:nth-child(4) {
+    width: 20%; /* Adjust the width as needed */
+}
+
+/* Ensure there is no additional margin or padding */
+.table-container table {
+    margin: 0;
+    padding: 0;
+}
         .table-container {
-        max-height: 300px; /* Adjust the max-height as needed */
+        max-height: 300px; 
         overflow-y: auto;
+        margin-right: 115px;
     }
+    
+    
 
     
     </style>
@@ -176,6 +202,7 @@
         <!-- Conteúdo da sua página vai aqui -->
         <section class="entradas">
             <h2>Entradas de Stock recentes</h2>
+        <div class="table-container">
             <table>
                 <thead>
                     <tr>
@@ -185,6 +212,11 @@
                         <th>Data de Entrada</th>
                     </tr>
                 </thead>
+            </table>
+        </div>
+
+        <div class="table-container">
+            <table>
                 <tbody>
                     {% for component in componente_entrada_stock_recente %}
                     <tr>
@@ -196,6 +228,9 @@
                     {% endfor %}
                 </tbody>
             </table>
+        </div>
+<p></p><p></p><p></p>
+        <div class="table-container">
             <table>
                 <thead>
                     <tr>
@@ -203,8 +238,12 @@
                         <th>Quantidade</th>
                     </tr>
                 </thead>
-                {% for equipment in equipamento_entrada_stock_recente %}
+            </table>
+        </div>
+        <div class="table-container">
+            <table>
                 <tbody>
+                {% for equipment in equipamento_entrada_stock_recente %}
                     <tr>
                         <td>{{ equipment.0 }}</td>
                         <td>{{ equipment.1 }} unidades</td>
@@ -212,9 +251,13 @@
                     {% endfor %}
                 </tbody>
             </table>
-        </section>
-        <section class="saidas">
-            <h2>Saidas de stock recentes</h2>
+        </div>
+    </section>
+    
+    <section class="saidas">
+        
+        <h2>Saidas de stock recentes</h2>
+        <div class="table-container">
             <table>
                 <thead>
                     <tr>
@@ -224,6 +267,10 @@
                         <th>Data de Saida</th>
                     </tr>
                 </thead>
+            </table>
+        </div>
+        <div class="table-container">
+            <table>
                 <tbody>
                     {% for component in componente_saida_stock_recente %}
                     <tr>
@@ -235,28 +282,34 @@
                     {% endfor %}
                 </tbody>
             </table>
-        </section>
-        <section class="componentes-em-low-stock">
-            <h2>Componentes em Low Stock</h2>
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Componente</th>
-                            <th>Quantidade</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for component in low_stock_components_data %}
-                            <tr>
-                                <td>{{ component.0 }}</td>
-                                <td>{{ component.1 }} unidades</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </section>
+        </div>
+    </section>
+
+    <section class="componentes-em-low-stock">
+        <h2>Componentes em Low Stock</h2>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Componente</th>
+                        <th>Quantidade</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+        <div class="table-container">
+            <table>
+                <tbody>
+                    {% for component in low_stock_components_data %}
+                    <tr>
+                        <td>{{ component.0 }}</td>
+                        <td>{{ component.1 }} unidades</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
         <section class="relatorio-status-inventario">
             <h2>Relatório Status Inventário</h2>
             <form action="#">
