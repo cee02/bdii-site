@@ -260,8 +260,8 @@ def dashboard(request):
             equipamento_entrada_stock_recente = cursor.fetchall()
 
             # Vai buscar os componentes que sairam recentemente
-            cursor.execute("SELECT * FROM saida_stock_recente")
-            saida_stock_recente_data = cursor.fetchall()
+            cursor.execute("SELECT * FROM componente_saida_stock_recente")
+            componente_saida_stock_recente = cursor.fetchall()
 
             # Vai buscar os componentes em low stock
             cursor.execute("SELECT * FROM low_stock_components")
@@ -272,7 +272,7 @@ def dashboard(request):
         print(f"An error occurred: {str(e)}")
         low_stock_components_data = []
 
-    return render(request, 'dashboard.html', {'user_name': user_name, 'componente_entrada_stock_recente': componente_entrada_stock_recente, 'equipamento_entrada_stock_recente': equipamento_entrada_stock_recente,'saida_stock_recente_data': saida_stock_recente_data, 'low_stock_components_data': low_stock_components_data})
+    return render(request, 'dashboard.html', {'user_name': user_name, 'componente_entrada_stock_recente': componente_entrada_stock_recente, 'equipamento_entrada_stock_recente': equipamento_entrada_stock_recente,'componente_saida_stock_recente': componente_saida_stock_recente, 'low_stock_components_data': low_stock_components_data})
 
 
 

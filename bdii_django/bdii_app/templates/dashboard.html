@@ -181,6 +181,8 @@
                     <tr>
                         <th>Componente</th>
                         <th>Quantidade</th>
+                        <th>Armazem</th>
+                        <th>Data de Entrada</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -188,8 +190,10 @@
                     <tr>
                         <td>{{ component.0 }}</td>
                         <td>{{ component.1 }} unidades</td>
+                        <td>{{ component.2 }}</td>
+                        <td>{{ component.3 }}</td>
                     </tr>
-                    {% end for %}
+                    {% endfor %}
                 </tbody>
             </table>
             <table>
@@ -205,7 +209,7 @@
                         <td>{{ equipment.0 }}</td>
                         <td>{{ equipment.1 }} unidades</td>
                     </tr>
-                    {% end for %}
+                    {% endfor %}
                 </tbody>
             </table>
         </section>
@@ -216,15 +220,19 @@
                     <tr>
                         <th>Componente</th>
                         <th>Quantidade</th>
+                        <th>Armazem</th>
+                        <th>Data de Saida</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for component in saida_stock_recente_data %}
+                    {% for component in componente_saida_stock_recente %}
                     <tr>
                         <td>{{ component.0 }}</td>
                         <td>{{ component.1 }} unidades</td>
+                        <td>{{ component.2 }}</td>
+                        <td>{{ component.3 }}</td>
                     </tr>
-                    {% end for %}
+                    {% endfor %}
                 </tbody>
             </table>
         </section>
