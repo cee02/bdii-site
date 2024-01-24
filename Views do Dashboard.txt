@@ -1,0 +1,71 @@
+è preciso alterar a tabela armazem e retirar a data de entrada e saida
+Alterar a tabela componeneteArmazem e adicionar data de entra e saida
+
+CREATE VIEW componente_saida_stock_recente AS
+SELECT
+    C.nome AS nome_componente,
+    C.quantidade AS quantidade_componente,
+    A.nome AS nome_armazem,
+    CA.data_saida
+FROM
+    ComponenteArmazem CA
+JOIN Componentes C ON CA.componenteID = C.ID
+JOIN Armazem A ON CA.id_armazem = A.ID_armazem
+WHERE
+    CA.data_saida IS NOT NULL
+ORDER BY
+    CA.data_saida DESC
+LIMIT 10;
+
+CREATE VIEW componente_entrada_stock_recente AS
+SELECT
+    C.nome AS nome_componente,
+    C.quantidade AS quantidade_componente,
+    A.nome AS nome_armazem,
+    CA.data_entrada
+FROM
+    ComponenteArmazem CA
+JOIN Componentes C ON CA.componenteID = C.ID
+JOIN Armazem A ON CA.id_armazem = A.ID_armazem
+WHERE
+    CA.data_saida IS NOT NULL
+ORDER BY
+    CA.data_saida DESC
+LIMIT 10;
+
+
+//esta view não está bem é só para conseguir abrir a pagina dashboard
+CREATE VIEW equipamento_entrada_stock_recente AS
+SELECT
+    C.nome AS nome_componente,
+    C.quantidade AS quantidade_componente
+FROM
+    ComponenteArmazem CA
+JOIN Componentes C ON CA.componenteID = C.ID
+JOIN Armazem A ON CA.id_armazem = A.ID_armazem
+WHERE
+    CA.data_saida IS NOT NULL
+ORDER BY
+    CA.data_saida DESC
+LIMIT 10;
+
+
+
+INSERT INTO ComponenteArmazem (componenteID, id_armazem, data_entrada, data_saida)
+VALUES
+    (6, 1, '2024-01-01', '2024-01-05'), 
+    (7, 1, '2024-01-02', '2024-01-06'), 
+    (8, 3, '2024-01-04', '2024-01-08'), 
+    (9, 3, '2024-01-05', '2024-01-09'), 
+    (10, 2, '2024-01-05', '2024-01-09'), 
+    (11, 2, '2024-01-06', '2024-01-10'),
+	(12, 4, '2024-01-04', '2024-01-08'), 
+    (13, 4, '2024-01-05', '2024-01-09'), 
+    (14, 5, '2024-01-05', '2024-01-09'), 
+    (15, 5, '2024-01-06', '2024-01-10'),
+	(16, 3, '2024-01-04', '2024-01-08'), 
+    (17, 1, '2024-01-05', '2024-01-09'), 
+    (18, 2, '2024-01-04', '2024-01-08'), 
+    (19, 4, '2024-01-05', '2024-01-09'), 
+    (20, 5, '2024-01-06', '2024-01-10');
+
