@@ -246,6 +246,8 @@ def logout(request):
 
 def dashboard(request):
     user_name = request.session.get('username', 'Guest') # para o nome no menu lateral
+    if user_name == 'aluno3_c':
+        return redirect('home')
     
     try:
         importar_componentes(request)  # A chamar o IMPORTAR COMPONENTES
@@ -299,6 +301,11 @@ def registar_equipamento(request):
 def vendas_equipamentos(request):
     user_name = request.session.get('username', 'Guest') # para o nome no menu lateral
     return render(request, 'vendas_equipamentos.html', {'user_name': user_name})
+
+def home(request):
+    
+    user_name = request.session.get('username', 'Guest')
+    return render(request, 'homepage.html', {'user_name': user_name})
 
 def registar_equipamento(request): # listar componentes
     # Obter conexão com o banco de dados

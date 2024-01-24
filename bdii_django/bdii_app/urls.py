@@ -13,6 +13,7 @@ urlpatterns = [
     path('vendas_equipamentos/', views.vendas_equipamentos, name='bdii_vendas_equipamentos'),
     path('gestao_clientes/', views.gestao_clientes, name='bdii_gestao_clientes'),
     path('delete-cliente/<int:cliente_id>/', views.delete_cliente, name='delete_cliente'),
+    path('homepage/', views.home, name='home'),
 
 ]
 

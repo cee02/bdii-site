@@ -89,3 +89,7 @@ VALUES
     (4, 2, '2024-01-05', '2024-01-09'), 
     (5, 2, '2024-01-05', '2024-01-09');
 
+Corram isto no PGADMIN
+    REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA public FROM aluno3_c;
+    GRANT ALL PRIVILEGES ON TABLE public.equipamento TO aluno3_c;   
+
