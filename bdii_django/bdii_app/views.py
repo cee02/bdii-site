@@ -6,6 +6,7 @@ from django.db import OperationalError
 from django.http import HttpResponse
 import json
 from django.db import connections
+from django.db import transaction
 
 def error_page(request, error_message):
     return render(request, 'error_page.html', {'error_message': error_message})
@@ -13,9 +14,9 @@ def error_page(request, error_message):
 def get_database_connection(username, password):
     # Map user profiles to database configurations
     database_configurations = {
-        'aluno3_a': {'dbname': 'projeto_bdii', 'user': 'aluno3_a', 'password': 'aluno', 'port': '5432'},
-        'aluno3_b': {'dbname': 'projeto_bdii', 'user': 'aluno3_b', 'password': 'aluno', 'port': '5432'},
-        'aluno3_c': {'dbname': 'projeto_bdii', 'user': 'aluno3_c', 'password': 'aluno', 'port': '5432'},
+        'aluno3_a': {'dbname': 'projeto_bdii', 'user': 'aluno3_a', 'password': 'aluno', 'port': '5433'},
+        'aluno3_b': {'dbname': 'projeto_bdii', 'user': 'aluno3_b', 'password': 'aluno', 'port': '5433'},
+        'aluno3_c': {'dbname': 'projeto_bdii', 'user': 'aluno3_c', 'password': 'aluno', 'port': '5433'},
     }
 
     try:
@@ -86,56 +87,71 @@ def gestao_clientes(request):
         # Lidar com o caso em que a conexão com o banco de dados falha
         return render(request, 'error_page.html', {'error_message': 'Failed to connect to the database'})
     
+
 def producao_equipamentos(request):
     # Obter conexão com o banco de dados
-    print("Entrando na view producao_equipamentos")
     username = request.session.get('username')
     password = request.session.get('password')
-    print(username)
-    print(password)
     connection = get_database_connection(username, password)
 
-    user_name = request.session.get('username', 'Guest') # para o nome no menu lateral
+    user_name = request.session.get('username', 'Guest')  # para o nome no menu lateral
     
     if connection:
         try:
-            # Criar um cursor a partir da conexão
-            cursor = connection.cursor()
+            result = None 
 
-            # Chamar a procedure usando SELECT para a função get_componentes_data_function
-            cursor.execute('SELECT * FROM get_componentes_data_function()')
+            if request.method == 'POST':  # Verificar se o formulário foi submetido
+                # Obter os valores do formulário
+                component_id = request.POST.get('component_id')
+                quantidade_componente = request.POST.get('quantidade_componente')
+                tipo_operacao = request.POST.get('tipo_operacao')
+                mao_de_obra = request.POST.get('mao_de_obra')
 
-            # Recuperar os resultados da procedure
-            componentes_results = cursor.fetchall()
-            print("Resultados da função get_componentes_data_function:", componentes_results)
+                # Chamar a função para inserir na ficha de produção
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        'SELECT * FROM insert_componentes_ficha_producao(%s, %s, %s, %s)',
+                        [component_id, quantidade_componente, tipo_operacao, mao_de_obra]
+                    )                 
+                    result = cursor.fetchone()
 
-            # Chamar a procedure usando SELECT para a função get_equipamentos_prontos_para_armazenar
-            cursor.execute('SELECT * FROM get_equipamentos_prontos_para_armazenar()')
+            with connection.cursor() as cursor:
+                # Chamar a procedure usando SELECT para a função get_componentes_data_function
+                cursor.execute('SELECT * FROM get_componentes_data_function()')
 
-            # Recuperar os resultados da procedure
-            equipamentos_results = cursor.fetchall()
-            print("Resultados da função get_equipamentos_prontos_para_armazenar:", equipamentos_results)
+                # Recuperar os resultados da procedure
+                componentes_results = cursor.fetchall()
 
-            cursor.execute("SELECT * FROM vw_tipo_operacao")
-            tipo_operacao_list = cursor.fetchall()
+                # Chamar a procedure usando SELECT para a função get_equipamentos_prontos_para_armazenar
+                cursor.execute('SELECT * FROM get_equipamentos_prontos_para_armazenar()')
 
-            cursor.execute("SELECT * FROM vw_mao_obra")
-            mao_obra_list = cursor.fetchall()
+                # Recuperar os resultados da procedure
+                equipamentos_results = cursor.fetchall()
 
-            # Fechar o cursor
-            cursor.close()
+                # Buscar dados adicionais
+                cursor.execute("SELECT * FROM vw_tipo_operacao")
+                tipo_operacao_list = cursor.fetchall()
+
+                cursor.execute("SELECT * FROM vw_mao_obra")
+                mao_obra_list = cursor.fetchall()
+
+            # Confirmar a transação se tudo ocorreu sem erros
+            transaction.commit()
 
             # Fechar a conexão
             close_database_connection(connection)
 
             # Passar os resultados para o contexto da renderização
-            return render(request, 'producao_equipamentos.html', {'componentes': componentes_results, 'equipamentos': equipamentos_results, 'user_name': user_name,'tipo_operacao': tipo_operacao_list,'mao_de_obra': mao_obra_list  })
+            return render(request, 'producao_equipamentos.html', {'componentes': componentes_results, 'equipamentos': equipamentos_results, 'user_name': user_name,'tipo_operacao': tipo_operacao_list,'mao_de_obra': mao_obra_list, 'result': result})
         except Exception as e:
-            # Lidar com exceções, se houver algum problema durante a execução da procedure
+            # Lidar com exceções, rolar a transação de volta se necessário
+            transaction.rollback()
+
             return render(request, 'error_page.html', {'error_message': str(e)})
     else:
         # Lidar com o caso em que a conexão com o banco de dados falha
         return render(request, 'error_page.html', {'error_message': 'Failed to connect to the database'})
+
     
 
     

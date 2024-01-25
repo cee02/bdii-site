@@ -319,12 +319,14 @@
   margin-left: 1120px;
   margin-top: 260px;
  
+ 
 }
 
 .tipo-container1 {
   position: fixed;
   margin-left: 1310px;
   margin-top: 260px;
+  
 
 }
 .assembly-list {
@@ -403,24 +405,32 @@
       <!-- Assembly list items will be dynamically added here -->
     </ul>
   </div>
+  <form method="post" action="{% url 'bdii_producao_equipamentos' %}" id="myForm">
+    {% csrf_token %}
+    <div class="tipo-container">
+        <label for="tipoOperacao">Tipo de Operação:</label> <br>
+        <select id="tipoOperacaoDropdown" name="tipoOperacao">
+            <option value="">Seleciona</option>
+            {% for tipo_operacao in tipo_operacao %}
+                <option value="{{ tipo_operacao.0 }}">{{ tipo_operacao.1 }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="tipo-container1">
+        <label for="maoObra">Mão de Obra:</label><br>
+        <select id="maoObraDropdown" name="maoObra">
+            <option value="">Seleciona</option>
+            {% for mao_obra in mao_de_obra %}
+                <option value="{{ mao_obra.0 }}">{{ mao_obra.1 }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <button type="button" onclick="submitForm()" id="submitButton">Submit</button>
+  </form>
 
-  <div class="tipo-container">
-    <label for="tipoOperacao">Tipo de Operação:</label> <br>
-    <select id="tipoOperacao_{{ component.0 }}">
-        <option value="">Seleciona</option>
-        {% for tipo_operacao in tipo_operacao %}
-        <option value="{{ tipo_operacao.0 }}">{{ tipo_operacao.1 }}</option>
-        {% endfor %}
-    </select></div>
-  <div class="tipo-container1">
-  <label for="maoObra">Mão de Obra:</label><br>
-  <select id="maoObra_{{ component.0 }}">
-    <option value="">Seleciona</option>
-      {% for mao_obra in mao_de_obra %}
-          <option value="{{ mao_obra.0 }}">{{ mao_obra.1 }}</option>
-      {% endfor %}
-  </select>
+  
 </div>
+    
 
   <!-- Secção de Equipamentos -->
   <div class="container">
@@ -534,7 +544,7 @@
       hideConfirmation();
     }
 
-function showAssemblyList(componentId, componentName) {
+    function showAssemblyList(componentId, componentName) {
   const assemblyList = document.getElementById('assemblyList');
   // Crie um identificador único para cada item da lista
   const itemId = `assemblyItem_${componentId}`;
@@ -556,8 +566,6 @@ function showAssemblyList(componentId, componentName) {
   listItem.appendChild(removeButton);
   assemblyList.appendChild(listItem);
 
-  // Mostre o modal da lista de montagem
-  document.getElementById('assemblyListModal').style.display = 'flex';
     }
     
     function removeAssemblyItem(itemId) {
@@ -567,6 +575,28 @@ function showAssemblyList(componentId, componentName) {
     assemblyItem.remove();
   }
 }
+function submitForm() {
+  document.getElementById('submitButton').addEventListener('click', function() {
+    // Get selected values from dropdowns
+    const tipoOperacaoDropdown = document.getElementById('tipoOperacaoDropdown');
+    const selectedTipoOperacao = tipoOperacaoDropdown.options[tipoOperacaoDropdown.selectedIndex].value;
+
+    const maoObraDropdown = document.getElementById('maoObraDropdown');
+    const selectedMaoObra = maoObraDropdown.options[maoObraDropdown.selectedIndex].value;
+
+    // Get data from the selected component
+    const selectedComponent = document.querySelector('.component-item:hover');
+    const idComponente = selectedComponent ? selectedComponent.dataset.id : null;
+
+    // Now you have tipoOperacao, maoObra, and idComponente
+    console.log('Tipo de Operação:', selectedTipoOperacao);
+    console.log('Mão de Obra:', selectedMaoObra);
+    console.log('ID do Componente:', idComponente);
+});}
+
+
+
+
 
   function hideAssemblyList() {
     // Hide the assembly list modal
