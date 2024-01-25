@@ -13,9 +13,9 @@ def error_page(request, error_message):
 def get_database_connection(username, password):
     # Map user profiles to database configurations
     database_configurations = {
-        'aluno3_a': {'dbname': 'projeto_bdii', 'user': 'aluno3_a', 'password': 'aluno', 'port': '5433'},
-        'aluno3_b': {'dbname': 'projeto_bdii', 'user': 'aluno3_b', 'password': 'aluno', 'port': '5433'},
-        'aluno3_c': {'dbname': 'projeto_bdii', 'user': 'aluno3_c', 'password': 'aluno', 'port': '5433'},
+        'aluno3_a': {'dbname': 'projeto_bdii', 'user': 'aluno3_a', 'password': 'aluno', 'port': '5432'},
+        'aluno3_b': {'dbname': 'projeto_bdii', 'user': 'aluno3_b', 'password': 'aluno', 'port': '5432'},
+        'aluno3_c': {'dbname': 'projeto_bdii', 'user': 'aluno3_c', 'password': 'aluno', 'port': '5432'},
     }
 
     try:
@@ -263,13 +263,17 @@ def dashboard(request):
             cursor.execute("SELECT * FROM componente_entrada_stock_recente")
             componente_entrada_stock_recente = cursor.fetchall()
         
-            # Vai Buscar os equipamentos que entraram recentemente
+            # Vai buscar os equipamentos que entraram recentemente
             cursor.execute("SELECT * FROM equipamento_entrada_stock_recente")
             equipamento_entrada_stock_recente = cursor.fetchall()
 
             # Vai buscar os componentes que sairam recentemente
             cursor.execute("SELECT * FROM componente_saida_stock_recente")
             componente_saida_stock_recente = cursor.fetchall()
+
+            # Vai buscar os equipamentos que sairam recentemente
+            cursor.execute("SELECT * FROM equipamento_saida_stock_recente")
+            equipamento_saida_stock_recente = cursor.fetchall()
 
             # Vai buscar os componentes em low stock
             cursor.execute("SELECT * FROM low_stock_components")
@@ -280,7 +284,7 @@ def dashboard(request):
         print(f"An error occurred: {str(e)}")
         low_stock_components_data = []
 
-    return render(request, 'dashboard.html', {'user_name': user_name, 'componente_entrada_stock_recente': componente_entrada_stock_recente, 'equipamento_entrada_stock_recente': equipamento_entrada_stock_recente,'componente_saida_stock_recente': componente_saida_stock_recente, 'low_stock_components_data': low_stock_components_data})
+    return render(request, 'dashboard.html', {'user_name': user_name, 'componente_entrada_stock_recente': componente_entrada_stock_recente, 'equipamento_entrada_stock_recente': equipamento_entrada_stock_recente,'componente_saida_stock_recente': componente_saida_stock_recente, 'equipamento_saida_stock_recente': equipamento_saida_stock_recente,'low_stock_components_data': low_stock_components_data})
 
 
 

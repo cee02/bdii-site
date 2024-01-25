@@ -235,7 +235,9 @@ th:nth-child(4), td:nth-child(4) {
                 <thead>
                     <tr>
                         <th>Equipamento</th>
-                        <th>Quantidade</th>
+                        <th>Descrição</th>
+                        <th>Armazem</th>
+                        <th>Data de Entrada</th>
                     </tr>
                 </thead>
             </table>
@@ -246,7 +248,9 @@ th:nth-child(4), td:nth-child(4) {
                 {% for equipment in equipamento_entrada_stock_recente %}
                     <tr>
                         <td>{{ equipment.0 }}</td>
-                        <td>{{ equipment.1 }} unidades</td>
+                        <td>{{ equipment.1 }}</td>
+                        <td>{{ equipment.2 }}</td>
+                        <td>{{ equipment.3 }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -284,6 +288,33 @@ th:nth-child(4), td:nth-child(4) {
             </table>
         </div>
     </section>
+<p></p><p></p><p></p>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Equipamento</th>
+                        <th>Descrição</th>
+                        <th>Armazem</th>
+                        <th>Data de Saida</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+        <div class="table-container">
+            <table>
+                <tbody>
+                {% for equipment in equipamento_saida_stock_recente %}
+                    <tr>
+                        <td>{{ equipment.0 }}</td>
+                        <td>{{ equipment.1 }}</td>
+                        <td>{{ equipment.2 }}</td>
+                        <td>{{ equipment.3 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
     <section class="componentes-em-low-stock">
         <h2>Componentes em Low Stock</h2>

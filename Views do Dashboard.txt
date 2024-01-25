@@ -34,19 +34,22 @@ ORDER BY
 LIMIT 10;
 
 
-//esta view não está bem é só para conseguir abrir a pagina dashboard
+//esta view não estava bem era só para conseguir abrir a pagina dashboard
+//usar esta para substituir a view anterior
 CREATE VIEW equipamento_entrada_stock_recente AS
 SELECT
-    C.nome AS nome_componente,
-    C.quantidade AS quantidade_componente
+    E.tipo AS tipo_equipamento,
+    E.descricao AS descricao_equipamento,
+    A.nome AS nome_armazem,
+    EA.data_entrada
 FROM
-    ComponenteArmazem CA
-JOIN Componentes C ON CA.componenteID = C.ID
-JOIN Armazem A ON CA.id_armazem = A.ID_armazem
+    EquipamentoArmazem EA
+JOIN equipamento E ON EA.equipamentoID = E.id_equipamento
+JOIN Armazem A ON EA.id_armazem = A.ID_armazem
 WHERE
-    CA.data_saida IS NOT NULL
+    EA.data_entrada IS NOT NULL
 ORDER BY
-    CA.data_saida DESC
+    EA.data_entrada DESC
 LIMIT 10;
 
 
@@ -119,3 +122,19 @@ Corram isto no PGADMIN
     REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA public FROM aluno3_c;
     GRANT ALL PRIVILEGES ON TABLE public.equipamento TO aluno3_c;   
 
+//Tem de criar esta view se não o dashboard nao funciona
+CREATE VIEW equipamento_saida_stock_recente AS
+SELECT
+    E.tipo AS tipo_equipamento,
+    E.descricao AS descricao_equipamento,
+    A.nome AS nome_armazem,
+    EA.data_saida
+FROM
+    EquipamentoArmazem EA
+JOIN equipamento E ON EA.equipamentoID = E.id_equipamento
+JOIN Armazem A ON EA.id_armazem = A.ID_armazem
+WHERE
+    EA.data_saida IS NOT NULL
+ORDER BY
+    EA.data_saida DESC
+LIMIT 10;
