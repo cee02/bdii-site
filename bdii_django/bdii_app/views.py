@@ -116,6 +116,12 @@ def producao_equipamentos(request):
             equipamentos_results = cursor.fetchall()
             print("Resultados da função get_equipamentos_prontos_para_armazenar:", equipamentos_results)
 
+            cursor.execute("SELECT * FROM vw_tipo_operacao")
+            tipo_operacao_list = cursor.fetchall()
+
+            cursor.execute("SELECT * FROM vw_mao_obra")
+            mao_obra_list = cursor.fetchall()
+
             # Fechar o cursor
             cursor.close()
 
@@ -123,7 +129,7 @@ def producao_equipamentos(request):
             close_database_connection(connection)
 
             # Passar os resultados para o contexto da renderização
-            return render(request, 'producao_equipamentos.html', {'componentes': componentes_results, 'equipamentos': equipamentos_results, 'user_name': user_name})
+            return render(request, 'producao_equipamentos.html', {'componentes': componentes_results, 'equipamentos': equipamentos_results, 'user_name': user_name,'tipo_operacao': tipo_operacao_list,'mao_de_obra': mao_obra_list  })
         except Exception as e:
             # Lidar com exceções, se houver algum problema durante a execução da procedure
             return render(request, 'error_page.html', {'error_message': str(e)})

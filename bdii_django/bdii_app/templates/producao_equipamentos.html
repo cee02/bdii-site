@@ -305,7 +305,7 @@
   top: 0;
   right: 0;
   width: 400px;
-  height: 80%;
+  height: 65%;
   background-color: #fff;
   border: 2px solid #3498db; 
   border-right: 2px solid #f4f4f4; 
@@ -314,7 +314,19 @@
   margin-top: 50px;
   
 }
+.tipo-container {
+  position: fixed;
+  margin-left: 1120px;
+  margin-top: 260px;
+ 
+}
 
+.tipo-container1 {
+  position: fixed;
+  margin-left: 1310px;
+  margin-top: 260px;
+
+}
 .assembly-list {
   list-style: none;
   padding: 0;
@@ -391,6 +403,24 @@
       <!-- Assembly list items will be dynamically added here -->
     </ul>
   </div>
+
+  <div class="tipo-container">
+    <label for="tipoOperacao">Tipo de Operação:</label> <br>
+    <select id="tipoOperacao_{{ component.0 }}">
+        <option value="">Seleciona</option>
+        {% for tipo_operacao in tipo_operacao %}
+        <option value="{{ tipo_operacao.0 }}">{{ tipo_operacao.1 }}</option>
+        {% endfor %}
+    </select></div>
+  <div class="tipo-container1">
+  <label for="maoObra">Mão de Obra:</label><br>
+  <select id="maoObra_{{ component.0 }}">
+    <option value="">Seleciona</option>
+      {% for mao_obra in mao_de_obra %}
+          <option value="{{ mao_obra.0 }}">{{ mao_obra.1 }}</option>
+      {% endfor %}
+  </select>
+</div>
 
   <!-- Secção de Equipamentos -->
   <div class="container">

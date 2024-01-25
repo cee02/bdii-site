@@ -89,7 +89,33 @@ VALUES
     (4, 2, '2024-01-05', '2024-01-09'), 
     (5, 2, '2024-01-05', '2024-01-09');
 
+
+Insert INTO tipooperacao (id, descricao)
+Values
+(1, 'Montagem de board'),
+(2, 'Montagem de ram'),
+(3, 'Montagem de GPU'),
+(4, 'Montagem Completa'),
+(5, 'Instalação de Periféricos'),
+(6, 'Embalagem');
+
+
+Insert Into maoobra (id, tipo, custo)
+Values
+(1, 'Operador de 1a', 40.50),
+(2, 'Operador de 2a',  35.50),
+(3, 'Embalador', 25.50),
+(4, 'Técnico de Montagem', 59.50),
+(5, 'Técnico de Manutenção', 36.50);
+
+CREATE VIEW vw_tipo_operacao AS
+SELECT * FROM tipooperacao;
+
+CREATE VIEW vw_mao_obra AS
+SELECT * FROM maoobra;
+
 Corram isto no PGADMIN
+    GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO aluno3_a
     REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA public FROM aluno3_c;
     GRANT ALL PRIVILEGES ON TABLE public.equipamento TO aluno3_c;   
 
