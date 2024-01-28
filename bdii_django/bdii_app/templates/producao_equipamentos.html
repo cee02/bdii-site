@@ -360,6 +360,12 @@
 .remove-button:hover {
   background-color: #03548b;
 }
+#submitButton {
+  position: fixed;
+  top: 84%;
+  right: 270px; /* Adjust the value according to your preference */
+  transform: translateY(-50%);
+}
   </style>
 </head>
 <body>
@@ -405,32 +411,33 @@
       <!-- Assembly list items will be dynamically added here -->
     </ul>
   </div>
-  <form method="post" action="{% url 'bdii_producao_equipamentos' %}" id="myForm">
+  <form method="post" action="{% url 'bdii_producao_equipamentos' %}" id="myForm">  <!-- A ir buscar o id=myform do submit daqui -->
     {% csrf_token %}
+    <input type="hidden" name="tipo_operacao" id="tipoOperacaoInput">
+    <input type="hidden" name="mao_de_obra" id="maoObraInput">
+    <input type="hidden" name="component_id" id="componentIdInput">
     <div class="tipo-container">
-        <label for="tipoOperacao">Tipo de Operação:</label> <br>
-        <select id="tipoOperacaoDropdown" name="tipoOperacao">
-            <option value="">Seleciona</option>
-            {% for tipo_operacao in tipo_operacao %}
-                <option value="{{ tipo_operacao.0 }}">{{ tipo_operacao.1 }}</option>
-            {% endfor %}
-        </select>
+      <label for="tipoOperacao">Tipo de Operação:</label><br>
+      <select id="tipoOperacaoDropdown" name="tipo_operacao">    <!-- A ir buscar o tipo daqui -->
+        <option value="">Seleciona</option>
+        {% for tipo_operacao in tipo_operacao %}
+          <option value="{{ tipo_operacao.0 }}">{{ tipo_operacao.1 }}</option>
+        {% endfor %}
+      </select>
     </div>
     <div class="tipo-container1">
-        <label for="maoObra">Mão de Obra:</label><br>
-        <select id="maoObraDropdown" name="maoObra">
-            <option value="">Seleciona</option>
-            {% for mao_obra in mao_de_obra %}
-                <option value="{{ mao_obra.0 }}">{{ mao_obra.1 }}</option>
-            {% endfor %}
-        </select>
+      <label for="maoObra">Mão de Obra:</label><br>
+      <select id="maoObraDropdown" name="mao_de_obra">    <!-- A ir buscar a mão daqui -->
+        <option value="">Seleciona</option>
+        {% for mao_obra in mao_de_obra %}
+          <option value="{{ mao_obra.0 }}">{{ mao_obra.1 }}</option>
+        {% endfor %}
+      </select>
     </div>
-    <button type="button" onclick="submitForm()" id="submitButton">Submit</button>
+    <button type="button" onclick="submitForm()" id="submitButton">Enviar</button>
   </form>
-
   
 </div>
-    
 
   <!-- Secção de Equipamentos -->
   <div class="container">
@@ -544,58 +551,65 @@
       hideConfirmation();
     }
 
-    function showAssemblyList(componentId, componentName) {
-  const assemblyList = document.getElementById('assemblyList');
-  // Crie um identificador único para cada item da lista
-  const itemId = `assemblyItem_${componentId}`;
-  
-  // Adicione o item à lista de montagem
-  const listItem = document.createElement('li');
-  listItem.id = itemId;
-  listItem.classList.add('assembly-item');
-  listItem.innerHTML = `<span>Component ID: ${componentId}</span><br><span>Name: ${componentName}</span>`;
-  
-  // Adicione o botão de remoção
-  const removeButton = document.createElement('button');
-  removeButton.innerText = 'Remover';
-  removeButton.classList.add('remove-button');  
-  removeButton.onclick = function() {
-    removeAssemblyItem(itemId);
-  };
-  
-  listItem.appendChild(removeButton);
-  assemblyList.appendChild(listItem);
+    let selectedComponents = [];
+
+function showAssemblyList(componentId, componentName) {
+    const assemblyList = document.getElementById('assemblyList');
+    const itemId = `${componentId}`;
+
+    // Check if the component is already selected
+    if (selectedComponents.includes(componentId)) {
+        alert('Componente já selecionado!');
+        return;
+    }
+
+    selectedComponents.push(componentId);
+
+    const listItem = document.createElement('li');
+    listItem.id = itemId;
+    listItem.classList.add('assembly-item');
+    listItem.innerHTML = `<span>Component ID: ${componentId}</span><br><span>Name: ${componentName}</span>`;
+
+    console.log('Item ID:', itemId);
+
+    const removeButton = document.createElement('button');
+    removeButton.innerText = 'Remover';
+    removeButton.classList.add('remove-button');
+    removeButton.onclick = function () {
+        removeAssemblyItem(itemId, componentId);
+    };
+
+    listItem.appendChild(removeButton);
+    assemblyList.appendChild(listItem);
+
+    //Dá update do input hidden no form  com os Selected IDs dos componentes
+    document.getElementById('componentIdInput').value = selectedComponents.join(',');
+
+}
+
+function removeAssemblyItem(itemId, componentId) {
+    const assemblyItem = document.getElementById(itemId);
+    if (assemblyItem) {
+        // Remove the component from the selectedComponents array
+        selectedComponents = selectedComponents.filter(id => id !== componentId);
+        assemblyItem.remove();
+
+        //Dá update do input hidden no form  com os Selected IDs dos componentes
+        document.getElementById('componentIdInput').value = selectedComponents.join(',');
 
     }
-    
-    function removeAssemblyItem(itemId) {
-  // Remova o item da lista de montagem pelo identificador único
-  const assemblyItem = document.getElementById(itemId);
-  if (assemblyItem) {
-    assemblyItem.remove();
-  }
 }
+
+
 function submitForm() {
-  document.getElementById('submitButton').addEventListener('click', function() {
-    // Get selected values from dropdowns
-    const tipoOperacaoDropdown = document.getElementById('tipoOperacaoDropdown');
-    const selectedTipoOperacao = tipoOperacaoDropdown.options[tipoOperacaoDropdown.selectedIndex].value;
-
-    const maoObraDropdown = document.getElementById('maoObraDropdown');
-    const selectedMaoObra = maoObraDropdown.options[maoObraDropdown.selectedIndex].value;
-
-    // Get data from the selected component
-    const selectedComponent = document.querySelector('.component-item:hover');
-    const idComponente = selectedComponent ? selectedComponent.dataset.id : null;
-
-    // Now you have tipoOperacao, maoObra, and idComponente
-    console.log('Tipo de Operação:', selectedTipoOperacao);
-    console.log('Mão de Obra:', selectedMaoObra);
-    console.log('ID do Componente:', idComponente);
-});}
-
-
-
+    // Check if any components are selected
+    if (selectedComponents.length === 0) {
+        alert('Selecione pelo menos um componente!');
+        return;
+    }
+    // Submit the form
+    document.getElementById('myForm').submit();
+}
 
 
   function hideAssemblyList() {

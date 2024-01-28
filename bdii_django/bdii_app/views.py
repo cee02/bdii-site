@@ -14,9 +14,9 @@ def error_page(request, error_message):
 def get_database_connection(username, password):
     # Map user profiles to database configurations
     database_configurations = {
-        'aluno3_a': {'dbname': 'projeto_bdii', 'user': 'aluno3_a', 'password': 'aluno', 'port': '5433'},
-        'aluno3_b': {'dbname': 'projeto_bdii', 'user': 'aluno3_b', 'password': 'aluno', 'port': '5433'},
-        'aluno3_c': {'dbname': 'projeto_bdii', 'user': 'aluno3_c', 'password': 'aluno', 'port': '5433'},
+        'aluno3_a': {'dbname': 'projeto_bdii', 'user': 'aluno3_a', 'password': 'aluno', 'port': '5432'},
+        'aluno3_b': {'dbname': 'projeto_bdii', 'user': 'aluno3_b', 'password': 'aluno', 'port': '5432'},
+        'aluno3_c': {'dbname': 'projeto_bdii', 'user': 'aluno3_c', 'password': 'aluno', 'port': '5432'},
     }
 
     try:
@@ -102,18 +102,33 @@ def producao_equipamentos(request):
 
             if request.method == 'POST':  # Verificar se o formulário foi submetido
                 # Obter os valores do formulário
-                component_id = request.POST.get('component_id')
+                componente_id = request.POST.get('component_id')
                 quantidade_componente = request.POST.get('quantidade_componente')
-                tipo_operacao = request.POST.get('tipo_operacao')
-                mao_de_obra = request.POST.get('mao_de_obra')
+                tipooperacao = request.POST.get('tipo_operacao')
+                mao_obra = request.POST.get('mao_de_obra')
+
+                print('Component ID:', componente_id)
+                print('Tipo de Operação:', tipooperacao)
+                print('Mão de Obra:', mao_obra)
 
                 # Chamar a função para inserir na ficha de produção
                 with connection.cursor() as cursor:
-                    cursor.execute(
-                        'SELECT * FROM insert_componentes_ficha_producao(%s, %s, %s, %s)',
-                        [component_id, quantidade_componente, tipo_operacao, mao_de_obra]
-                    )                 
-                    result = cursor.fetchone()
+                    try:
+                        cursor.execute(
+                            'SELECT * FROM insert_componentes_ficha_producao(%s, %s, %s, %s)',
+                            [int(componente_id), 1, int(tipooperacao), int(mao_obra)]
+                        )    
+                        print('insert_componentes_ficha_producao executed')
+                        result = cursor.fetchone()
+                        connection.commit()
+                    
+
+                        # Print the data directly after insertion
+                        cursor.execute('SELECT * FROM ComponentesFichaProducao')
+                        print('Data after insertion:', cursor.fetchall())
+
+                    except Exception as e:
+                        print('Error during insert:', e)
 
             with connection.cursor() as cursor:
                 # Chamar a procedure usando SELECT para a função get_componentes_data_function
@@ -135,9 +150,6 @@ def producao_equipamentos(request):
                 cursor.execute("SELECT * FROM vw_mao_obra")
                 mao_obra_list = cursor.fetchall()
 
-            # Confirmar a transação se tudo ocorreu sem erros
-            transaction.commit()
-
             # Fechar a conexão
             close_database_connection(connection)
 
@@ -145,7 +157,6 @@ def producao_equipamentos(request):
             return render(request, 'producao_equipamentos.html', {'componentes': componentes_results, 'equipamentos': equipamentos_results, 'user_name': user_name,'tipo_operacao': tipo_operacao_list,'mao_de_obra': mao_obra_list, 'result': result})
         except Exception as e:
             # Lidar com exceções, rolar a transação de volta se necessário
-            transaction.rollback()
 
             return render(request, 'error_page.html', {'error_message': str(e)})
     else:

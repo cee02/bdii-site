@@ -80,7 +80,7 @@ DATABASES = {
         'NAME': 'projeto_bdii',         
         'USER': 'postgres',      
         'PASSWORD': 'computador123@A', # Mudem as credenciais consoante              
-        'PORT': '5433',   
+        'PORT': '5432',   
          'OPTIONS': {
             'client_encoding': 'UTF-8',
         },          
