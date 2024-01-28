@@ -102,21 +102,24 @@ def producao_equipamentos(request):
 
             if request.method == 'POST':  # Verificar se o formulário foi submetido
                 # Obter os valores do formulário
-                componente_id = request.POST.get('component_id')
+                componente_ids = request.POST.get('component_id')
                 quantidade_componente = request.POST.get('quantidade_componente')
                 tipooperacao = request.POST.get('tipo_operacao')
                 mao_obra = request.POST.get('mao_de_obra')
 
-                print('Component ID:', componente_id)
+                print('Component ID:', componente_ids)
                 print('Tipo de Operação:', tipooperacao)
                 print('Mão de Obra:', mao_obra)
 
                 # Chamar a função para inserir na ficha de produção
                 with connection.cursor() as cursor:
                     try:
+                        # Convert the list of strings to a list of integers
+                        componente_ids = [int(id) for id in componente_ids.split(',')]
+
                         cursor.execute(
                             'SELECT * FROM insert_componentes_ficha_producao(%s, %s, %s, %s)',
-                            [int(componente_id), 1, int(tipooperacao), int(mao_obra)]
+                            [componente_ids, 1, int(tipooperacao), int(mao_obra)]
                         )    
                         print('insert_componentes_ficha_producao executed')
                         result = cursor.fetchone()

@@ -152,21 +152,32 @@ CREATE TABLE ComponentesFichaProducao (
     datahorafim TIMESTAMP DEFAULT (CURRENT_TIMESTAMP + INTERVAL '15 minutes'),
     FOREIGN KEY (id_tipooperacao) REFERENCES tipooperacao(ID),
     FOREIGN KEY (id_maodeobra) REFERENCES maoobra(ID),
-    FOREIGN KEY (idcomponente) REFERENCES componentes(ID)
+    FOREIGN KEY (idcomponente) REFERENCES componentes(ID),
+  	UNIQUE (id, idcomponente)
 );
 
 //substituir esta função para o ecrâ Produção Equipamentos funcionar
 CREATE OR REPLACE FUNCTION insert_componentes_ficha_producao(
-    p_idcomponente INT,
+    p_idcomponentes INT[],
     p_quantidadeComponente INT,
     p_id_tipooperacao INT,
     p_id_maodeobra INT
 )
 RETURNS VOID AS
 $$
+DECLARE
+    idcomponente_element INT;
 BEGIN
-    INSERT INTO ComponentesFichaProducao (idcomponente, quantidadeComponente, id_tipooperacao, id_maodeobra) 
-    VALUES (p_idcomponente, p_quantidadeComponente, p_id_tipooperacao, p_id_maodeobra);
+    -- Get the array length
+    FOR i IN 1..array_length(p_idcomponentes, 1)
+    LOOP
+        -- Retrieve the idcomponente at index i
+        idcomponente_element := p_idcomponentes[i];
+
+        -- Insert into the table
+       INSERT INTO ComponentesFichaProducao (id, idcomponente, quantidadeComponente, id_tipooperacao, id_maodeobra) 
+        VALUES (NEXTVAL('componentesfichaproducao_id_seq'), idcomponente_element, p_quantidadeComponente, p_id_tipooperacao, p_id_maodeobra);
+    END LOOP;
 EXCEPTION
     WHEN others THEN
         -- Raise an exception with the error message

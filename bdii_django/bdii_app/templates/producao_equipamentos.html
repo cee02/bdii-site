@@ -607,6 +607,20 @@ function submitForm() {
         alert('Selecione pelo menos um componente!');
         return;
     }
+    const tipoOperacaoDropdown = document.getElementById('tipoOperacaoDropdown');
+    const tipoOperacaoValue = tipoOperacaoDropdown.value;
+    if (!tipoOperacaoValue) {
+        alert('Selecione um Tipo de Operação!');
+        return;
+    }
+
+    // Check if Mão de Obra is selected
+    const maoObraDropdown = document.getElementById('maoObraDropdown');
+    const maoObraValue = maoObraDropdown.value;
+    if (!maoObraValue) {
+        alert('Selecione uma Mão de Obra!');
+        return;
+    }
     // Submit the form
     document.getElementById('myForm').submit();
 }
