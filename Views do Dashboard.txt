@@ -139,24 +139,24 @@ ORDER BY
     EA.data_saida DESC
 LIMIT 10;
 
+
+//Modificações DIA 28
 //Usar esta table para substituir a que tem no pgadmin (ComponentesFichaProducao)
 CREATE TABLE ComponentesFichaProducao (
-    Id INT,
+    Id SERIAL PRIMARY KEY,
     idcomponente INT,
     quantidadeComponente INT,
     id_tipooperacao INT,
     id_maodeobra INT,
     datahorainicio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     datahorafim TIMESTAMP DEFAULT (CURRENT_TIMESTAMP + INTERVAL '15 minutes'),
-    PRIMARY KEY (Id, idcomponente), -- Composite primary key
     FOREIGN KEY (id_tipooperacao) REFERENCES tipooperacao(ID),
     FOREIGN KEY (id_maodeobra) REFERENCES maoobra(ID),
     FOREIGN KEY (idcomponente) REFERENCES componentes(ID)
 );
 
-//Criar esta view para o ecrâ Produção Equipamentos funcionar
+//substituir esta função para o ecrâ Produção Equipamentos funcionar
 CREATE OR REPLACE FUNCTION insert_componentes_ficha_producao(
-    p_id INT,
     p_idcomponente INT,
     p_quantidadeComponente INT,
     p_id_tipooperacao INT,
@@ -165,7 +165,15 @@ CREATE OR REPLACE FUNCTION insert_componentes_ficha_producao(
 RETURNS VOID AS
 $$
 BEGIN
-    INSERT INTO ComponentesFichaProducao (Id,idcomponente,quantidadeComponente,id_tipooperacao,id_maodeobra) 
-	VALUES (p_id,p_idcomponente,p_quantidadeComponente,p_id_tipooperacao,p_id_maodeobra);
-END;$$
+    INSERT INTO ComponentesFichaProducao (idcomponente, quantidadeComponente, id_tipooperacao, id_maodeobra) 
+    VALUES (p_idcomponente, p_quantidadeComponente, p_id_tipooperacao, p_id_maodeobra);
+EXCEPTION
+    WHEN others THEN
+        -- Raise an exception with the error message
+        RAISE EXCEPTION 'Error in insert_componentes_ficha_producao: %', SQLERRM;
+END;
+$$
 LANGUAGE plpgsql;
+
+GRANT USAGE, SELECT ON SEQUENCE componentesfichaproducao_id_seq TO aluno3_a;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO aluno3_a;
