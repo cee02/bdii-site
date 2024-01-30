@@ -188,3 +188,100 @@ LANGUAGE plpgsql;
 
 GRANT USAGE, SELECT ON SEQUENCE componentesfichaproducao_id_seq TO aluno3_a;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO aluno3_a;
+
+
+--------------- DIA 30/01 ---------------------
+Update este trigger:
+Foi removida a linha 'data_entrada = CURRENT_DATE'
+
+BEGIN
+   
+    UPDATE Armazem
+    SET quantidade_em_stock = quantidade_em_stock + NEW.quantidade
+    WHERE ID_armazem = 1;
+
+    RETURN NEW;
+END;
+
+--Tabela modificada adicionada linha quantidade INT,
+CREATE TABLE ComponenteArmazem (
+    componenteID INT,
+    id_armazem INT,
+	quantidade INT,
+    data_entrada DATE,
+    data_saida DATE,
+    FOREIGN KEY (componenteID) REFERENCES Componentes(ID),
+    FOREIGN KEY (id_armazem) REFERENCES Armazem(ID_armazem)
+);
+
+
+--  Substituir after_insert_componentes() por esta
+CREATE OR REPLACE FUNCTION after_insert_componentes()
+RETURNS TRIGGER AS $$
+DECLARE
+    quantidade_componente INT;
+BEGIN
+    SELECT quantidade INTO quantidade_componente FROM Componentes WHERE ID = NEW.ID;
+    INSERT INTO ComponenteArmazem (componenteID, id_armazem, quantidade, data_entrada)
+    VALUES (NEW.ID, 1, quantidade_componente, CURRENT_DATE);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER after_insert_componentes_trigger
+AFTER INSERT ON Componentes
+FOR EACH ROW
+EXECUTE FUNCTION after_insert_componentes();
+
+
+-- Neste trigger componente_entrada_stock_recente foi retirado a linha "WHERE
+    CA.data_saida IS NOT NULL" e modificada 
+    a linha  "ORDER BY ca.data_saida DESC" para "ORDER BY ca.data_entrada DESC"
+    Também foi adicionada a linha WHERE
+
+CREATE OR REPLACE VIEW componente_entrada_stock_recente
+ AS
+ SELECT c.nome AS nome_componente,
+    c.quantidade AS quantidade_componente,
+    a.nome AS nome_armazem,
+    ca.data_entrada
+   FROM componentearmazem ca
+     JOIN componentes c ON ca.componenteid = c.id
+     JOIN armazem a ON ca.id_armazem = a.id_armazem
+  WHERE ca.data_entrada >= (CURRENT_DATE - '2 days'::interval)
+  ORDER BY ca.data_entrada DESC
+ LIMIT 10;
+
+
+--Apagar o trigger update_stock_apos_compra_fornecedor e substituir por esta --
+--Armazem sempre a atualizar --
+ CREATE OR REPLACE FUNCTION update_armazem_quantidade()
+RETURNS TRIGGER AS $$
+DECLARE
+    total_quantidade INT;
+BEGIN
+    -- Calculate the total quantity of components in ComponenteArmazem for the specific armazem
+    SELECT COALESCE(SUM(quantidade), 0) INTO total_quantidade
+    FROM Componentearmazem
+    WHERE id_armazem = NEW.id_armazem;
+
+    -- Update the Armazem table with the calculated total quantity
+    UPDATE Armazem
+    SET quantidade_em_stock = total_quantidade
+    WHERE ID_armazem = NEW.id_armazem;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger for AFTER INSERT on ComponenteArmazem
+CREATE TRIGGER after_insert_componente_armazem
+AFTER INSERT OR UPDATE OR DELETE ON Componentearmazem
+FOR EACH ROW
+EXECUTE FUNCTION update_armazem_quantidade();
+
+
+
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO aluno3_a;
+
+
