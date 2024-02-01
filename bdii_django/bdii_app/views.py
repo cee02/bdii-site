@@ -7,6 +7,10 @@ from django.http import HttpResponse
 import json
 from django.db import connections
 from django.db import transaction
+import pandas as pd
+import os
+from django.conf import settings
+
 
 def error_page(request, error_message):
     return render(request, 'error_page.html', {'error_message': error_message})
@@ -312,12 +316,19 @@ def dashboard(request):
             cursor.execute("SELECT * FROM low_stock_components")
             low_stock_components_data = cursor.fetchall()
 
+            # Vai buscar os componentes em low stock
+            cursor.execute("SELECT * FROM view_meses_anos_componentearmazem")
+            view_meses_anos_componentearmazem = cursor.fetchall()
+
     except Exception as e:
         # Handle exceptions (e.g., database connection error, file not found, etc.)
         print(f"An error occurred: {str(e)}")
         low_stock_components_data = []
 
-    return render(request, 'dashboard.html', {'user_name': user_name, 'componente_entrada_stock_recente': componente_entrada_stock_recente, 'equipamento_entrada_stock_recente': equipamento_entrada_stock_recente,'componente_saida_stock_recente': componente_saida_stock_recente, 'equipamento_saida_stock_recente': equipamento_saida_stock_recente,'low_stock_components_data': low_stock_components_data})
+    return render(request, 'dashboard.html', {'user_name': user_name, 'componente_entrada_stock_recente': componente_entrada_stock_recente,
+                                              'equipamento_entrada_stock_recente': equipamento_entrada_stock_recente,'componente_saida_stock_recente': componente_saida_stock_recente,
+                                              'equipamento_saida_stock_recente': equipamento_saida_stock_recente, 'low_stock_components_data': low_stock_components_data,
+                                              'view_meses_anos_componentearmazem': view_meses_anos_componentearmazem})
 
 
 
@@ -406,3 +417,75 @@ def fazerregisto_equipamento(request): #registar equipamento (ainda nao pinta)
         form = EquipamentoForm()
 
     return render(request, 'registar_equipamento.html', {'form': form})
+
+def gerar_relatorio_excel(request):
+    # Obtém o mês e ano selecionados no formulário
+    mes_ano_selecionado = request.GET.get('mesAno')
+    print(f"Valor data: {mes_ano_selecionado}")
+    # Verifica se o mês e ano foram fornecidos corretamente
+    if not mes_ano_selecionado or '-' not in mes_ano_selecionado:
+        return HttpResponse("O mês não foi selecionado corretamente na solicitação.")
+
+    # Divide o valor do formulário em mês e ano
+    try:
+        mes, ano = mes_ano_selecionado.split('-')
+        print(f"Valor mes: {mes}")
+        print(f"Valor ano: {ano}")
+        # Verifica se o mês é um número válido
+        if not mes.isdigit():
+            raise ValueError("Formato de mês inválido.")
+    except ValueError as e:
+        return HttpResponse(str(e))
+
+    # Consulta os componentes que entraram e saíram no mês e ano selecionados
+    query_entrada = "SELECT * FROM componentearmazem WHERE EXTRACT(MONTH FROM data_entrada) = %s AND EXTRACT(YEAR FROM data_entrada) = %s"
+    query_saida = "SELECT * FROM componentearmazem WHERE EXTRACT(MONTH FROM data_saida) = %s AND EXTRACT(YEAR FROM data_saida) = %s"
+
+    # Define a variável excel_file_path
+    # Define o caminho para a pasta "Downloads" do usuário atual
+    downloads_path = os.path.join(os.path.expanduser('~'), 'Downloads')
+
+    # Define a variável excel_file_path
+    excel_file_path = os.path.join(downloads_path, f'relatorio_{mes}-{ano}.xlsx')
+
+    # Garante que o diretório exista antes de salvar o arquivo
+    os.makedirs(os.path.dirname(excel_file_path), exist_ok=True)
+
+    try:
+        with connections['default'].cursor() as cursor:
+            cursor.execute(query_entrada, [mes, ano])
+            componente_entrada_data = cursor.fetchall()
+
+            cursor.execute(query_saida, [mes, ano])
+            componente_saida_data = cursor.fetchall()
+
+        # Cria DataFrames com os resultados
+        df_entrada = pd.DataFrame(componente_entrada_data)
+        df_saida = pd.DataFrame(componente_saida_data)
+
+        # Concatena os DataFrames
+        df_result = pd.concat([df_entrada, df_saida])
+
+        # Converte o DataFrame para um arquivo Excel
+        df_result.to_excel(excel_file_path, index=False)
+
+        # Retorna o arquivo Excel como resposta HTTP
+        with open(excel_file_path, 'rb') as excel_file:
+            response = HttpResponse(excel_file.read(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            response['Content-Disposition'] = f'attachment; filename=relatorio_{mes}-{ano}.xlsx'
+
+        return response
+
+    except Exception as e:
+        # Trate exceções conforme necessário
+        print(f"An error occurred: {str(e)}")
+        print(f"Query Entrada: {query_entrada}")
+        print(f"Query Saída: {query_saida}")
+        print(f"Excel File Path: {excel_file_path}")
+        return HttpResponse("Erro ao gerar o relatório Excel.")
+
+    finally:
+        # Garante que o arquivo seja fechado, mesmo se ocorrer uma exceção
+        if os.path.exists(excel_file_path):
+            os.remove(excel_file_path)
+

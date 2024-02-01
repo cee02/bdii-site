@@ -357,5 +357,17 @@ LANGUAGE plpgsql;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO aluno3_a;
 GRANT USAGE, SELECT ON SEQUENCE producaoheader_id_seq TO aluno3_a;
 
+-- view para mostrar mes e ano em que houve componentes a entrar ou a sair do componentearmazem
+CREATE OR REPLACE VIEW view_meses_anos_componentearmazem AS
+SELECT DISTINCT
+    EXTRACT(MONTH FROM data_entrada) AS mes,
+    EXTRACT(YEAR FROM data_entrada) AS ano
+FROM componentearmazem
+UNION
+SELECT DISTINCT
+    EXTRACT(MONTH FROM data_saida) AS mes,
+    EXTRACT(YEAR FROM data_saida) AS ano
+FROM componentearmazem;
 
-
+-- é preciso instalar isto, correr no vscode
+pip install pandas openpyxl

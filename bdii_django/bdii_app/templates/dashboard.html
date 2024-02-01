@@ -341,19 +341,19 @@ th:nth-child(4), td:nth-child(4) {
             </table>
         </div>
     </section>
-        <section class="relatorio-status-inventario">
-            <h2>Relatório Status Inventário</h2>
-            <form action="#">
-                <select name="mes">
-                    <option value="novembro">Novembro</option>
-                    <option value="outubro">Outubro</option>
-                    <option value="setembro">Setembro</option>
-                    <option value="agosto">Agosto</option>
-                    <option value="julho">Julho</option>
-                </select>
-                <input type="submit" value="Gerar">
-            </form>
-        </section>
+    <section class="relatorio-status-inventario">
+        <h2>Relatório Status Inventário</h2>
+        <form action="{% url 'gerar_relatorio_excel' %}" method="get">
+            <select name="mesAno">
+                {% for result in view_meses_anos_componentearmazem %}
+                    <option value="{{ result.0 }}-{{ result.1 }}">
+                        {{ result.0 }}-{{ result.1 }}
+                    </option>
+                {% endfor %}
+            </select>
+            <input type="submit" value="Gerar">
+        </form>
+    </section>
     </main>
   </div>  
 

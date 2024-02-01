@@ -14,6 +14,6 @@ urlpatterns = [
     path('gestao_clientes/', views.gestao_clientes, name='bdii_gestao_clientes'),
     path('delete-cliente/<int:cliente_id>/', views.delete_cliente, name='delete_cliente'),
     path('homepage/', views.home, name='home'),
-
+    path('gerar_relatorio_excel/', views.gerar_relatorio_excel, name='gerar_relatorio_excel'),
 ]
 
