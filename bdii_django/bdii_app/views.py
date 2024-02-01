@@ -117,9 +117,12 @@ def producao_equipamentos(request):
                         # Convert the list of strings to a list of integers
                         componente_ids = [int(id) for id in componente_ids.split(',')]
 
+                        cursor.execute('INSERT INTO ProducaoHeader DEFAULT VALUES RETURNING Id')
+                        producao_header_id = cursor.fetchone()[0]
+
                         cursor.execute(
-                            'SELECT * FROM insert_componentes_ficha_producao(%s, %s, %s, %s)',
-                            [componente_ids, 1, int(tipooperacao), int(mao_obra)]
+                            'SELECT * FROM insert_componentes_ficha_producao(%s, %s, %s, %s, %s)',
+                            [componente_ids, 1, int(tipooperacao), int(mao_obra), producao_header_id]
                         )    
                         print('insert_componentes_ficha_producao executed')
                         result = cursor.fetchone()
@@ -193,7 +196,7 @@ def insert_componentes_to_db(username, password, componentes_data):
 
 def importar_componentes(request):
     # Caminho para o arquivo JSON
-    json_file_path = 'D:\\Universidade\\BDII\\Projeto_BDII\\bdii-site\\bdii_django\\bdii_app\\componentes.json'
+    json_file_path = '\Projeto_BDII/bdii-site/bdii_django/bdii_app/componentes.json'
 
     try:
         # Lê o conteúdo do arquivo JSON

@@ -285,3 +285,77 @@ EXECUTE FUNCTION update_armazem_quantidade();
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO aluno3_a;
 
 
+----DIA 01 Fevereiro ---
+
+--Criar esta table para controlar cada Lista de Produção
+CREATE TABLE ProducaoHeader (
+    Id SERIAL PRIMARY KEY
+);
+
+-- Usar este Alter para alterar a tabela ComponentesFichaProducao(vai adicionar uma row importantissima)
+ALTER TABLE ComponentesFichaProducao
+ADD COLUMN id_producao_header INT,
+ADD CONSTRAINT fk_producao_header
+    FOREIGN KEY (id_producao_header)
+    REFERENCES ProducaoHeader(Id);
+
+--A tabela dps desses comandos vai ficar assim
+CREATE TABLE ComponentesFichaProducao (
+    Id SERIAL PRIMARY KEY,
+    idcomponente INT,
+    quantidadeComponente INT,
+    id_tipooperacao INT,
+    id_maodeobra INT,
+    datahorainicio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    datahorafim TIMESTAMP DEFAULT (CURRENT_TIMESTAMP + INTERVAL '15 minutes'),
+    id_producao_header INT,  -- New field for the foreign key reference to ProducaoHeader
+    FOREIGN KEY (id_tipooperacao) REFERENCES tipooperacao(ID),
+    FOREIGN KEY (id_maodeobra) REFERENCES maoobra(ID),
+    FOREIGN KEY (idcomponente) REFERENCES componentes(ID),
+    FOREIGN KEY (id_producao_header) REFERENCES ProducaoHeader(Id),  -- New foreign key
+  	UNIQUE (id, idcomponente)
+);
+
+-- Modifiquei a função insert_componentes_ficha_producao, Podem apagar a anterior e colocar esta
+CREATE OR REPLACE FUNCTION insert_componentes_ficha_producao(
+    p_idcomponentes INT[],
+    p_quantidadeComponente INT,
+    p_id_tipooperacao INT,
+    p_id_maodeobra INT,
+    p_id_producao_header INT 
+)
+RETURNS VOID AS
+$$
+DECLARE
+    idcomponente_element INT;
+BEGIN
+    -- Get the array length
+    FOR i IN 1..array_length(p_idcomponentes, 1)
+    LOOP
+        -- Retrieve the idcomponente at index i
+        idcomponente_element := p_idcomponentes[i];
+
+        -- Insert into the ComponentesFichaProducao table
+        INSERT INTO ComponentesFichaProducao (id, idcomponente, quantidadeComponente, id_tipooperacao, id_maodeobra, id_producao_header) 
+        VALUES (NEXTVAL('componentesfichaproducao_id_seq'), idcomponente_element, p_quantidadeComponente, p_id_tipooperacao, p_id_maodeobra, p_id_producao_header);
+
+        -- Update the ComponenteArmazem table by subtracting 1 from quantidade and updating data_saida
+        UPDATE ComponenteArmazem
+        SET quantidade = quantidade - 1,
+            data_saida = CURRENT_DATE  -- You can adjust this based on your requirement
+        WHERE componenteID = idcomponente_element;
+    END LOOP;
+EXCEPTION
+    WHEN others THEN
+        -- Raise an exception with the error message
+        RAISE EXCEPTION 'Error in insert_componentes_ficha_producao: %', SQLERRM;
+END;
+$$
+LANGUAGE plpgsql;
+
+-- Dar grant outra vez
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO aluno3_a;
+GRANT USAGE, SELECT ON SEQUENCE producaoheader_id_seq TO aluno3_a;
+
+
+

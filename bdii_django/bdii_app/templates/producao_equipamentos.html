@@ -316,18 +316,14 @@
 }
 .tipo-container {
   position: fixed;
-  margin-left: 1120px;
-  margin-top: 260px;
- 
- 
+  margin-left: 1050px;
+  margin-top: 245px;
 }
 
 .tipo-container1 {
   position: fixed;
-  margin-left: 1310px;
-  margin-top: 260px;
-  
-
+  margin-left: 1250px;
+  margin-top: 245px;
 }
 .assembly-list {
   list-style: none;
@@ -556,12 +552,6 @@
 function showAssemblyList(componentId, componentName) {
     const assemblyList = document.getElementById('assemblyList');
     const itemId = `${componentId}`;
-
-    // Check if the component is already selected
-    if (selectedComponents.includes(componentId)) {
-        alert('Componente já selecionado!');
-        return;
-    }
 
     selectedComponents.push(componentId);
 
