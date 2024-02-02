@@ -144,6 +144,23 @@ form {
         button:hover {
             background-color: #000000;
         }
+
+
+        select[multiple] {
+        height: auto !important;
+        }
+
+         option:checked::before {
+        content: '\2193'; /* Código unicode para uma seta para baixo */
+        margin-right: 5px;
+        
+        }
+
+        .selected-options {
+            border: 1px solid #ccc;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
     </style>
     <title>Registrar Encomenda</title>
 </head>
@@ -167,33 +184,40 @@ form {
         </ul>
     </div>
 
-    <form id="encomendaForm">
-        <h2>Registo da Encomenda</h2>
-        <label for="numero">Número:</label>
-        <select id="numero" name="numero">
-            <!-- Opções do dropdown -->
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <!-- Adicione mais opções conforme necessário -->
-        </select>
-
-        <label for="ficheiros">Ficheiros (permitir anexar mais de um):</label>
-        <input type="file" id="ficheiros" name="ficheiros" multiple>
-
-        <button type="button" onclick="guardarEncomenda()">Guardar</button>
+    <form method="post" action="{% url 'bdii_registo_encomenda' %}">
+        <h2>Nova Encomenda</h2>
+        <label for="quantidade">ID Encomenda:</label>
+        <input type="number" name="id" required><br>
+        {% csrf_token %}
+        <label for="componente">Componente(s):</label>
+        <div class="selected-options" id="selectedOptions"></div>
+        <select name="componentes" id="componentes" multiple required>
+            {% for componentes in componentes %}
+                <option value="{{ componentes.0 }}">{{ componentes.1 }}</option>
+            {% endfor %}
+        </select><br>
+        <label for="quantidade">Quantidade:</label>
+        <input type="number" name="quantidade" required><br>
+    
+        <label for="fornecedor_id">Fornecedor:</label>
+        <select name="fornecedor_id" required>
+            {% for fornecedor in fornecedores %}
+                <option value="{{ fornecedor.0 }}">{{ fornecedor.1 }}</option>
+            {% endfor %}
+        </select><br>
+    
+        <button type="submit">Adicionar à encomenda</button>
     </form>
+    
+    
 
     <form id="faturaForm">
         <h2>Registo da Fatura da Encomenda</h2>
-        <label for="idCompra">ID de Compra:</label>
-        <select id="idCompra" name="idCompra">
-            <!-- Opções do dropdown -->
-            <option value="A001">A001</option>
-            <option value="A002">A002</option>
-            <option value="A003">A003</option>
-            <!-- Adicione mais opções conforme necessário -->
-        </select>
+        <label for="encomenda">ID de Encomenda:</label>
+        <select name="encomenda_id" required>
+            {% for encomenda in encomenda %}
+                <option value="{{ encomenda.0 }}">{{ encomenda.1 }}</option>
+            {% endfor %}
 
         <label for="nomeFornecedor">Nome do Fornecedor:</label>
         <input type="text" id="nomeFornecedor" name="nomeFornecedor">
@@ -245,6 +269,24 @@ form {
 
 
     <script>
+
+        const selectedOptionsDiv = document.getElementById('selectedOptions');
+        const componentesSelect = document.getElementById('componentes');
+
+        componentesSelect.addEventListener('change', updateSelectedOptions);
+
+        function updateSelectedOptions() {
+            const selectedOptions = Array.from(componentesSelect.selectedOptions).map(option => option.text);
+            selectedOptionsDiv.textContent = selectedOptions.join(', ');
+
+        }
+
+
+
+
+
+
+
         function adicionarComponente() {
             var componentesDiv = document.getElementById('componentes');
             var novoComponente = document.createElement('div');

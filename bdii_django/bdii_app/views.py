@@ -494,3 +494,54 @@ def gerar_relatorio_excel(request):
         if os.path.exists(excel_file_path):
             os.remove(excel_file_path)
 
+
+
+
+from django.shortcuts import render
+from django.db import connection
+from django.contrib import messages
+
+def registo_encomenda(request):
+    if request.method == 'POST':
+        id = request.POST.get('id')
+        quantidade = request.POST.get('quantidade')
+        fornecedor = request.POST.get('fornecedor')
+        componente = request.POST.get('componentesenc')
+
+        with connection.cursor() as cursor:
+            cursor.execute(
+                "INSERT INTO pedidodecompra (id, quantidade, fornecedor, componentesenc ) VALUES (%s, %s, %s, %s)",
+                [id, quantidade, fornecedor, componente]
+            )
+            messages.success(request, 'Encomenda adicionada com sucesso!')
+
+    # Recupere os fornecedores para exibir no formulário
+    fornecedores = obter_fornecedores()
+    componentes = obter_componentes()
+
+    return render(request, 'registo_encomenda.html', {'fornecedores': fornecedores, 'componentes': componentes})
+
+def obter_fornecedores():
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT id, nome FROM fornecedor")
+        fornecedores = cursor.fetchall()
+
+    return fornecedores
+
+def obter_componentes():
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT id, nome FROM componentes")
+        componentes = cursor.fetchall()
+
+    return componentes
+
+def obter_encomendas():
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT id,  FROM encomenda")
+        encomenda = cursor.fetchall()
+
+    return encomenda
+
+    
+
+
