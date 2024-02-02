@@ -371,3 +371,30 @@ FROM componentearmazem;
 
 -- é preciso instalar isto, correr no vscode
 pip install pandas openpyxl
+
+-- estas duas views precisam de ser alteradas para que a quantidade seja aquela associada com o tipo de movimento 
+-- entrada/saida
+CREATE OR REPLACE VIEW view_componentes_armazem_entrada AS
+SELECT
+    c.nome AS nome_componente,
+    c.preco AS preco_componente,
+    ca.quantidade,
+    ca.data_entrada,
+    ca.id_armazem
+FROM
+    componentes c
+JOIN
+    componentearmazem ca ON c.id = ca.componenteid
+	
+	
+CREATE OR REPLACE VIEW view_componentes_armazem_saida AS
+SELECT
+    c.nome AS nome_componente,
+    c.preco AS preco_componente,
+    ca.quantidade,
+    ca.data_saida,
+    ca.id_armazem
+FROM
+    componentes c
+JOIN
+    componentearmazem ca ON c.id = ca.componenteid

@@ -438,8 +438,10 @@ def gerar_relatorio_excel(request):
         return HttpResponse(str(e))
 
     # Consulta os componentes que entraram e saíram no mês e ano selecionados
-    query_entrada = "SELECT * FROM componentearmazem WHERE EXTRACT(MONTH FROM data_entrada) = %s AND EXTRACT(YEAR FROM data_entrada) = %s"
-    query_saida = "SELECT * FROM componentearmazem WHERE EXTRACT(MONTH FROM data_saida) = %s AND EXTRACT(YEAR FROM data_saida) = %s"
+    #query_entrada = "SELECT * FROM componentearmazem WHERE EXTRACT(MONTH FROM data_entrada) = %s AND EXTRACT(YEAR FROM data_entrada) = %s"
+    query_entrada_componentes = f"SELECT * FROM view_componentes_armazem_entrada WHERE EXTRACT(MONTH FROM data_entrada) = {mes} AND EXTRACT(YEAR FROM data_entrada) = {ano}"
+
+    query_saida_componentes = f"SELECT * FROM view_componentes_armazem_saida WHERE EXTRACT(MONTH FROM data_saida) = {mes} AND EXTRACT(YEAR FROM data_saida) = {ano}"
 
     # Define a variável excel_file_path
     # Define o caminho para a pasta "Downloads" do usuário atual
@@ -453,15 +455,19 @@ def gerar_relatorio_excel(request):
 
     try:
         with connections['default'].cursor() as cursor:
-            cursor.execute(query_entrada, [mes, ano])
+            cursor.execute(query_entrada_componentes)
             componente_entrada_data = cursor.fetchall()
 
-            cursor.execute(query_saida, [mes, ano])
+            cursor.execute(query_saida_componentes)
             componente_saida_data = cursor.fetchall()
 
         # Cria DataFrames com os resultados
-        df_entrada = pd.DataFrame(componente_entrada_data)
-        df_saida = pd.DataFrame(componente_saida_data)
+      
+
+        df_entrada = pd.DataFrame(componente_entrada_data, columns=['Nome', 'Preço', 'Quantidade', 'Data', 'Armazem'])
+        df_saida = pd.DataFrame(componente_saida_data, columns=['Nome', 'Preço', 'Quantidade', 'Data','Armazem'])
+        df_entrada['Tipo Movimento'] = 'Entrada'
+        df_saida['Tipo Movimento'] = 'Saída'
 
         # Concatena os DataFrames
         df_result = pd.concat([df_entrada, df_saida])
@@ -479,8 +485,7 @@ def gerar_relatorio_excel(request):
     except Exception as e:
         # Trate exceções conforme necessário
         print(f"An error occurred: {str(e)}")
-        print(f"Query Entrada: {query_entrada}")
-        print(f"Query Saída: {query_saida}")
+        print(f"Query Saída: {query_saida_componentes}")
         print(f"Excel File Path: {excel_file_path}")
         return HttpResponse("Erro ao gerar o relatório Excel.")
 
