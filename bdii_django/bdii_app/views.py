@@ -200,7 +200,8 @@ def insert_componentes_to_db(username, password, componentes_data):
 
 def importar_componentes(request):
     # Caminho para o arquivo JSON
-    json_file_path = 'D:\\Universidade\\BDII\\Projeto_BDII\\bdii-site\\bdii_django\\bdii_app\\componentes.json'
+    #json_file_path = 'D:\\Universidade\\BDII\\Projeto_BDII\\bdii-site\\bdii_django\\bdii_app\\componentes.json'
+    json_file_path = '\Projeto_BDII/bdii-site/bdii_django/bdii_app/componentes.json'
 
     try:
         # Lê o conteúdo do arquivo JSON
