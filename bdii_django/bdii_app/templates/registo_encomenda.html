@@ -10,6 +10,7 @@
 form {
             max-width: 600px;
             margin: 0 auto;
+            margin-left: 160px;
         }
 
         label, input, select {
@@ -185,19 +186,21 @@ form {
     </div>
 
     <form method="post" action="{% url 'bdii_registo_encomenda' %}">
-        <h2>Nova Encomenda</h2>
-        <label for="quantidade">ID Encomenda:</label>
-        <input type="number" name="id" required><br>
         {% csrf_token %}
-        <label for="componente">Componente(s):</label>
-        <div class="selected-options" id="selectedOptions"></div>
-        <select name="componentes" id="componentes" multiple required>
-            {% for componentes in componentes %}
-                <option value="{{ componentes.0 }}">{{ componentes.1 }}</option>
-            {% endfor %}
-        </select><br>
-        <label for="quantidade">Quantidade:</label>
-        <input type="number" name="quantidade" required><br>
+        <h2>Nova Encomenda</h2>
+        <label for="componentes">Componente(s):</label>
+        <div class="component-list">
+            <div class="component-item">
+                <select name="componente[]" required>
+                    {% for componente in componentes %}
+                        <option value="{{ componente.0 }}">{{ componente.1 }}</option>
+                    {% endfor %}
+                </select>
+                <input type="number" name="quantidade[]" placeholder="Quantidade" required>
+                <button type="button" onclick="removerComponente(this)">Remover</button>
+            </div>
+        </div>
+        <button type="button" onclick="adicionarComponente()">Adicionar Componente</button>
     
         <label for="fornecedor_id">Fornecedor:</label>
         <select name="fornecedor_id" required>
@@ -208,6 +211,9 @@ form {
     
         <button type="submit">Adicionar à encomenda</button>
     </form>
+    
+    
+    
     
     
 
@@ -260,65 +266,29 @@ form {
         <button type="button" onclick="registarGuiaRemessa()">Registar</button>
     </form>
 
-
-
-
-
-
-
-
-
     <script>
+       function adicionarComponente() {
+    var componentesDiv = document.querySelector('.component-list');
+    var novoComponente = document.createElement('div');
+    novoComponente.className = 'component-item';
+    novoComponente.innerHTML = `
+        <select name="componente[]" required>
+            {% for componente in componentes %}
+                <option value="{{ componente.0 }}">{{ componente.1 }}</option>
+            {% endfor %}
+        </select>
+        <input type="number" name="quantidade[]" placeholder="Quantidade" required>
+        <button type="button" onclick="removerComponente(this)">Remover</button>
+    `;
+    componentesDiv.appendChild(novoComponente);
+}
 
-        const selectedOptionsDiv = document.getElementById('selectedOptions');
-        const componentesSelect = document.getElementById('componentes');
-
-        componentesSelect.addEventListener('change', updateSelectedOptions);
-
-        function updateSelectedOptions() {
-            const selectedOptions = Array.from(componentesSelect.selectedOptions).map(option => option.text);
-            selectedOptionsDiv.textContent = selectedOptions.join(', ');
-
-        }
-
-
-
-
-
-
-
-        function adicionarComponente() {
-            var componentesDiv = document.getElementById('componentes');
-            var novoComponente = document.createElement('div');
-            novoComponente.className = 'component-item';
-            novoComponente.innerHTML = `
-                <input type="text" name="componente[]" placeholder="Nome do componente">
-                <button type="button" onclick="removerComponente(this)">Remover</button>
-            `;
-            componentesDiv.appendChild(novoComponente);
-        }
-
+    
         function removerComponente(button) {
             var componenteDiv = button.parentNode;
             componenteDiv.parentNode.removeChild(componenteDiv);
         }
-
-        function guardarEncomenda() {
-            // Lógica para guardar a encomenda
-            console.log('Encomenda guardada!');
-        }
-
-        function guardarFatura() {
-            // Lógica para guardar a fatura
-            console.log('Fatura guardada!');
-        }
-
-        function registarGuiaRemessa() {
-            // Lógica para registar a guia de remessa
-            console.log('Guia de remessa registada!');
-        }
     </script>
-
 
 </body>
 </html>

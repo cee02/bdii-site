@@ -10,6 +10,7 @@ from django.db import transaction
 import pandas as pd
 import os
 from django.conf import settings
+from django.contrib import messages
 
 
 def error_page(request, error_message):
@@ -331,11 +332,45 @@ def dashboard(request):
                                               'equipamento_saida_stock_recente': equipamento_saida_stock_recente, 'low_stock_components_data': low_stock_components_data,
                                               'view_meses_anos_componentearmazem': view_meses_anos_componentearmazem})
 
-
+   
 
 def registo_encomenda(request):
-    user_name = request.session.get('username', 'Guest') # para o nome no menu lateral
-    return render(request, 'registo_encomenda.html', {'user_name': user_name})
+    fornecedores = obter_fornecedores()
+    componentes = obter_componentes()
+
+    if request.method == 'POST':
+        componentes_list = request.POST.getlist('componente[]')
+        quantidades_list = request.POST.getlist('quantidade[]')
+        fornecedor_id = request.POST.get('fornecedor_id')
+
+        with connection.cursor() as cursor:
+            try:
+                # Insert into Encomenda_componentesHeader
+                cursor.execute('INSERT INTO Encomenda_componentesHeader DEFAULT VALUES RETURNING Id')
+                encomenda_header_id = cursor.fetchone()[0]
+
+                # Convert the component IDs to a list of integers
+                componentes_list = [int(componente_id) for componente_id in componentes_list]
+
+                # Loop through the components and quantities, and call the stored procedure
+                for componente, quantidade in zip(componentes_list, quantidades_list):
+                    cursor.execute("SELECT insert_componentes_pedido_compra(%s, %s, %s, %s)",
+                                   [componente, quantidade, fornecedor_id, encomenda_header_id])
+
+                # Commit the changes
+                connection.commit()
+
+                return HttpResponse('Encomenda registrada com sucesso!')
+
+            except Exception as e:
+                # Rollback the transaction if an exception occurs
+                connection.rollback()
+                return render(request, 'error_page.html', {'error_message': str(e)})
+
+    user_name = request.session.get('username', 'Guest')
+    return render(request, 'registo_encomenda.html', {'user_name': user_name, 'fornecedores': fornecedores, 'componentes': componentes})
+
+
 
 def get_armazem_data(request):
     with connection.cursor() as cursor:
@@ -494,33 +529,6 @@ def gerar_relatorio_excel(request):
         # Garante que o arquivo seja fechado, mesmo se ocorrer uma exceção
         if os.path.exists(excel_file_path):
             os.remove(excel_file_path)
-
-
-
-
-from django.shortcuts import render
-from django.db import connection
-from django.contrib import messages
-
-def registo_encomenda(request):
-    if request.method == 'POST':
-        id = request.POST.get('id')
-        quantidade = request.POST.get('quantidade')
-        fornecedor = request.POST.get('fornecedor')
-        componente = request.POST.get('componentesenc')
-
-        with connection.cursor() as cursor:
-            cursor.execute(
-                "INSERT INTO pedidodecompra (id, quantidade, fornecedor, componentesenc ) VALUES (%s, %s, %s, %s)",
-                [id, quantidade, fornecedor, componente]
-            )
-            messages.success(request, 'Encomenda adicionada com sucesso!')
-
-    # Recupere os fornecedores para exibir no formulário
-    fornecedores = obter_fornecedores()
-    componentes = obter_componentes()
-
-    return render(request, 'registo_encomenda.html', {'fornecedores': fornecedores, 'componentes': componentes})
 
 def obter_fornecedores():
     with connection.cursor() as cursor:
