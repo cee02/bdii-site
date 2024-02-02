@@ -398,3 +398,18 @@ FROM
     componentes c
 JOIN
     componentearmazem ca ON c.id = ca.componenteid
+
+
+    ---Corram isto no pgadmin para alterar a View low_stock_components
+    CREATE OR REPLACE VIEW public.low_stock_components AS
+SELECT c.nome, ce.quantidade
+FROM Componentes c
+JOIN Componentearmazem ce ON c.ID = ce.componenteID
+WHERE ce.quantidade <= 10
+ORDER BY ce.quantidade;
+
+ALTER TABLE public.low_stock_components
+OWNER TO postgres;
+
+GRANT ALL ON TABLE public.low_stock_components TO aluno3_a;
+GRANT ALL ON TABLE public.low_stock_components TO postgres;
