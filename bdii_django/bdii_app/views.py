@@ -125,8 +125,7 @@ def producao_equipamentos(request):
                         cursor.execute('INSERT INTO ProducaoHeader DEFAULT VALUES RETURNING Id')
                         producao_header_id = cursor.fetchone()[0]
 
-                        cursor.execute(
-                            'SELECT * FROM insert_componentes_ficha_producao(%s, %s, %s, %s, %s)',
+                        cursor.execute('SELECT * FROM insert_componentes_ficha_producao(%s, %s, %s, %s, %s)',
                             [componente_ids, 1, int(tipooperacao), int(mao_obra), producao_header_id]
                         )    
                         print('insert_componentes_ficha_producao executed')
@@ -346,7 +345,7 @@ def registo_encomenda(request):
         print (componentes_list)
         with connection.cursor() as cursor:
             try:
-                # Insert into Encomenda_componentesHeader
+                #
                 cursor.execute('INSERT INTO Encomenda_componentesHeader DEFAULT VALUES RETURNING Id')
                 encomenda_header_id = cursor.fetchone()[0]
 
@@ -385,9 +384,31 @@ def get_armazem_data(request):
 
     return render(request, '.html', context)
 
+
 def registar_equipamento(request):
-    user_name = request.session.get('username', 'Guest') # para o nome no menu lateral
-    return render(request, 'registar_equipamento.html', {'user_name': user_name})
+    user_name = request.session.get('username', 'Guest')
+    componentes = []
+
+    producao_header_id = request.POST.get('encomenda_id', None)
+    print('producao_header_id:', producao_header_id)
+    if producao_header_id:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    "SELECT * FROM vw_componentes_by_producao_header WHERE id_producao_header = %s",
+                    [producao_header_id]
+                )
+                columns = [col[0] for col in cursor.description]
+                componentes = [dict(zip(columns, row)) for row in cursor.fetchall()]
+                print('Componentes:', componentes)
+
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT id FROM vw_componentes_ProducaoHeader")
+        encomenda_ids = [row[0] for row in cursor.fetchall()]
+
+    return render(request, 'registar_equipamento.html', {'user_name': user_name, 'encomenda_ids': encomenda_ids, 'componentes': componentes})
+
+
+
 
 def vendas_equipamentos(request):
     user_name = request.session.get('username', 'Guest') # para o nome no menu lateral
@@ -397,52 +418,6 @@ def home(request):
     
     user_name = request.session.get('username', 'Guest')
     return render(request, 'homepage.html', {'user_name': user_name})
-
-def registar_equipamento(request): # listar componentes
-    # Obter conexão com o banco de dados
-    user_name = request.session.get('username', 'Guest') 
-    print("Entrando na view registo_equipamentos")
-    username = request.session.get('username')
-    password = request.session.get('password')
-    print(username)
-    print(password)
-    connection = get_database_connection(username, password)
-
-    user_name = request.session.get('username', 'Guest') # para o nome no menu lateral
-    
-    if connection:
-        try:
-            # Criar um cursor a partir da conexão
-            cursor = connection.cursor()
-
-            # Chamar a procedure usando SELECT para a função get_componentes_data_function
-            cursor.execute('SELECT * FROM get_componentes_data_function()')
-
-            # Recuperar os resultados da procedure
-            componentes_results = cursor.fetchall()
-            print("Resultados da função get_componentes_data_function:", componentes_results)
-
-            # Chamar a procedure usando SELECT para a função get_equipamentos_prontos_para_armazenar
-            cursor.execute('SELECT * FROM get_equipamentos_prontos_para_armazenar()')
-
-            # Recuperar os resultados da procedure
-            equipamentos_results = cursor.fetchall()
-            print("Resultados da função get_equipamentos_prontos_para_armazenar:", equipamentos_results)
-
-            # Fechar o cursor
-            cursor.close()
-
-            # Fechar a conexão
-            close_database_connection(connection)
-
-            # Passar os resultados para o contexto da renderização
-            return render(request, 'registar_equipamento.html', {'componentes': componentes_results, 'equipamentos': equipamentos_results, 'user_name': user_name})
-        except Exception as e:
-            # Lidar com exceções, se houver algum problema durante a execução da procedure
-            return render(request, 'error_page.html', {'error_message': str(e)})
-    else:
-        # Lidar com o caso em que a conexão com o banco de dados falha
-        return render(request, 'error_page.html', {'error_message': 'Failed to connect to the database'})
     
 def fazerregisto_equipamento(request): #registar equipamento (ainda nao pinta)
     if request.method == 'POST':

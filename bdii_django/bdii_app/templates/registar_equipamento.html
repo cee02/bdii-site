@@ -7,202 +7,261 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <title>Registar Equipamento</title>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            display: flex;
-        }
+       body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
 
-        .sidebar {
-            height: 100%;
-            width: 90px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            background-color: #184060;
-            overflow-x: hidden;
-            padding-top: 20px;
-            transition: 0.5s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+.sidebar {
+    height: 100%;
+    width: 90px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #184060;
+    overflow-x: hidden;
+    padding-top: 20px;
+    transition: 0.5s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
-        .sidebar:hover {
-            width: 250px;
-        }
+.sidebar:hover {
+    width: 250px;
+}
 
-        .menu {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
+.menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
 
-        .menu-text {
-            display: none;
-        }
+.menu-text {
+    display: none;
+}
 
-        .menu a {
-            text-decoration: none;
-            color: white;
-            padding: 15px;
-            display: flex;
-            align-items: center;
-            transition: 0.3s;
-        }
+.menu a {
+    text-decoration: none;
+    color: white;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    transition: 0.3s;
+}
 
-        .menu i {
-            margin-right: 10px;
-            display: inline;
-        }
+.menu i {
+    margin-right: 10px;
+    display: inline;
+}
 
-        .menu a:hover {
-            background-color: rgba(57, 91, 141, 0.973);
-        }
+.menu a:hover {
+    background-color: rgba(57, 91, 141, 0.973);
+}
 
-        .sidebar:hover .menu-text {
-            display: inline;
-        }
+.sidebar:hover .menu-text {
+    display: inline;
+}
 
-        .user-profile {
-            text-align: center;
-            color: #e8e8e8;
-            padding-bottom: 20px;
-        }
+.user-profile {
+    text-align: center;
+    color: #e8e8e8;
+    padding-bottom: 20px;
+}
 
-        .user-profile img {
-            width: 50px;
-            border-radius: 50%;
-        }
+.user-profile img {
+    width: 50px;
+    border-radius: 50%;
+}
 
-        form {
-            
-            margin: 0 auto;
-            background-color: #a1a1a1;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
+form {
+ 
+    width: 75%;
+    margin: 0 auto;
+    background-color: #f8f9fa;
+    margin-right: 100px;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
 
-        label {
-            display: block;
-            margin-bottom: 8px;
-        }
+form h2 {
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
 
-        input,
-        select {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 16px;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
+form label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #495057;
+}
 
-        button {
-            margin-top: 10px;
-            padding: 10px;
-            background-color: #000000;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
+form input,
+form select,
+form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 16px;
+    box-sizing: border-box;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background-color: #fff;
+}
 
-        button:hover {
-            background-color: #000000;
-        }
+form textarea {
+    resize: vertical; /* Allow vertical resizing of textarea */
+}
 
+form button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+form button:hover {
+    background-color: #0056b3;
+}
+
+
+label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 16px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #000000;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #000000;
+}
 
 /* Scrollable container for the table */
-    .scrollable-container {
-      max-height: 510px;
-      overflow-y: scroll;
-    }
+.scrollable-container {
+    max-height: 510px;
+    overflow-y: scroll;
+}
 
-    .table-title {
-      text-align: center;
-      font-size: 20px;
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
-    .checkbox-container {
-      display: flex;
+.table-title {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.checkbox-container {
+    display: flex;
     align-items: center;
     cursor: pointer;
     margin-bottom: 15px;
     margin-left: -130px;
 }
+
 .container {
-      max-width: 600px;
-      margin: 20px auto;
-      margin-left: 200px;
-      margin-top: 60px;
+    max-width: 600px;
+    margin: 20px auto;
+    margin-left: 200px;
+    margin-top: 60px;
+}
+
+.component-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+h3 {
+        color: #333;
+        font-size: 1.5em;
+        margin-bottom: 10px;
+    }
+.component-list {
+        list-style: none;
+        padding: 0;
     }
 
-    .component-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
 
-    .component-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
+.component-item {
+    background-color: #fff;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.componente-nome {
+        font-weight: bold;
+        color: #000000;
     }
+.component-item:hover {
+    background-color: #f1f1f1;
+}
 
-    .component-item {
-      background-color: #fff;
-      padding: 10px;
-      margin-bottom: 15px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      transition: background-color 0.3s;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+.component-details {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin-top: 20px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: left;
+    border: 2px solid #3498db;
+}
 
-    .component-item:hover {
-      background-color: #f1f1f1;
-    }
-    .component-details {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      margin-top: 20px;
-      background-color: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      text-align: left;
-      border: 2px solid #3498db;
-    }
+.component-details h2 {
+    color: #333;
+    margin-bottom: 10px;
+}
 
-    .component-details h2 {
-      color: #333;
-      margin-bottom: 10px;
-    }
+.component-details p {
+    margin: 8px 0;
+}
 
-    .component-details p {
-      margin: 8px 0;
-    }
-    .component-details button {
-      background-color: #3498db; 
-      color: #fff;
-      padding: 8px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-    .component-details button:hover {
-      background-color: #03548b; 
-    }
+.component-details button {
+    background-color: #3498db;
+    color: #fff;
+    padding: 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.component-details button:hover {
+    background-color: #03548b;
+}
     
     </style>
 </head>
@@ -224,66 +283,60 @@
         </ul>
     </div>
 
-    <form action="">
-        <h2>Registar Equipamento</h2>
-        <label for="fname">ID da ficha de Produção:</label>
-        <input type="text" id="fname" name="fname">
-        <label for="lname">Tipo:</label>
-        <input type="text" id="lname" name="lname">
-        <label for="lname">Data de Montagem:</label>
-        <input type="date" id="lname" name="lname">
-        <label for="lname">Configuração:</label>
-        <input type="text" id="lname" name="lname">
-        <label for="lname">Armazem:</label>
-        <input type="text" id="lname" name="lname">
-        <br><br>
-        <button type="submit">Registar</button>
+    <form action="" method="POST" id="registarEquipamentoForm">
+        {% csrf_token %}
+        <div style="display: flex; justify-content: space-between;">
+            <div style="width: 45%;">
+                <h2>Registar Equipamento</h2>
+                <label for="encomenda_id">ID da Ficha de Produção:</label>
+                <select id="encomenda_id" name="encomenda_id">
+                    <option value="" selected disabled>Selecione uma opção</option>
+                    {% for encomenda_id in encomenda_ids %}
+                        <option value="{{ encomenda_id }}">{{ encomenda_id }}</option>
+                    {% endfor %}
+                </select>
+                <br><br>
+        
+                <label for="tipo">Tipo:</label>
+                <input type="text" id="tipo" name="tipo">
+                <label for="descricao">Descrição:</label>
+                <textarea id="descricao" name="descricao" rows="4"></textarea>
+            </div>
+        
+            <div style="width: 45%;">
+                <!-- Componentes associados -->
+                <div class="component-list-container">
+                    <h3>Componentes Associados:</h3>
+                    <ul class="component-list" id="componentList">
+                        <!-- A lista de componentes será preenchida dinamicamente com JavaScript -->
+                        <ul>
+                            {% for componente in componentes %}
+                                <li class="componente-item">
+                                    <span class="componente-nome">{{ componente.nome }}</span> || <br>
+                                    <span class="componente-descricao">{{ componente.descricao }}</span> ||<br>
+                                    <span class="componente-preco">{{ componente.preco }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Adicione um botão de submit ao final do formulário -->
+        <button type="submit">Submit</button>
     </form>
-
     
-  <!-- Secção de Componentes -->
-  <div class="container">
-    <div class="table-title">Lista de Componentes em Stock</div>
-    <div class="scrollable-container">
-      <table class="component-table">
-        <tbody class="component-list">
-          {% for componente in componentes %}
-          <tr class="component-item" data-id="{{ componente.0 }}" data-nome="{{ componente.1 }}" data-descricao="{{ componente.2 }}" data-preco="{{ componente.3 }}">
-            <td><span>{{ componente.1 }}</span></td>
-            <td>
-              <button class="details-button" onclick="showDetailscomponent(this)" style="margin-right: 150px;">Detalhes</button>
-              <i class="fas fa-shopping-basket basket-icon" onclick="showAssemblyList('{{ componente.0 }}', '{{ componente.1 }}')" style="margin-right: 50px;"></i>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </div>
-   <!-- Detalhes do Componente -->
-   <div class="component-details" id="componentDetails">
-    <h2>Detalhes do Componente</h2>
-    <p><strong>Nome:</strong> <span id="componentNome"></span></p>
-    <p><strong>Descrição:</strong> <span id="componentDescricao"></span></p>
-    <p><strong>Preço:</strong> <span id="componentPreco"></span></p>
 
-    <button onclick="hideDetailscomponent()">Fechar</button>
-  </div>
-  <script>
-    function showDetailscomponent(button) {
-      const listItem = button.closest('.component-item');
-      const componentNome = listItem.dataset.nome;
-      const componentDescricao = listItem.dataset.descricao;
-      const componentPreco = listItem.dataset.preco;
-      // Preencher os detalhes do componente
-      document.getElementById('componentNome').innerText = componentNome;
-      document.getElementById('componentDescricao').innerText = componentDescricao;
-      document.getElementById('componentPreco').innerText = componentPreco;
-
-      // Exibir a seção de detalhes do componente
-      document.getElementById('componentDetails').style.display = 'block';
-    }
+    <script>
+        // Adicionar um ouvinte de evento ao seletor de Ficha de Produção
+        document.getElementById('encomenda_id').addEventListener('change', function () {
+            // Submit do formulário quando o valor é alterado
+            document.getElementById('registarEquipamentoForm').submit();
+        });
     </script>
+  
+
+
 
 </body>
 

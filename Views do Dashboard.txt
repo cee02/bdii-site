@@ -557,3 +557,24 @@ CREATE OR REPLACE VIEW id_encomenda AS
 SELECT id
 FROM encomenda_componentesheader;
 select * from id_encomenda
+
+
+-- Criar para o Registo de equipamento
+CREATE VIEW vw_componentes_ProducaoHeader AS
+SELECT id
+FROM ProducaoHeader;
+
+
+CREATE OR REPLACE VIEW vw_componentes_by_producao_header AS
+SELECT
+    cf.id,
+    c.nome,
+    c.descricao,
+    c.preco,
+    cf.id_producao_header  
+FROM
+    ComponentesFichaProducao cf
+JOIN
+    componentes c ON cf.idcomponente = c.id
+JOIN
+    ProducaoHeader ph ON cf.id_producao_header = ph.id;  

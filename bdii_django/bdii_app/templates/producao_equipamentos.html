@@ -26,6 +26,7 @@
       width: 100%;
       border-collapse: collapse;
       margin-top: 20px;
+     
     }
 
     .component-list {
@@ -151,41 +152,6 @@
     .component-details button:hover {
       background-color: #0867a6; 
     }
-    
-    .equipment-details {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      margin-top: 20px;
-      background-color: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      text-align: left;
-      border: 2px solid #0867a6;
-    }
-
-    .equipment-details h2 {
-      color: #333;
-      margin-bottom: 10px;
-    }
-
-    .equipment-details p {
-      margin: 8px 0;
-    }
-    .equipment-details button {
-      background-color: #0867a6; 
-      color: #fff;
-      padding: 8px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-    .equipment-details button:hover {
-      background-color: #03548b; 
-    }
 
     /* sidebar */
 
@@ -258,7 +224,7 @@
 
     /* Scrollable container for the table */
     .scrollable-container {
-      max-height: 350px;
+      max-height: 490px;
       overflow-y: scroll;
     }
 
@@ -317,13 +283,13 @@
 .tipo-container {
   position: fixed;
   margin-left: 1050px;
-  margin-top: 105px;
+  margin-top: -30px;
 }
 
 .tipo-container1 {
   position: fixed;
   margin-left: 1250px;
-  margin-top: 105px;
+  margin-top: -30px;
 }
 .assembly-list {
   list-style: none;
@@ -435,36 +401,7 @@
   
 </div>
 
-  <!-- Secção de Equipamentos -->
-  <div class="container">
-    <div class="table-title">Lista de Equipamentos</div>
-    <div class="scrollable-container">
-        <table class="equipment-table">
-            <tbody class="equipment-list">
-                <tr>
-                    <td>
-                        <h4 style="margin-left: 10px; display: inline-block;">Descrição</h4>
-                        <h4 style="margin-left: 280px; display: inline-block;">Pronto para Armazenar</h4>
-                    </td>
-                </tr>
-                {% for equipamento in equipamentos %}
-                    <tr class="equipment-item" data-id="{{ equipamento.0 }}" data-tipo="{{ equipamento.1 }}" data-descricao="{{ equipamento.2 }}" data-preco="{{ equipamento.3 }}">
-                        <td><span>{{ equipamento.1 }}</span></td>
-                        <td>
-                          <button class="details-button" onclick="showDetailsequipment(this)" style="margin-left: 170px;">Detalhes</button>
-                      </td>
-                        <td>
-                         <label class="checkbox-container">
-        <input type="checkbox" id="prontoParaArmazenar{{ equipamento.0 }}" {% if equipamento.4 %}checked{% endif %} disabled>
-    </label>
-                      </td>
-                        
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</div>
+ 
 
 
   <!-- Detalhes do Componente -->
@@ -477,15 +414,7 @@
     <button onclick="hideDetailscomponent()">Fechar</button>
   </div>
 
-  <!-- Detalhes do Equipamento -->
-  <div class="equipment-details" id="equipmentDetails">
-    <h2>Detalhes do Equipamento</h2>
-    <p><strong>Tipo:</strong> <span id="equipmentTipo"></span></p>
-    <p><strong>Descrição:</strong> <span id="equipmentDescricao"></span></p>
-    <p><strong>Preço:</strong> <span id="equipmentPreco"></span></p>
 
-    <button onclick="hideDetailsequipment()">Fechar</button>
-  </div>
 
   <script>
     function showDetailscomponent(button) {
