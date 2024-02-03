@@ -342,7 +342,7 @@ def registo_encomenda(request):
         componentes_list = request.POST.getlist('componente[]')
         quantidades_list = request.POST.getlist('quantidade[]')
         fornecedor_id = request.POST.get('fornecedor_id')
-
+        print (componentes_list)
         with connection.cursor() as cursor:
             try:
                 # Insert into Encomenda_componentesHeader
@@ -350,16 +350,14 @@ def registo_encomenda(request):
                 encomenda_header_id = cursor.fetchone()[0]
 
                 # Convert the component IDs to a list of integers
-                componentes_list = [int(componente_id) for componente_id in componentes_list]
+                componentes_array = [int(componente) for componente in componentes_list]
+                quantidades_array = [int(quantidade) for quantidade in quantidades_list]
 
-                # Loop through the components and quantities, and call the stored procedure
-                for componente, quantidade in zip(componentes_list, quantidades_list):
-                    cursor.execute("SELECT insert_componentes_pedido_compra(%s, %s, %s, %s)",
-                                   [componente, quantidade, fornecedor_id, encomenda_header_id])
-
+                cursor.execute("SELECT insert_componentes_pedido_compra(%s, %s, %s, %s)",
+                            [componentes_array, quantidades_array, int(fornecedor_id), encomenda_header_id])
+        
                 # Commit the changes
                 connection.commit()
-
                 return HttpResponse('Encomenda registrada com sucesso!')
 
             except Exception as e:
@@ -550,7 +548,3 @@ def obter_encomendas():
         encomenda = cursor.fetchall()
 
     return encomenda
-
-    
-
-
