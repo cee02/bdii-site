@@ -204,6 +204,8 @@ def importar_componentes(request):
     #json_file_path = 'D:\\Universidade\\BDII\\Projeto_BDII\\bdii-site\\bdii_django\\bdii_app\\componentes.json'
     json_file_path = '\Projeto_BDII/bdii-site/bdii_django/bdii_app/componentes.json'
 
+    #PARA O MENESES
+    #json_file_path = 'C:\\Users\\franc\\OneDrive\\Documentos\\GitHub\\bdii-site\\bdii_django\\bdii_app\\componentes.json'
     try:
         # Lê o conteúdo do arquivo JSON
         with open(json_file_path, 'r') as file:
