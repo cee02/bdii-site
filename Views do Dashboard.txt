@@ -487,3 +487,58 @@ END;
 $$
 LANGUAGE plpgsql;
 
+-----------------
+insert into Encomenda_componentesHeader(Id)
+values (1);
+
+CREATE TABLE Encomenda_componentesHeader (
+    Id SERIAL PRIMARY KEY
+);
+
+CREATE TABLE PedidoDeCompra (
+    Id SERIAL PRIMARY KEY,
+    componenteID INT,
+    quantidadeComponente INT,
+    fornecedor_id INT,
+    datahora TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    id_Encomenda_componentesHeader INT,
+    FOREIGN KEY (componenteID) REFERENCES Componentes(ID),
+    FOREIGN KEY (fornecedor_id) REFERENCES Fornecedor(ID),
+    FOREIGN KEY (id_Encomenda_componentesHeader) REFERENCES Encomenda_componentesHeader(ID)
+);
+
+CREATE OR REPLACE FUNCTION insert_componentes_pedido_compra(
+    p_idcomponentes integer[],
+    p_quantidades integer[],
+    p_fornecedor_id integer,
+    p_id_Encomenda_componentesHeader integer
+)
+RETURNS VOID AS
+$$
+DECLARE
+    idcomponente_element INT;
+    quantidade_element INT;
+BEGIN
+    -- Verificar se os arrays têm o mesmo comprimento
+    IF array_length(p_idcomponentes, 1) <> array_length(p_quantidades, 1) THEN
+        RAISE EXCEPTION 'Arrays de comprimentos diferentes';
+    END IF;
+
+    -- Iterar sobre os arrays simultaneamente
+    FOR i IN 1..array_length(p_idcomponentes, 1)
+    LOOP
+        -- Obter os elementos correspondentes dos arrays
+        idcomponente_element := p_idcomponentes[i];
+        quantidade_element := p_quantidades[i];
+
+        -- Inserir na tabela PedidoDeCompra
+        INSERT INTO PedidoDeCompra (componenteID, quantidadeComponente, fornecedor_id, datahora, id_Encomenda_componentesHeader) 
+        VALUES (idcomponente_element, quantidade_element, p_fornecedor_id, CURRENT_TIMESTAMP, p_id_Encomenda_componentesHeader);
+    END LOOP;
+EXCEPTION
+    WHEN others THEN
+        -- Levantar uma exceção com a mensagem de erro
+        RAISE EXCEPTION 'Erro em insert_componentes_pedido_compra: %', SQLERRM;
+END;
+$$
+LANGUAGE plpgsql;
