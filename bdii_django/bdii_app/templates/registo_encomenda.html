@@ -196,7 +196,7 @@ form {
                         <option value="{{ componente.0 }}">{{ componente.1 }}</option>
                     {% endfor %}
                 </select>
-                <input type="number" name="quantidade[]" placeholder="Quantidade" required>
+                <input type="number" name="quantidade[]" placeholder="Quantidade" required min="1" required>
                 <button type="button" onclick="removerComponente(this)">Remover</button>
             </div>
         </div>
@@ -209,14 +209,10 @@ form {
             {% endfor %}
         </select><br>
     
-        <button type="submit">Adicionar à encomenda</button>
+        <button type="submit" id="adicionarBtn" onclick="showSuccessAlert()">Adicionar à encomenda</button>
     </form>
     
     
-    
-    
-    
-
     <form id="faturaForm">
         <h2>Registo da Fatura da Encomenda</h2>
         <label for="encomenda">ID de Encomenda:</label>
@@ -268,25 +264,46 @@ form {
 
     <script>
        function adicionarComponente() {
-    var componentesDiv = document.querySelector('.component-list');
-    var novoComponente = document.createElement('div');
-    novoComponente.className = 'component-item';
-    novoComponente.innerHTML = `
-        <select name="componente[]" required>
-            {% for componente in componentes %}
-                <option value="{{ componente.0 }}">{{ componente.1 }}</option>
-            {% endfor %}
-        </select>
-        <input type="number" name="quantidade[]" placeholder="Quantidade" required>
-        <button type="button" onclick="removerComponente(this)">Remover</button>
-    `;
-    componentesDiv.appendChild(novoComponente);
-}
+            var componentesDiv = document.querySelector('.component-list');
+            var novoComponente = document.createElement('div');
+            novoComponente.className = 'component-item';
+            novoComponente.innerHTML = `
+                <select name="componente[]" required>
+                    {% for componente in componentes %}
+                         <option value="{{ componente.0 }}">{{ componente.1 }}</option>
+                    {% endfor %}
+                </select>
+                <input type="number" name="quantidade[]" placeholder="Quantidade" required>
+                <button type="button" onclick="removerComponente(this)">Remover</button>
+            `;
+            componentesDiv.appendChild(novoComponente);
+        }
 
-    
         function removerComponente(button) {
             var componenteDiv = button.parentNode;
             componenteDiv.parentNode.removeChild(componenteDiv);
+        }
+
+        function showSuccessAlert() {
+            // Verificar se pelo menos uma quantidade foi inserida
+            var quantidades = document.getElementsByName("quantidade[]");
+            var quantidadePreenchida = false;
+
+            for (var i = 0; i < quantidades.length; i++) {
+                if (quantidades[i].value.trim() !== "") {
+                    quantidadePreenchida = true;
+                    break;
+                }
+            }
+
+            if (!quantidadePreenchida) {
+                alert('Requisitos em falta');
+                return false;
+            }
+
+            else if(quantidadePreenchida) {
+                alert('Encomanda feita com sucesso');
+            }
         }
     </script>
 

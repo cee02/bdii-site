@@ -349,6 +349,9 @@ def registo_encomenda(request):
                 cursor.execute('INSERT INTO Encomenda_componentesHeader DEFAULT VALUES RETURNING Id')
                 encomenda_header_id = cursor.fetchone()[0]
 
+                #cursor.execute("SELECT * FROM ")
+                #id_das_encomendas = cursor.fetchall()
+
                 # Convert the component IDs to a list of integers
                 componentes_array = [int(componente) for componente in componentes_list]
                 quantidades_array = [int(quantidade) for quantidade in quantidades_list]
@@ -358,7 +361,6 @@ def registo_encomenda(request):
         
                 # Commit the changes
                 connection.commit()
-                return HttpResponse('Encomenda registrada com sucesso!')
 
             except Exception as e:
                 # Rollback the transaction if an exception occurs
