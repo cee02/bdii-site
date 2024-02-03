@@ -542,3 +542,18 @@ EXCEPTION
 END;
 $$
 LANGUAGE plpgsql;
+
+-----------------
+
+CREATE OR REPLACE VIEW dados_fornecedor AS
+SELECT id, nome
+FROM fornecedor;
+
+CREATE OR REPLACE VIEW dados_componentes AS
+SELECT id, nome
+FROM componentes;
+
+CREATE OR REPLACE VIEW id_encomenda AS
+SELECT id
+FROM encomenda_componentesheader;
+select * from id_encomenda

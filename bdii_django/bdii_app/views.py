@@ -204,8 +204,6 @@ def importar_componentes(request):
     json_file_path = 'D:\\Universidade\\BDII\\Projeto_BDII\\bdii-site\\bdii_django\\bdii_app\\componentes.json'
     #json_file_path = '\Projeto_BDII/bdii-site/bdii_django/bdii_app/componentes.json'
 
-    #PARA O MENESES
-    #json_file_path = 'C:\\Users\\franc\\OneDrive\\Documentos\\GitHub\\bdii-site\\bdii_django\\bdii_app\\componentes.json'
     try:
         # Lê o conteúdo do arquivo JSON
         with open(json_file_path, 'r') as file:
@@ -339,6 +337,7 @@ def dashboard(request):
 def registo_encomenda(request):
     fornecedores = obter_fornecedores()
     componentes = obter_componentes()
+    idencomenda = obter_encomendas()
 
     if request.method == 'POST':
         componentes_list = request.POST.getlist('componente[]')
@@ -351,7 +350,7 @@ def registo_encomenda(request):
                 cursor.execute('INSERT INTO Encomenda_componentesHeader DEFAULT VALUES RETURNING Id')
                 encomenda_header_id = cursor.fetchone()[0]
 
-                #cursor.execute("SELECT * FROM ")
+                #cursor.execute("SELECT * FROM idencomenda")
                 #id_das_encomendas = cursor.fetchall()
 
                 # Convert the component IDs to a list of integers
@@ -370,7 +369,7 @@ def registo_encomenda(request):
                 return render(request, 'error_page.html', {'error_message': str(e)})
 
     user_name = request.session.get('username', 'Guest')
-    return render(request, 'registo_encomenda.html', {'user_name': user_name, 'fornecedores': fornecedores, 'componentes': componentes})
+    return render(request, 'registo_encomenda.html', {'user_name': user_name, 'fornecedores': fornecedores, 'componentes': componentes, 'idencomenda': idencomenda})
 
 
 
@@ -534,21 +533,24 @@ def gerar_relatorio_excel(request):
 
 def obter_fornecedores():
     with connection.cursor() as cursor:
-        cursor.execute("SELECT id, nome FROM fornecedor")
+        #cursor.execute("SELECT id, nome FROM fornecedor")
+        cursor.execute("SELECT * FROM dados_fornecedor")
         fornecedores = cursor.fetchall()
 
     return fornecedores
 
 def obter_componentes():
     with connection.cursor() as cursor:
-        cursor.execute("SELECT id, nome FROM componentes")
+        #cursor.execute("SELECT id, nome FROM componentes")
+        cursor.execute("SELECT * FROM dados_componentes")
         componentes = cursor.fetchall()
 
     return componentes
 
 def obter_encomendas():
     with connection.cursor() as cursor:
-        cursor.execute("SELECT id,  FROM encomenda")
-        encomenda = cursor.fetchall()
+        #cursor.execute("SELECT id,  FROM encomenda")
+        cursor.execute("SELECT * FROM id_encomenda")
+        idencomenda = cursor.fetchall()
 
-    return encomenda
+    return idencomenda

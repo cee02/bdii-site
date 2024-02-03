@@ -217,8 +217,8 @@ form {
         <h2>Registo da Fatura da Encomenda</h2>
         <label for="encomenda">ID de Encomenda:</label>
         <select name="encomenda_id" required>
-            {% for encomenda in encomenda %}
-                <option value="{{ encomenda.0 }}">{{ encomenda.1 }}</option>
+            {% for encomenda in idencomenda %}
+                <option value="{{ encomenda.0 }}">{{ encomenda.0 }}</option>
             {% endfor %}
 
         <label for="nomeFornecedor">Nome do Fornecedor:</label>
