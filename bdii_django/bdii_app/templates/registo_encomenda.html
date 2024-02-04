@@ -230,21 +230,13 @@ form {
             <label for="nomeFornecedor">Nome do Fornecedor:</label>
             <input type="text" id="nomeFornecedor" name="nomeFornecedor" readonly>
             
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nome do Componente</th>
-                        <th>Quantidade</th>
-                        <th>Preço Total</th>
-                    </tr>
-                </thead>
-                <tbody id="componentesTableBody">
-                    <!-- Dados da tabela serão adicionados aqui usando JavaScript -->
-                </tbody>
-            </table>
-
-            <label for="valorTotal">Valor Total (€):</label>
+            <label for="dataHora">Data/Hora Emissão:</label>
+            <input type="datetime-local" id="dataHora" name="dataHora" readonly>
+            
+            <label for="valorTotal">Valor Total:</label>
             <input type="text" id="valorTotal" name="valorTotal" readonly>
+
+            <ul id="componentesList"></ul>
     
             <button type="button" onclick="guardarFatura()">Guardar</button>
         </div>
@@ -324,12 +316,7 @@ form {
             fetchEncomendaData();
             document.getElementById("additionalFields").style.display = "block";
             document.getElementById("continuarButton").style.display = "none";
-        }
-
-        function continuar() {
-            fetchEncomendaData();
-            document.getElementById("additionalFields").style.display = "block";
-            document.getElementById("continuarButton").style.display = "none";
+            document.getElementById("encomenda_id").onchange = function() {fetchEncomendaData();};
         }
 
         function fetchEncomendaData() {
@@ -338,30 +325,32 @@ form {
             fetch('/registo_encomenda/fetch_encomenda_data/' + encomendaId + '/')
                 .then(response => response.json())
                 .then(data => {
-                    console.log('Dados recebidos:', data);
-
+                    // Update additional fields with data
                     document.getElementById("nomeFornecedor").value = data.nomeFornecedor;
                     document.getElementById("dataHora").value = data.dataHora;
                     document.getElementById("valorTotal").value = data.valorTotal;
+                    
+                    // Access the componentes_info array
+                    var componentesInfo = data.componentes_info;
+                    console.log('Componentes Info:', componentesInfo);
+                    // Loop through componentes_info and update HTML elements
+                    var componentesList = document.getElementById("componentesList");
+                    componentesList.innerHTML = ""; // Clear previous content
 
-                    var tableBody = document.getElementById("componentesTableBody");
-                    tableBody.innerHTML = ""; // Limpar a tabela antes de adicionar novos dados
-
-                    data.componentes_info.forEach(function(componente_info) {
-                        var row = tableBody.insertRow();
-                        var cell1 = row.insertCell(0);
-                        var cell2 = row.insertCell(1);
-                        var cell3 = row.insertCell(2);
-
-                        cell1.innerHTML = componente_info.nome_componente;
-                        cell2.innerHTML = componente_info.quantidade;
-                        cell3.innerHTML = componente_info.preco;
+                    componentesInfo.forEach(componente => {
+                        var listItem = document.createElement("li");
+                        listItem.textContent = `Nome: ${componente[0]}, Quantidade: ${componente[1]}, Preço: ${componente[2]}`;
+                        componentesList.appendChild(listItem);
                     });
 
+
+                    // Show the additional fields
                     document.getElementById("additionalFields").style.display = "block";
                 })
-                .catch(error => console.error('Erro ao buscar dados da encomenda:', error));
+                .catch(error => {console.error('Error fetching encomenda data:', error), console.log('Data received:', data)});
+                document.getElementById("additionalFields").style.display = "block";
         }
+
 
         function guardarFatura() {
             
