@@ -216,24 +216,31 @@ form {
     <form id="faturaForm">
         <h2>Registo da Fatura da Encomenda</h2>
         <label for="encomenda">ID de Encomenda:</label>
-        <select name="encomenda_id" required>
+        <select name="encomenda_id" id="encomenda_id" required onchange="fetchEncomendaData()">
             {% for encomenda in idencomenda %}
                 <option value="{{ encomenda.0 }}">{{ encomenda.0 }}</option>
             {% endfor %}
-
-        <label for="nomeFornecedor">Nome do Fornecedor:</label>
-        <input type="text" id="nomeFornecedor" name="nomeFornecedor">
-
-        <label for="dataHora">Data/Hora Emissão:</label>
-        <input type="datetime-local" id="dataHora" name="dataHora">
-
-        <label for="valorTotal">Valor Total:</label>
-        <input type="text" id="valorTotal" name="valorTotal">
-
-        <label for="quantidade">Quantidade:</label>
-        <input type="text" id="quantidade" name="quantidade">
-
-        <button type="button" onclick="guardarFatura()">Guardar</button>
+        </select>
+    
+        <!-- Remova a chamada fetchEncomendaData() do evento onclick -->
+        <button type="button" id="continuarButton" onclick="continuar()">Continuar</button>
+    
+        <div id="additionalFields" style="display:none;">
+            <!-- Additional fields go here -->
+            <label for="nomeFornecedor">Nome do Fornecedor:</label>
+            <input type="text" id="nomeFornecedor" name="nomeFornecedor" readonly>
+            
+            <label for="dataHora">Data/Hora Emissão:</label>
+            <input type="datetime-local" id="dataHora" name="dataHora" readonly>
+            
+            <label for="valorTotal">Valor Total:</label>
+            <input type="text" id="valorTotal" name="valorTotal" readonly>
+            
+            <label for="quantidade">Quantidade:</label>
+            <input type="text" id="quantidade" name="quantidade" readonly>
+    
+            <button type="button" onclick="guardarFatura()">Guardar</button>
+        </div>
     </form>
 
     <form id="guiaRemessaForm">
@@ -305,7 +312,40 @@ form {
                 alert('Encomanda feita com sucesso');
             }
         }
-    </script>
 
+        function continuar() {
+            fetchEncomendaData();
+            document.getElementById("additionalFields").style.display = "block";
+            document.getElementById("continuarButton").style.display = "none";
+        }
+
+        function fetchEncomendaData() {
+            // Get the selected encomenda_id
+            var encomendaId = document.getElementById("encomenda_id").value;
+
+            // Make an AJAX request to fetch additional data based on the selected encomenda_id
+            // Update the additional fields with the fetched data
+
+            // Example using fetch API:
+            fetch('/registo_encomenda/fetch_encomenda_data/' + encomendaId + '/')
+                .then(response => response.json())
+                .then(data => {
+                    // Update additional fields with data
+                    document.getElementById("nomeFornecedor").value = data.nomeFornecedor;
+                    //document.getElementById("dataHora").value = data.dataHora;
+                    //document.getElementById("valorTotal").value = data.valorTotal;
+                   // document.getElementById("quantidade").value = data.quantidade;
+
+                    // Show the additional fields
+                    document.getElementById("additionalFields").style.display = "block";
+                })
+                .catch(error => console.error('Error fetching encomenda data:', error));
+                document.getElementById("additionalFields").style.display = "block";
+        }
+
+        function guardarFatura() {
+            
+        }
+    </script>
 </body>
 </html>

@@ -553,11 +553,6 @@ CREATE OR REPLACE VIEW dados_componentes AS
 SELECT id, nome
 FROM componentes;
 
-CREATE OR REPLACE VIEW id_encomenda AS
-SELECT id
-FROM encomenda_componentesheader;
-select * from id_encomenda
-
 
 -- Criar para o Registo de equipamento
 CREATE VIEW vw_componentes_ProducaoHeader AS
@@ -578,3 +573,11 @@ JOIN
     componentes c ON cf.idcomponente = c.id
 JOIN
     ProducaoHeader ph ON cf.id_producao_header = ph.id;  
+	
+	
+----Esta view foi alterada
+CREATE OR REPLACE VIEW id_encomenda
+ AS
+ SELECT DISTINCT ON (id_encomenda_componentesheader)
+ 	id_encomenda_componentesheader
+   FROM pedidodecompra;

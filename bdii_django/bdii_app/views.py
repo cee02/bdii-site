@@ -11,6 +11,7 @@ import pandas as pd
 import os
 from django.conf import settings
 from django.contrib import messages
+from django.http import JsonResponse
 
 
 def error_page(request, error_message):
@@ -173,9 +174,7 @@ def producao_equipamentos(request):
         # Lidar com o caso em que a conexão com o banco de dados falha
         return render(request, 'error_page.html', {'error_message': 'Failed to connect to the database'})
 
-    
 
-    
 def insert_componentes_to_db(username, password, componentes_data):
     try:
         connection = get_database_connection(username, password)
@@ -349,9 +348,6 @@ def registo_encomenda(request):
                 cursor.execute('INSERT INTO Encomenda_componentesHeader DEFAULT VALUES RETURNING Id')
                 encomenda_header_id = cursor.fetchone()[0]
 
-                #cursor.execute("SELECT * FROM idencomenda")
-                #id_das_encomendas = cursor.fetchall()
-
                 # Convert the component IDs to a list of integers
                 componentes_array = [int(componente) for componente in componentes_list]
                 quantidades_array = [int(quantidade) for quantidade in quantidades_list]
@@ -369,6 +365,38 @@ def registo_encomenda(request):
 
     user_name = request.session.get('username', 'Guest')
     return render(request, 'registo_encomenda.html', {'user_name': user_name, 'fornecedores': fornecedores, 'componentes': componentes, 'idencomenda': idencomenda})
+
+def fetch_encomenda_data(request, encomenda_id):
+    try:
+        with connections['default'].cursor() as cursor:
+            # Vai buscar os componentes que entraram recentemente
+            cursor.execute("SELECT * FROM nomeFornecedorDadoIDenc(%s)", [int(encomenda_id)])
+            nomeFornecedor = cursor.fetchall()
+        
+            # Vai buscar os equipamentos que entraram recentemente
+            #cursor.execute("SELECT * FROM dataHoraDadoIDenc")
+            #dataHora = cursor.fetchall()
+
+            # Vai buscar os componentes que sairam recentemente
+            #cursor.execute("SELECT * FROM valorTotalDadoIDenc")
+            #valorTotal = cursor.fetchall()
+
+            # Vai buscar os equipamentos que sairam recentemente
+            #cursor.execute("SELECT * FROM quantidadeDadoIDenc")
+            #quantidade = cursor.fetchall()
+
+            data = {
+            'nomeFornecedor': nomeFornecedor,
+            #'dataHora': dataHora.strftime('%Y-%m-%dT%H:%M'),  # Formato para datetime-local
+            #'valorTotal': valorTotal,
+            #'quantidade': quantidade,
+            }
+        return JsonResponse(data)
+    
+    except Exception as e:
+        # Handle exceptions (e.g., database connection error, file not found, etc.)
+        print(f"An error occurred: {str(e)}")
+        return JsonResponse({'error': 'Encomenda não encontrada'}, status=404)
 
 
 
@@ -406,8 +434,6 @@ def registar_equipamento(request):
         encomenda_ids = [row[0] for row in cursor.fetchall()]
 
     return render(request, 'registar_equipamento.html', {'user_name': user_name, 'encomenda_ids': encomenda_ids, 'componentes': componentes})
-
-
 
 
 def vendas_equipamentos(request):
