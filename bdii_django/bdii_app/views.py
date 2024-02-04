@@ -148,9 +148,6 @@ def producao_equipamentos(request):
                 # Recuperar os resultados da procedure
                 componentes_results = cursor.fetchall()
 
-                # Chamar a procedure usando SELECT para a função get_equipamentos_prontos_para_armazenar
-                cursor.execute('SELECT * FROM get_equipamentos_prontos_para_armazenar()')
-
                 # Recuperar os resultados da procedure
                 equipamentos_results = cursor.fetchall()
 
@@ -425,24 +422,35 @@ def registar_equipamento(request):
     print('descricao:', descricao)
 
     if producao_header_id:
-            with connection.cursor() as cursor:
-                cursor.execute(
-                    "SELECT * FROM vw_componentes_by_producao_header WHERE id_producao_header = %s",
-                    [producao_header_id]
-                )
-                columns = [col[0] for col in cursor.description]
-                componentes = [dict(zip(columns, row)) for row in cursor.fetchall()]
-                print('Componentes:', componentes)
-                print('tipo:', tipo)
-                print('descricao:', descricao)
+        # Check if producao_header_id already exists in EquipamentoArmazem
+        with connection.cursor() as cursor:
+            cursor.execute(
+                "SELECT COUNT(*) FROM vw_EquipamentoArmazem_Ids WHERE equipamentoID = %s",
+                [producao_header_id]
+            )
+            exists_in_view = cursor.fetchone()[0]
 
-                if producao_header_id:
-                    with connection.cursor() as cursor:
-                        cursor.execute("CALL InsertEquipamentoArmazemWithTotal(%s, %s, %s)",
-                                        [producao_header_id, tipo, descricao])
+            if exists_in_view  == 0:  # If not exists
+                # Proceed to fetch componentes and call stored procedure
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        "SELECT * FROM vw_componentes_by_producao_header WHERE id_producao_header = %s",
+                        [producao_header_id]
+                    )
+                    columns = [col[0] for col in cursor.description]
+                    componentes = [dict(zip(columns, row)) for row in cursor.fetchall()]
+                    print('Componentes:', componentes)
+                    print('tipo:', tipo)
+                    print('descricao:', descricao)
+
+                    # Call stored procedure only if producao_header_id doesn't exist in EquipamentoArmazem
+                    cursor.execute("CALL InsertEquipamentoArmazemWithTotal(%s, %s, %s)",
+                                    [producao_header_id, tipo, descricao])
 
     with connection.cursor() as cursor:
-        cursor.execute("SELECT id FROM vw_componentes_ProducaoHeader")
+        cursor.execute(
+            "SELECT id FROM vw_componentes_ProducaoHeader WHERE id NOT IN (SELECT equipamentoID FROM EquipamentoArmazem)"
+        )
         componente_ids = [row[0] for row in cursor.fetchall()]
 
     return render(request, 'registar_equipamento.html', {'user_name': user_name, 'componente_ids': componente_ids, 'componentes': componentes})

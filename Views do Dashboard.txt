@@ -649,7 +649,8 @@ CREATE TABLE EquipamentoArmazem (
     data_saida DATE,
     tipo VARCHAR(255),  
     descricao VARCHAR(255),  
-    valor_total DECIMAL(10, 2),  
+    valor_total DECIMAL(10, 2),
+	quantidade INT,
     FOREIGN KEY (id_armazem) REFERENCES Armazem(ID_armazem)
 );
 
@@ -662,9 +663,10 @@ CREATE OR REPLACE PROCEDURE InsertEquipamentoArmazemWithTotal(
     IN p_descricao VARCHAR(255)
 )
 AS $$
--- Set the fixed value for ID_armazem
+-- Set the fixed value for ID_armazem and default quantity
 DECLARE 
     v_id_armazem INT DEFAULT 2;
+    v_quantidade INT DEFAULT 1;
     
 -- Declare variables to store calculated values
 v_component_price DECIMAL(10, 2);
@@ -691,13 +693,14 @@ BEGIN
     -- Calculate the total value
     v_valor_total := v_component_price + v_maodeobra_price;
 
-    -- Insert into EquipamentoArmazem
+    -- Insert into EquipamentoArmazem with fixed quantity as 1
     INSERT INTO EquipamentoArmazem (
         equipamentoID,
         id_armazem,
         data_entrada,
         tipo,
         descricao,
+        quantidade,
         valor_total
     )
     VALUES (
@@ -706,9 +709,15 @@ BEGIN
         CURRENT_DATE,  -- Assuming you want to use the current date for data_entrada
         p_tipo,
         p_descricao,
+        v_quantidade,
         v_valor_total
     );
 END;
 $$ LANGUAGE plpgsql;
 
--- Apagar a Função marcar_como_pronto_para_armazenar() do PGadmin
+-- Apagar a Função marcar_como_pronto_para_armazenar() e get_equipamentos_prontos_para_armazenar() do PGadmin
+
+-- Adicionar esta view para tratar da filtragem posterior do ID da produçao
+CREATE VIEW vw_EquipamentoArmazem_Ids AS
+SELECT equipamentoID
+FROM EquipamentoArmazem;

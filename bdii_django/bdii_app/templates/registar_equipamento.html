@@ -334,29 +334,37 @@ h3 {
         document.getElementById('componente_id').addEventListener('change', function () {
             // Submit do formulário quando o valor é alterado
             updateComponentList();
-    });
-
-    function updateComponentList() {
-        // Obter o valor selecionado
-        var selectedComponenteId = document.getElementById('componente_id').value;
-
-        // Obter a lista de componentes
-        var componentList = document.getElementById('componentList');
-
-        var tipo = document.getElementById('tipo').value;
-        var descricao = document.getElementById('descricao').value;
-        document.getElementById('hiddenTipo').value = tipo;
-        document.getElementById('hiddenDescricao').value = descricao;
-
-        
-        
-    }
-
-    function submitForm() {
-        updateComponentList();
-        document.getElementById('registarEquipamentoForm').submit();
-    }
-</script>
+        });
+    
+        function updateComponentList() {
+            // Obter o valor selecionado
+            var selectedComponenteId = document.getElementById('componente_id').value;
+    
+            // Obter a lista de componentes
+            var componentList = document.getElementById('componentList');
+    
+            var tipo = document.getElementById('tipo').value;
+            var descricao = document.getElementById('descricao').value;
+            document.getElementById('hiddenTipo').value = tipo;
+            document.getElementById('hiddenDescricao').value = descricao;
+        }
+    
+        function submitForm() {
+            updateComponentList();
+    
+            // Check if Tipo, Descrição, and ID are not null before submitting
+            var tipo = document.getElementById('tipo').value.trim();
+            var descricao = document.getElementById('descricao').value.trim();
+            var selectedComponenteId = document.getElementById('componente_id').value;
+    
+            if (!tipo || !descricao || !selectedComponenteId) {
+                alert('Por favor, preencha todos os campos (ID, Tipo, Descrição).');
+            } else {
+                document.getElementById('registarEquipamentoForm').submit();
+                alert('Registo efetuado com sucesso!');
+            }
+        }
+    </script>
   
 </body>
 
