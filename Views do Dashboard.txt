@@ -649,7 +649,8 @@ CREATE TABLE EquipamentoArmazem (
     data_saida DATE,
     tipo VARCHAR(255),  
     descricao VARCHAR(255),  
-    valor_total DECIMAL(10, 2),  
+    valor_total DECIMAL(10, 2),
+	quantidade INT,
     FOREIGN KEY (id_armazem) REFERENCES Armazem(ID_armazem)
 );
 
@@ -662,9 +663,10 @@ CREATE OR REPLACE PROCEDURE InsertEquipamentoArmazemWithTotal(
     IN p_descricao VARCHAR(255)
 )
 AS $$
--- Set the fixed value for ID_armazem
+-- Set the fixed value for ID_armazem and default quantity
 DECLARE 
     v_id_armazem INT DEFAULT 2;
+    v_quantidade INT DEFAULT 1;
     
 -- Declare variables to store calculated values
 v_component_price DECIMAL(10, 2);
@@ -691,13 +693,14 @@ BEGIN
     -- Calculate the total value
     v_valor_total := v_component_price + v_maodeobra_price;
 
-    -- Insert into EquipamentoArmazem
+    -- Insert into EquipamentoArmazem with fixed quantity as 1
     INSERT INTO EquipamentoArmazem (
         equipamentoID,
         id_armazem,
         data_entrada,
         tipo,
         descricao,
+        quantidade,
         valor_total
     )
     VALUES (
@@ -706,6 +709,7 @@ BEGIN
         CURRENT_DATE,  -- Assuming you want to use the current date for data_entrada
         p_tipo,
         p_descricao,
+        v_quantidade,
         v_valor_total
     );
 END;
@@ -717,3 +721,30 @@ $$ LANGUAGE plpgsql;
 CREATE VIEW vw_EquipamentoArmazem_Ids AS
 SELECT equipamentoID
 FROM EquipamentoArmazem;
+
+--Adicionar este trigger para dar update á quantidade_em_Stock dos equips da table Armazem
+
+CREATE OR REPLACE FUNCTION update_equipamento_armazem_quantidade()
+RETURNS TRIGGER AS $$
+DECLARE
+    total_quantidade INT;
+BEGIN
+    -- Calculate the total quantity of equipamentos in EquipamentoArmazem for the specific armazem
+    SELECT COALESCE(SUM(quantidade), 0) INTO total_quantidade
+    FROM EquipamentoArmazem
+    WHERE id_armazem = NEW.id_armazem;
+
+    -- Update the Armazem table with the calculated total quantity
+    UPDATE Armazem
+    SET quantidade_em_stock = total_quantidade
+    WHERE ID_armazem = NEW.id_armazem;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger for AFTER INSERT, UPDATE, or DELETE on EquipamentoArmazem
+CREATE TRIGGER after_insert_update_delete_equipamento_armazem
+AFTER INSERT OR UPDATE OR DELETE ON EquipamentoArmazem
+FOR EACH ROW
+EXECUTE FUNCTION update_equipamento_armazem_quantidade();
