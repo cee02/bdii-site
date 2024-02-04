@@ -581,3 +581,62 @@ CREATE OR REPLACE VIEW id_encomenda
  SELECT DISTINCT ON (id_encomenda_componentesheader)
  	id_encomenda_componentesheader
    FROM pedidodecompra;
+   
+----Esta função é usada para mostrar os valores na fatura ao selecionar o id
+CREATE OR REPLACE FUNCTION nomeFornecedorDadoIDenc(encomenda_id integer)
+RETURNS character varying
+AS $$
+DECLARE
+    fornecedor_nome character varying;
+BEGIN
+    SELECT f.nome
+    INTO fornecedor_nome
+    FROM pedidodecompra p
+    JOIN fornecedor f ON p.fornecedor_id = f.id
+    WHERE p.id_encomenda_componentesheader = encomenda_id
+    LIMIT 1;
+
+    RETURN fornecedor_nome;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION datahoraDadoIdEnc(encomenda_id integer)
+RETURNS timestamp without time zone
+AS $$
+DECLARE
+    datahora_encomenda timestamp without time zone;
+BEGIN
+    SELECT datahora
+    INTO datahora_encomenda
+    FROM pedidodecompra
+    WHERE id_encomenda_componentesheader = encomenda_id
+    ORDER BY id DESC
+    LIMIT 1;
+
+    RETURN datahora_encomenda;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION calcular_valor_total_encomenda(encomenda_id integer)
+RETURNS numeric(10,2)
+AS $$
+DECLARE
+    valor_total numeric(10,2) := 0;
+    componente_info RECORD;
+BEGIN
+    -- Criar um cursor para os componentes associados à encomenda
+    FOR componente_info IN
+        SELECT c.preco, p.quantidadecomponente
+        FROM componentes c
+        JOIN pedidodecompra p ON c.id = p.componenteid
+        WHERE p.id_encomenda_componentesheader = encomenda_id
+    LOOP
+        -- Somar o preço multiplicado pela quantidade ao valor_total
+        valor_total := valor_total + (componente_info.preco * componente_info.quantidadecomponente);
+    END LOOP;
+
+    RETURN valor_total;
+END;
+$$ LANGUAGE plpgsql;

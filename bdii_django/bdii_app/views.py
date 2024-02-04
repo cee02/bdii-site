@@ -369,17 +369,17 @@ def registo_encomenda(request):
 def fetch_encomenda_data(request, encomenda_id):
     try:
         with connections['default'].cursor() as cursor:
-            # Vai buscar os componentes que entraram recentemente
+            # Vai buscar o nome do fornecedor
             cursor.execute("SELECT * FROM nomeFornecedorDadoIDenc(%s)", [int(encomenda_id)])
             nomeFornecedor = cursor.fetchall()
         
-            # Vai buscar os equipamentos que entraram recentemente
-            #cursor.execute("SELECT * FROM dataHoraDadoIDenc")
-            #dataHora = cursor.fetchall()
+            # Vai buscar a data da encomenda
+            cursor.execute("SELECT * FROM datahoraDadoIdEnc(%s)", [int(encomenda_id)])
+            dataHora = cursor.fetchall()
 
             # Vai buscar os componentes que sairam recentemente
-            #cursor.execute("SELECT * FROM valorTotalDadoIDenc")
-            #valorTotal = cursor.fetchall()
+            cursor.execute("SELECT * FROM calcular_valor_total_encomenda(%s)", [int(encomenda_id)])
+            valorTotal = cursor.fetchall()
 
             # Vai buscar os equipamentos que sairam recentemente
             #cursor.execute("SELECT * FROM quantidadeDadoIDenc")
@@ -387,8 +387,8 @@ def fetch_encomenda_data(request, encomenda_id):
 
             data = {
             'nomeFornecedor': nomeFornecedor,
-            #'dataHora': dataHora.strftime('%Y-%m-%dT%H:%M'),  # Formato para datetime-local
-            #'valorTotal': valorTotal,
+            'dataHora': dataHora,  # Formato para datetime-local
+            'valorTotal': valorTotal,
             #'quantidade': quantidade,
             }
         return JsonResponse(data)

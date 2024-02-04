@@ -233,7 +233,7 @@ form {
             <label for="dataHora">Data/Hora Emissão:</label>
             <input type="datetime-local" id="dataHora" name="dataHora" readonly>
             
-            <label for="valorTotal">Valor Total:</label>
+            <label for="valorTotal">Valor Total (€):</label>
             <input type="text" id="valorTotal" name="valorTotal" readonly>
             
             <label for="quantidade">Quantidade:</label>
@@ -332,8 +332,8 @@ form {
                 .then(data => {
                     // Update additional fields with data
                     document.getElementById("nomeFornecedor").value = data.nomeFornecedor;
-                    //document.getElementById("dataHora").value = data.dataHora;
-                    //document.getElementById("valorTotal").value = data.valorTotal;
+                    document.getElementById("dataHora").value = data.dataHora;
+                    document.getElementById("valorTotal").value = data.valorTotal;
                    // document.getElementById("quantidade").value = data.quantidade;
 
                     // Show the additional fields
