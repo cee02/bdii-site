@@ -711,4 +711,9 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Apagar a Função marcar_como_pronto_para_armazenar() do PGadmin
+-- Apagar a Função marcar_como_pronto_para_armazenar() e get_equipamentos_prontos_para_armazenar() do PGadmin
+
+-- Adicionar esta view para tratar da filtragem posterior do ID da produçao
+CREATE VIEW vw_EquipamentoArmazem_Ids AS
+SELECT equipamentoID
+FROM EquipamentoArmazem;
