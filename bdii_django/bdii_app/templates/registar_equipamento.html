@@ -283,25 +283,29 @@ h3 {
         </ul>
     </div>
 
-    <form action="" method="POST" id="registarEquipamentoForm">
+    <form action="{% url 'bdii_registar_equipamento' %}" method="POST" id="registarEquipamentoForm">
         {% csrf_token %}
         <div style="display: flex; justify-content: space-between;">
             <div style="width: 45%;">
                 <h2>Registar Equipamento</h2>
-                <label for="encomenda_id">ID da Ficha de Produção:</label>
-                <select id="encomenda_id" name="encomenda_id">
+                <label for="componente_id">ID da Ficha de Produção:</label>
+                <select id="componente_id" name="componente_id">
                     <option value="" selected disabled>Selecione uma opção</option>
-                    {% for encomenda_id in encomenda_ids %}
-                        <option value="{{ encomenda_id }}">{{ encomenda_id }}</option>
+                    {% for componente_id in componente_ids %}
+                        <option value="{{ componente_id }}">{{ componente_id }}</option>
                     {% endfor %}
                 </select>
                 <br><br>
-        
+    
                 <label for="tipo">Tipo:</label>
-                <input type="text" id="tipo" name="tipo">
-                <label for="descricao">Descrição:</label>
-                <textarea id="descricao" name="descricao" rows="4"></textarea>
-            </div>
+            <input type="text" id="tipo" name="tipo">
+            <label for="descricao">Descrição:</label>
+            <textarea id="descricao" name="descricao" rows="4"></textarea>
+
+            <!-- Add hidden fields to store Tipo and Descrição values -->
+            <input type="hidden" id="hiddenTipo" name="hiddenTipo">
+            <input type="hidden" id="hiddenDescricao" name="hiddenDescricao">
+        </div>
         
             <div style="width: 45%;">
                 <!-- Componentes associados -->
@@ -309,35 +313,51 @@ h3 {
                     <h3>Componentes Associados:</h3>
                     <ul class="component-list" id="componentList">
                         <!-- A lista de componentes será preenchida dinamicamente com JavaScript -->
-                        <ul>
-                            {% for componente in componentes %}
-                                <li class="componente-item">
-                                    <span class="componente-nome">{{ componente.nome }}</span> || <br>
-                                    <span class="componente-descricao">{{ componente.descricao }}</span> ||<br>
-                                    <span class="componente-preco">{{ componente.preco }}</span>
-                                </li>
-                            {% endfor %}
-                        </ul>
+                        {% for componente in componentes %}
+                            <li class="componente-item">
+                                <span class="componente-nome">{{ componente.nome }}</span> || <br>
+                                <span class="componente-descricao">{{ componente.descricao }}</span> ||<br>
+                                <span class="componente-preco">{{ componente.preco }}</span>
+                            </li>
+                        {% endfor %}
                     </ul>
                 </div>
             </div>
         </div>
-        <!-- Adicione um botão de submit ao final do formulário -->
-        <button type="submit">Submit</button>
+        <button type="button" onclick="submitForm()">Submit</button>
+
     </form>
     
 
     <script>
         // Adicionar um ouvinte de evento ao seletor de Ficha de Produção
-        document.getElementById('encomenda_id').addEventListener('change', function () {
+        document.getElementById('componente_id').addEventListener('change', function () {
             // Submit do formulário quando o valor é alterado
-            document.getElementById('registarEquipamentoForm').submit();
-        });
-    </script>
+            updateComponentList();
+    });
+
+    function updateComponentList() {
+        // Obter o valor selecionado
+        var selectedComponenteId = document.getElementById('componente_id').value;
+
+        // Obter a lista de componentes
+        var componentList = document.getElementById('componentList');
+
+        var tipo = document.getElementById('tipo').value;
+        var descricao = document.getElementById('descricao').value;
+        document.getElementById('hiddenTipo').value = tipo;
+        document.getElementById('hiddenDescricao').value = descricao;
+
+        
+        
+    }
+
+    function submitForm() {
+        updateComponentList();
+        document.getElementById('registarEquipamentoForm').submit();
+    }
+</script>
   
-
-
-
 </body>
 
 </html>

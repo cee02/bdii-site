@@ -417,8 +417,13 @@ def registar_equipamento(request):
     user_name = request.session.get('username', 'Guest')
     componentes = []
 
-    producao_header_id = request.POST.get('encomenda_id', None)
+    producao_header_id = request.POST.get('componente_id', None)
+    tipo = request.POST.get('hiddenTipo', '')
+    descricao = request.POST.get('hiddenDescricao', '')
     print('producao_header_id:', producao_header_id)
+    print('tipo:', tipo)
+    print('descricao:', descricao)
+
     if producao_header_id:
             with connection.cursor() as cursor:
                 cursor.execute(
@@ -428,12 +433,19 @@ def registar_equipamento(request):
                 columns = [col[0] for col in cursor.description]
                 componentes = [dict(zip(columns, row)) for row in cursor.fetchall()]
                 print('Componentes:', componentes)
+                print('tipo:', tipo)
+                print('descricao:', descricao)
+
+                if producao_header_id:
+                    with connection.cursor() as cursor:
+                        cursor.execute("CALL InsertEquipamentoArmazemWithTotal(%s, %s, %s)",
+                                        [producao_header_id, tipo, descricao])
 
     with connection.cursor() as cursor:
         cursor.execute("SELECT id FROM vw_componentes_ProducaoHeader")
-        encomenda_ids = [row[0] for row in cursor.fetchall()]
+        componente_ids = [row[0] for row in cursor.fetchall()]
 
-    return render(request, 'registar_equipamento.html', {'user_name': user_name, 'encomenda_ids': encomenda_ids, 'componentes': componentes})
+    return render(request, 'registar_equipamento.html', {'user_name': user_name, 'componente_ids': componente_ids, 'componentes': componentes})
 
 
 def vendas_equipamentos(request):

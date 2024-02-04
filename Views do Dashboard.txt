@@ -640,3 +640,75 @@ BEGIN
     RETURN valor_total;
 END;
 $$ LANGUAGE plpgsql;
+
+---- Alterar a tabela, adicionei tipo, descricao, valor_total e retirei a FOREIGN key equipamentoID
+CREATE TABLE EquipamentoArmazem (
+    equipamentoID INT,
+    id_armazem INT,
+    data_entrada DATE,
+    data_saida DATE,
+    tipo VARCHAR(255),  
+    descricao VARCHAR(255),  
+    valor_total DECIMAL(10, 2),  
+    FOREIGN KEY (id_armazem) REFERENCES Armazem(ID_armazem)
+);
+
+
+--Criei este procedimento para  tratar de Criar o equipamento
+
+CREATE OR REPLACE PROCEDURE InsertEquipamentoArmazemWithTotal(
+    IN p_ficha_producao_id INT,
+    IN p_tipo VARCHAR(255),
+    IN p_descricao VARCHAR(255)
+)
+AS $$
+-- Set the fixed value for ID_armazem
+DECLARE 
+    v_id_armazem INT DEFAULT 2;
+    
+-- Declare variables to store calculated values
+v_component_price DECIMAL(10, 2);
+v_maodeobra_price DECIMAL(10, 2);
+v_valor_total DECIMAL(10, 2);
+v_maodeobra_id INT;
+
+BEGIN
+    -- Retrieve the component price based on the given p_ficha_producao_id
+    SELECT COALESCE(SUM(comp.preco), 0) INTO v_component_price
+    FROM vw_componentes_by_producao_header comp
+    WHERE comp.id_producao_header = p_ficha_producao_id;
+
+    -- Retrieve the id_maodeobra from ComponentesFichaProducao
+    SELECT id_maodeobra INTO v_maodeobra_id
+    FROM ComponentesFichaProducao
+    WHERE id_producao_header = p_ficha_producao_id;
+
+    -- Retrieve the maodeobra price based on the obtained id_maodeobra
+    SELECT COALESCE(custo, 0) INTO v_maodeobra_price
+    FROM MaoObra
+    WHERE id = v_maodeobra_id;
+
+    -- Calculate the total value
+    v_valor_total := v_component_price + v_maodeobra_price;
+
+    -- Insert into EquipamentoArmazem
+    INSERT INTO EquipamentoArmazem (
+        equipamentoID,
+        id_armazem,
+        data_entrada,
+        tipo,
+        descricao,
+        valor_total
+    )
+    VALUES (
+        p_ficha_producao_id,
+        v_id_armazem,
+        CURRENT_DATE,  -- Assuming you want to use the current date for data_entrada
+        p_tipo,
+        p_descricao,
+        v_valor_total
+    );
+END;
+$$ LANGUAGE plpgsql;
+
+-- Apagar a Função marcar_como_pronto_para_armazenar() do PGadmin
