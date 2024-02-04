@@ -381,15 +381,15 @@ def fetch_encomenda_data(request, encomenda_id):
             cursor.execute("SELECT * FROM calcular_valor_total_encomenda(%s)", [int(encomenda_id)])
             valorTotal = cursor.fetchall()
 
-            # Vai buscar os equipamentos que sairam recentemente
-            #cursor.execute("SELECT * FROM quantidadeDadoIDenc")
-            #quantidade = cursor.fetchall()
+            # Vai buscar as informações dos componentes da encomenda
+            cursor.execute("SELECT * FROM obter_info_componentes_encomenda(%s)", [int(encomenda_id)])
+            componentes_info = cursor.fetchall()
 
             data = {
             'nomeFornecedor': nomeFornecedor,
             'dataHora': dataHora,  # Formato para datetime-local
             'valorTotal': valorTotal,
-            #'quantidade': quantidade,
+            'componentes_info': componentes_info,
             }
         return JsonResponse(data)
     

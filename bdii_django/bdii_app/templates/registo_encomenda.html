@@ -216,7 +216,7 @@ form {
     <form id="faturaForm">
         <h2>Registo da Fatura da Encomenda</h2>
         <label for="encomenda">ID de Encomenda:</label>
-        <select name="encomenda_id" id="encomenda_id" required onchange="fetchEncomendaData()">
+        <select name="encomenda_id" id="encomenda_id">
             {% for encomenda in idencomenda %}
                 <option value="{{ encomenda.0 }}">{{ encomenda.0 }}</option>
             {% endfor %}
@@ -230,14 +230,21 @@ form {
             <label for="nomeFornecedor">Nome do Fornecedor:</label>
             <input type="text" id="nomeFornecedor" name="nomeFornecedor" readonly>
             
-            <label for="dataHora">Data/Hora Emissão:</label>
-            <input type="datetime-local" id="dataHora" name="dataHora" readonly>
-            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome do Componente</th>
+                        <th>Quantidade</th>
+                        <th>Preço Total</th>
+                    </tr>
+                </thead>
+                <tbody id="componentesTableBody">
+                    <!-- Dados da tabela serão adicionados aqui usando JavaScript -->
+                </tbody>
+            </table>
+
             <label for="valorTotal">Valor Total (€):</label>
             <input type="text" id="valorTotal" name="valorTotal" readonly>
-            
-            <label for="quantidade">Quantidade:</label>
-            <input type="text" id="quantidade" name="quantidade" readonly>
     
             <button type="button" onclick="guardarFatura()">Guardar</button>
         </div>
@@ -319,28 +326,41 @@ form {
             document.getElementById("continuarButton").style.display = "none";
         }
 
+        function continuar() {
+            fetchEncomendaData();
+            document.getElementById("additionalFields").style.display = "block";
+            document.getElementById("continuarButton").style.display = "none";
+        }
+
         function fetchEncomendaData() {
-            // Get the selected encomenda_id
             var encomendaId = document.getElementById("encomenda_id").value;
 
-            // Make an AJAX request to fetch additional data based on the selected encomenda_id
-            // Update the additional fields with the fetched data
-
-            // Example using fetch API:
             fetch('/registo_encomenda/fetch_encomenda_data/' + encomendaId + '/')
                 .then(response => response.json())
                 .then(data => {
-                    // Update additional fields with data
+                    console.log('Dados recebidos:', data);
+
                     document.getElementById("nomeFornecedor").value = data.nomeFornecedor;
                     document.getElementById("dataHora").value = data.dataHora;
                     document.getElementById("valorTotal").value = data.valorTotal;
-                   // document.getElementById("quantidade").value = data.quantidade;
 
-                    // Show the additional fields
+                    var tableBody = document.getElementById("componentesTableBody");
+                    tableBody.innerHTML = ""; // Limpar a tabela antes de adicionar novos dados
+
+                    data.componentes_info.forEach(function(componente_info) {
+                        var row = tableBody.insertRow();
+                        var cell1 = row.insertCell(0);
+                        var cell2 = row.insertCell(1);
+                        var cell3 = row.insertCell(2);
+
+                        cell1.innerHTML = componente_info.nome_componente;
+                        cell2.innerHTML = componente_info.quantidade;
+                        cell3.innerHTML = componente_info.preco;
+                    });
+
                     document.getElementById("additionalFields").style.display = "block";
                 })
-                .catch(error => console.error('Error fetching encomenda data:', error));
-                document.getElementById("additionalFields").style.display = "block";
+                .catch(error => console.error('Erro ao buscar dados da encomenda:', error));
         }
 
         function guardarFatura() {
