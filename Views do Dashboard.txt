@@ -721,3 +721,30 @@ $$ LANGUAGE plpgsql;
 CREATE VIEW vw_EquipamentoArmazem_Ids AS
 SELECT equipamentoID
 FROM EquipamentoArmazem;
+
+--Adicionar este trigger para dar update á quantidade_em_Stock dos equips da table Armazem
+
+CREATE OR REPLACE FUNCTION update_equipamento_armazem_quantidade()
+RETURNS TRIGGER AS $$
+DECLARE
+    total_quantidade INT;
+BEGIN
+    -- Calculate the total quantity of equipamentos in EquipamentoArmazem for the specific armazem
+    SELECT COALESCE(SUM(quantidade), 0) INTO total_quantidade
+    FROM EquipamentoArmazem
+    WHERE id_armazem = NEW.id_armazem;
+
+    -- Update the Armazem table with the calculated total quantity
+    UPDATE Armazem
+    SET quantidade_em_stock = total_quantidade
+    WHERE ID_armazem = NEW.id_armazem;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger for AFTER INSERT, UPDATE, or DELETE on EquipamentoArmazem
+CREATE TRIGGER after_insert_update_delete_equipamento_armazem
+AFTER INSERT OR UPDATE OR DELETE ON EquipamentoArmazem
+FOR EACH ROW
+EXECUTE FUNCTION update_equipamento_armazem_quantidade();
