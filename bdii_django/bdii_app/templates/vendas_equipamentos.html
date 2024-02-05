@@ -190,6 +190,12 @@
         <input type="text" id="contacto" name="contacto">
       </div>
       <div class="form-group">
+        <label for="componentes">Componentes:</label>
+        <input type="text" id="componentes" name="componentes">
+        <button type="button" onclick="removerComponente(this)">Remover</button><button type="button" onclick="adicionarComponente()">Adicionar Componente</button>
+        
+      </div>
+      <div class="form-group">
         <label for="valor">Valor:</label>
         <input type="text" id="valor" name="valor">
       </div>
@@ -199,7 +205,7 @@
       </div>
       <button>Guardar</button>
     </div>
-
+    <hr>
     <!-- Envio da Fatura ao Cliente -->
     <div class="section">
       <h2>Envio da Fatura ao Cliente</h2>
@@ -235,7 +241,7 @@
       </div>
       <button>Enviar Fatura</button>
     </div>
-
+    <hr>
     <!-- Histórico de Vendas -->
     <div class="section">
       <h2>Histórico de Vendas</h2>
