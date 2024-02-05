@@ -750,19 +750,13 @@ FOR EACH ROW
 EXECUTE FUNCTION update_equipamento_armazem_quantidade();
 
 -------------------------------------------------------
--- FUNCTION: public.obter_info_componentes_encomenda(integer)
-
--- DROP FUNCTION IF EXISTS public.obter_info_componentes_encomenda(integer);
-
-CREATE OR REPLACE FUNCTION public.obter_info_componentes_encomenda(
-    id_encomenda integer)
-    RETURNS TABLE(nome_componente character varying, quantidade integer, preco numeric) 
-    LANGUAGE 'plpgsql'
-    COST 100
-    VOLATILE PARALLEL UNSAFE
-    ROWS 1000
-
-AS $BODY$
+CREATE OR REPLACE FUNCTION obter_info_componentes_encomenda(id_encomenda integer)
+RETURNS TABLE (
+    nome_componente character varying(255),
+    quantidade integer,
+    preco numeric(10,2)
+)
+AS $$
 BEGIN
     RETURN QUERY
     SELECT c.nome, pc.quantidadecomponente, c.preco
@@ -770,7 +764,40 @@ BEGIN
     JOIN pedidodecompra pc ON c.id = pc.componenteid
     WHERE pc.id_encomenda_componentesheader = id_encomenda;
 END;
-$BODY$;
+$$ LANGUAGE plpgsql;
 
-ALTER FUNCTION public.obter_info_componentes_encomenda(integer)
-    OWNER TO postgres;
+
+-- Alterem as views para a Entrada e Saída de stock recente
+-- saida
+CREATE VIEW equipamento_saida_stock_recente AS
+SELECT
+    EA.tipo AS tipo_equipamento,
+    EA.descricao AS descricao_equipamento,
+    A.nome AS nome_armazem,
+    EA.data_saida
+FROM
+    EquipamentoArmazem EA
+JOIN Armazem A ON EA.id_armazem = A.ID_armazem
+WHERE
+    EA.data_saida IS NOT NULL
+    AND EA.data_saida >= CURRENT_DATE - INTERVAL '2' DAY
+ORDER BY
+    EA.data_saida DESC
+LIMIT 10;
+
+-- entrada
+CREATE VIEW equipamento_entrada_stock_recente AS
+SELECT
+    EA.tipo AS tipo_equipamento,
+    EA.descricao AS descricao_equipamento,
+    A.nome AS nome_armazem,
+    EA.data_entrada
+FROM
+    EquipamentoArmazem EA
+JOIN Armazem A ON EA.id_armazem = A.ID_armazem
+WHERE
+    EA.data_entrada IS NOT NULL
+    AND EA.data_entrada >= CURRENT_DATE - INTERVAL '2' DAY
+ORDER BY
+    EA.data_entrada DESC
+LIMIT 10;
