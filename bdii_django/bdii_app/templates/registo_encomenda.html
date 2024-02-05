@@ -185,7 +185,7 @@ form {
         </ul>
     </div>
 
-    <form method="post" action="{% url 'bdii_registo_encomenda' %}">
+    <form method="post" action="{% url 'bdii_registo_encomenda' %}" id="encomendaForm">
         {% csrf_token %}
         <h2>Nova Encomenda</h2>
         <label for="componentes">Componente(s):</label>
@@ -243,16 +243,15 @@ form {
     </form>
 
     <form id="guiaRemessaForm">
-        <h2>Registo Guia de Remessa para Stock</h2>
-        <label for="numeroRemessa">Número:</label>
-        <select id="numeroRemessa" name="numeroRemessa">
-            <!-- Opções do dropdown -->
-            <option value="R001">R001</option>
-            <option value="R002">R002</option>
-            <option value="R003">R003</option>
-            <!-- Adicione mais opções conforme necessário -->
+        <h2>Registo da Guia de Remessa da Encomenda</h2>
+        <label for="encomenda">ID de Encomenda:</label>
+        <select name="encomenda_id" id="encomenda_id">
+            {% for encomenda in idencomenda %}
+                <option value="{{ encomenda.0 }}">{{ encomenda.0 }}</option>
+            {% endfor %}
         </select>
 
+        
         <label for="fornecedorRemessa">Fornecedor:</label>
         <input type="text" id="fornecedorRemessa" name="fornecedorRemessa">
 
@@ -309,6 +308,7 @@ form {
 
             else if(quantidadePreenchida) {
                 alert('Encomanda feita com sucesso');
+                criarArquivoJSON();
             }
         }
 
@@ -349,6 +349,24 @@ form {
                 })
                 .catch(error => {console.error('Error fetching encomenda data:', error), console.log('Data received:', data)});
                 document.getElementById("additionalFields").style.display = "block";
+        }
+
+
+        function criarArquivoJSON() {
+        var formData = new FormData(document.getElementById('encomendaForm'));
+        var jsonData = {};
+
+        formData.forEach((value, key) => {
+            jsonData[key] = value;
+        });
+
+        var jsonString = JSON.stringify(jsonData);
+        var blob = new Blob([jsonString], { type: 'application/json' });
+
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'encomenda_data.json';
+        a.click();
         }
 
 
