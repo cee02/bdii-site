@@ -748,3 +748,29 @@ CREATE TRIGGER after_insert_update_delete_equipamento_armazem
 AFTER INSERT OR UPDATE OR DELETE ON EquipamentoArmazem
 FOR EACH ROW
 EXECUTE FUNCTION update_equipamento_armazem_quantidade();
+
+-------------------------------------------------------
+-- FUNCTION: public.obter_info_componentes_encomenda(integer)
+
+-- DROP FUNCTION IF EXISTS public.obter_info_componentes_encomenda(integer);
+
+CREATE OR REPLACE FUNCTION public.obter_info_componentes_encomenda(
+    id_encomenda integer)
+    RETURNS TABLE(nome_componente character varying, quantidade integer, preco numeric) 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
+BEGIN
+    RETURN QUERY
+    SELECT c.nome, pc.quantidadecomponente, c.preco
+    FROM componentes c
+    JOIN pedidodecompra pc ON c.id = pc.componenteid
+    WHERE pc.id_encomenda_componentesheader = id_encomenda;
+END;
+$BODY$;
+
+ALTER FUNCTION public.obter_info_componentes_encomenda(integer)
+    OWNER TO postgres;
