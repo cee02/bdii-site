@@ -750,19 +750,13 @@ FOR EACH ROW
 EXECUTE FUNCTION update_equipamento_armazem_quantidade();
 
 -------------------------------------------------------
--- FUNCTION: public.obter_info_componentes_encomenda(integer)
-
--- DROP FUNCTION IF EXISTS public.obter_info_componentes_encomenda(integer);
-
-CREATE OR REPLACE FUNCTION public.obter_info_componentes_encomenda(
-    id_encomenda integer)
-    RETURNS TABLE(nome_componente character varying, quantidade integer, preco numeric) 
-    LANGUAGE 'plpgsql'
-    COST 100
-    VOLATILE PARALLEL UNSAFE
-    ROWS 1000
-
-AS $BODY$
+CREATE OR REPLACE FUNCTION obter_info_componentes_encomenda(id_encomenda integer)
+RETURNS TABLE (
+    nome_componente character varying(255),
+    quantidade integer,
+    preco numeric(10,2)
+)
+AS $$
 BEGIN
     RETURN QUERY
     SELECT c.nome, pc.quantidadecomponente, c.preco
@@ -770,10 +764,7 @@ BEGIN
     JOIN pedidodecompra pc ON c.id = pc.componenteid
     WHERE pc.id_encomenda_componentesheader = id_encomenda;
 END;
-$BODY$;
-
-ALTER FUNCTION public.obter_info_componentes_encomenda(integer)
-    OWNER TO postgres;
+$$ LANGUAGE plpgsql;
 
 
 -- Alterem as views para a Entrada e Saída de stock recente
@@ -810,3 +801,10 @@ WHERE
 ORDER BY
     EA.data_entrada DESC
 LIMIT 10;
+
+-----
+Apagar o procedimento get_armazem_data
+-- Rodar comandos
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO aluno3_b
+GRANT USAGE, SELECT ON SEQUENCE producaoheader_id_seq TO aluno3_b;
+GRANT USAGE, SELECT ON SEQUENCE componentesfichaproducao_id_seq TO aluno3_b;
