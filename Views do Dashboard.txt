@@ -810,3 +810,20 @@ WHERE
 ORDER BY
     EA.data_entrada DESC
 LIMIT 10;
+
+
+
+CREATE OR REPLACE FUNCTION public.inserir_fatura(p_valor_total numeric, p_id_encomenda integer)
+RETURNS integer AS
+$$
+DECLARE
+    v_id_fatura integer;
+BEGIN
+    INSERT INTO public.faturacompras (valor_total, id_encomenda)
+    VALUES (p_valor_total, p_id_encomenda)
+    RETURNING id_fatura INTO v_id_fatura;
+
+    RETURN v_id_fatura;
+END;
+$$
+LANGUAGE plpgsql;
