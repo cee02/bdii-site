@@ -27,17 +27,8 @@ form {
             justify-content: space-between;
             margin-bottom: 5px;
         }
+       
 
-        button {
-            margin-top: 10px;
-            padding: 10px;
-            background-color: #000000;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-  
 .sidebar {
             height: 100%;
             width: 90px;
@@ -134,7 +125,7 @@ form {
         }
 
         button {
-            background-color: #000000;
+            background-color: #3498db;
             color: #fff;
             padding: 10px 15px;
             border: none;
@@ -143,10 +134,20 @@ form {
         }
 
         button:hover {
-            background-color: #000000;
+            background-color: #1f6797;
         }
-
-
+        .custom-button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #e81616;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+    }
+    .custom-button:hover {
+            background-color: #c92626;
+        }
         select[multiple] {
         height: auto !important;
         }
@@ -185,7 +186,7 @@ form {
         </ul>
     </div>
 
-    <form method="post" action="{% url 'bdii_registo_encomenda' %}">
+    <form method="post" action="{% url 'bdii_registo_encomenda' %}" id="encomendaForm">
         {% csrf_token %}
         <h2>Nova Encomenda</h2>
         <label for="componentes">Componente(s):</label>
@@ -196,11 +197,11 @@ form {
                         <option value="{{ componente.0 }}">{{ componente.1 }}</option>
                     {% endfor %}
                 </select>
-                <input type="number" name="quantidade[]" placeholder="Quantidade" required min="1" required>
-                <button type="button" onclick="removerComponente(this)">Remover</button>
+                <input type="number" name="quantidade[]" placeholder="Quantidade" style="margin-left: 20px;" required min="1" required>
+                <button type="button1"  class="custom-button" style="margin-left: 20px; margin-bottom: 20px" onclick="removerComponente(this)">Remover</button>
             </div>
         </div>
-        <button type="button" onclick="adicionarComponente()">Adicionar Componente</button>
+        <button type="button" style="margin-bottom: 20px; margin-top: -20px" onclick="adicionarComponente()">Adicionar Componente</button>
     
         <label for="fornecedor_id">Fornecedor:</label>
         <select name="fornecedor_id" required>
@@ -243,16 +244,15 @@ form {
     </form>
 
     <form id="guiaRemessaForm">
-        <h2>Registo Guia de Remessa para Stock</h2>
-        <label for="numeroRemessa">Número:</label>
-        <select id="numeroRemessa" name="numeroRemessa">
-            <!-- Opções do dropdown -->
-            <option value="R001">R001</option>
-            <option value="R002">R002</option>
-            <option value="R003">R003</option>
-            <!-- Adicione mais opções conforme necessário -->
+        <h2>Registo da Guia de Remessa da Encomenda</h2>
+        <label for="encomenda">ID de Encomenda:</label>
+        <select name="encomenda_id" id="encomenda_id">
+            {% for encomenda in idencomenda %}
+                <option value="{{ encomenda.0 }}">{{ encomenda.0 }}</option>
+            {% endfor %}
         </select>
 
+        
         <label for="fornecedorRemessa">Fornecedor:</label>
         <input type="text" id="fornecedorRemessa" name="fornecedorRemessa">
 
@@ -279,8 +279,8 @@ form {
                          <option value="{{ componente.0 }}">{{ componente.1 }}</option>
                     {% endfor %}
                 </select>
-                <input type="number" name="quantidade[]" placeholder="Quantidade" required>
-                <button type="button" onclick="removerComponente(this)">Remover</button>
+                <input type="number" name="quantidade[]" style="margin-left: 20px;" placeholder="Quantidade" required>
+                <button type="button1"  class="custom-button" style="margin-left: 20px; margin-bottom: 20px" onclick="removerComponente(this)">Remover</button>
             `;
             componentesDiv.appendChild(novoComponente);
         }
@@ -309,6 +309,7 @@ form {
 
             else if(quantidadePreenchida) {
                 alert('Encomanda feita com sucesso');
+                criarArquivoJSON();
             }
         }
 
@@ -350,6 +351,59 @@ form {
                 .catch(error => {console.error('Error fetching encomenda data:', error), console.log('Data received:', data)});
                 document.getElementById("additionalFields").style.display = "block";
         }
+
+
+        function criarArquivoJSON() {
+    var formData = document.forms.encomendaForm;
+    var jsonData = {
+        'IDcomponentes': [],
+        'Nomescomponentes': [], 
+        'quantidades': [],
+        'fornecedor_id': formData.querySelector('[name="fornecedor_id"]').value,
+    };
+
+    // Iterate through the componentes and quantidades fields
+    var componentesFields = formData.querySelectorAll('[name^="componente["]');
+    var quantidadesFields = formData.querySelectorAll('[name^="quantidade["]');
+
+    componentesFields.forEach(function (componenteField, index) {
+        jsonData.IDcomponentes.push(componenteField.value);
+
+        // Fetch the corresponding name based on the selected ID
+        var selectedOption = componenteField.options[componenteField.selectedIndex];
+        var componentName = selectedOption.textContent;
+        jsonData.Nomescomponentes.push(componentName);
+    });
+
+    quantidadesFields.forEach(function (quantidadeField, index) {
+        jsonData.quantidades.push(quantidadeField.value);
+    });
+
+    // Display component names and supplier name
+    var componentNames = jsonData.Nomescomponentes;
+    var supplierField = formData.querySelector('[name="fornecedor_id"]');
+    var supplierName = supplierField.options[supplierField.selectedIndex].textContent;
+
+    var displayText = 'Selected Components: ' + componentNames.join(', ') + '<br>Supplier: ' + supplierName;
+
+    // Display or use `displayText` as needed, for example, append it to an HTML element
+    var displayElement = document.getElementById('displayArea');
+    if (displayElement) {
+        displayElement.innerHTML = displayText;
+    }
+
+    // The rest of your code remains unchanged...
+    var jsonString = JSON.stringify(jsonData);
+    var blob = new Blob([jsonString], { type: 'application/json' });
+
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'encomenda_data.json';
+    a.click();
+}
+
+
+
 
 
         function guardarFatura() {
