@@ -774,3 +774,56 @@ $BODY$;
 
 ALTER FUNCTION public.obter_info_componentes_encomenda(integer)
     OWNER TO postgres;
+
+
+-- Alterem as views para a Entrada e Saída de stock recente
+-- saida
+CREATE VIEW equipamento_saida_stock_recente AS
+SELECT
+    EA.tipo AS tipo_equipamento,
+    EA.descricao AS descricao_equipamento,
+    A.nome AS nome_armazem,
+    EA.data_saida
+FROM
+    EquipamentoArmazem EA
+JOIN Armazem A ON EA.id_armazem = A.ID_armazem
+WHERE
+    EA.data_saida IS NOT NULL
+    AND EA.data_saida >= CURRENT_DATE - INTERVAL '2' DAY
+ORDER BY
+    EA.data_saida DESC
+LIMIT 10;
+
+-- entrada
+CREATE VIEW equipamento_entrada_stock_recente AS
+SELECT
+    EA.tipo AS tipo_equipamento,
+    EA.descricao AS descricao_equipamento,
+    A.nome AS nome_armazem,
+    EA.data_entrada
+FROM
+    EquipamentoArmazem EA
+JOIN Armazem A ON EA.id_armazem = A.ID_armazem
+WHERE
+    EA.data_entrada IS NOT NULL
+    AND EA.data_entrada >= CURRENT_DATE - INTERVAL '2' DAY
+ORDER BY
+    EA.data_entrada DESC
+LIMIT 10;
+
+
+
+CREATE OR REPLACE FUNCTION public.inserir_fatura(p_valor_total numeric, p_id_encomenda integer)
+RETURNS integer AS
+$$
+DECLARE
+    v_id_fatura integer;
+BEGIN
+    INSERT INTO public.faturacompras (valor_total, id_encomenda)
+    VALUES (p_valor_total, p_id_encomenda)
+    RETURNING id_fatura INTO v_id_fatura;
+
+    RETURN v_id_fatura;
+END;
+$$
+LANGUAGE plpgsql;
