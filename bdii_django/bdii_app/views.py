@@ -59,7 +59,6 @@ def close_database_connection(connection):
 
 # View functions
 def gestao_clientes(request):
-    
     # Obter conexão com o banco de dados
     username = request.session.get('username')
     password = request.session.get('password')
@@ -68,6 +67,8 @@ def gestao_clientes(request):
     connection = get_database_connection(username, password)
     
     user_name = request.session.get('username', 'Guest') # para o nome no menu lateral
+    if user_name in ['aluno3_b', 'aluno3_c']:
+        return render(request, 'error_page.html', {'error_message': 'Acesso não autorizado para este utilizador.'})
 
     if connection:
         try:
@@ -103,6 +104,9 @@ def producao_equipamentos(request):
     connection = get_database_connection(username, password)
 
     user_name = request.session.get('username', 'Guest')  # para o nome no menu lateral
+
+    if user_name in ['aluno3_c']:
+        return render(request, 'error_page.html', {'error_message': 'Acesso não autorizado para este utilizador.'})
     
     if connection:
         try:
@@ -234,6 +238,8 @@ def delete_cliente(request, cliente_id):
     connection = get_database_connection(username, password)
 
     user_name = request.session.get('username', 'Guest') # para o nome no menu lateral
+    if user_name in ['aluno3_b', 'aluno3_c']:
+        return render(request, 'error_page.html', {'error_message': 'Acesso não autorizado para este utilizador.'})
 
     if connection:
         try:
@@ -270,11 +276,24 @@ def user_login(request):
            (username == 'aluno3_b' and password == 'aluno') or \
            (username == 'aluno3_c' and password == 'aluno'):
             print(username, password)
+
+        if (username == 'aluno3_a' and password == 'aluno'):
             request.session['username'] = username
             request.session['password'] = password
-
-            # Credenciais válidas, redirecionar para o dashboard
+            # Credenciais válidas para aluno3_a, redirecionar para o dashboard
             return redirect('/dashboard')
+            
+        elif (username == 'aluno3_b' and password == 'aluno'):
+            request.session['username'] = username
+            request.session['password'] = password
+            # Credenciais válidas para aluno3_b, redirecionar para bdii_producao_equipamentos
+            return redirect('bdii_registo_encomenda')
+            
+        elif (username == 'aluno3_c' and password == 'aluno'):
+            request.session['username'] = username
+            request.session['password'] = password
+            # Credenciais válidas para aluno3_c, redirecionar para home
+            return redirect('home')
             
         else:
             # Credenciais inválidas, renderizar a página de login com uma mensagem de erro
@@ -289,9 +308,8 @@ def logout(request):
 
 def dashboard(request):
     user_name = request.session.get('username', 'Guest') # para o nome no menu lateral
-    if user_name == 'aluno3_c':
-        return redirect('home')
-    
+    if user_name in ['aluno3_b', 'aluno3_c']:
+        return render(request, 'error_page.html', {'error_message': 'Acesso não autorizado para este utilizador.'})
     try:
         importar_componentes(request)  # A chamar o IMPORTAR COMPONENTES
 
@@ -364,9 +382,15 @@ def registo_encomenda(request):
                 return render(request, 'error_page.html', {'error_message': str(e)})
 
     user_name = request.session.get('username', 'Guest')
+    if user_name in ['aluno3_c']:
+        return render(request, 'error_page.html', {'error_message': 'Acesso não autorizado para este utilizador.'})
+
     return render(request, 'registo_encomenda.html', {'user_name': user_name, 'fornecedores': fornecedores, 'componentes': componentes, 'idencomenda': idencomenda})
 
 def fetch_encomenda_data(request, encomenda_id):
+    user_name = request.session.get('username', 'Guest')
+    if user_name in ['aluno3_c']:
+        return render(request, 'error_page.html', {'error_message': 'Acesso não autorizado para este utilizador.'})
     try:
         with connections['default'].cursor() as cursor:
             # Vai buscar o nome do fornecedor
@@ -398,10 +422,10 @@ def fetch_encomenda_data(request, encomenda_id):
         print(f"An error occurred: {str(e)}")
         return JsonResponse({'error': 'Encomenda não encontrada'}, status=404)
 
-from django.db import connection
-from django.http import JsonResponse
-
 def guardar_fatura(request, encomenda_id):
+    user_name = request.session.get('username', 'Guest')
+    if user_name in ['aluno3_c']:
+        return render(request, 'error_page.html', {'error_message': 'Acesso não autorizado para este utilizador.'})
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
@@ -441,6 +465,9 @@ def get_armazem_data(request):
 
 def registar_equipamento(request):
     user_name = request.session.get('username', 'Guest')
+    if user_name in ['aluno3_c']:
+        return render(request, 'error_page.html', {'error_message': 'Acesso não autorizado para este utilizador.'})
+    
     componentes = []
 
     producao_header_id = request.POST.get('componente_id', None)
@@ -497,10 +524,15 @@ def vendas_equipamentos(request):
         print(f"An error occurred: {str(e)}")
      
     user_name = request.session.get('username', 'Guest')
+    if user_name in ['aluno3_c']:
+        return render(request, 'error_page.html', {'error_message': 'Acesso não autorizado para este utilizador.'})
     return render(request, 'vendas_equipamentos.html', {'user_name': user_name, 'emailCliente': emailCliente})
 
 
 def fetch_registo_venda(request, emailCliente):
+    user_name = request.session.get('username', 'Guest')
+    if user_name in ['aluno3_c']:
+        return render(request, 'error_page.html', {'error_message': 'Acesso não autorizado para este utilizador.'})
     try:
         logger.debug("Starting fetch_registo_venda view function...")
         
@@ -596,6 +628,9 @@ def get_armazem_data(request):
 
 def registar_venda(request):
     user_name = request.session.get('username', 'Guest')
+    if user_name in ['aluno3_c']:
+        return render(request, 'error_page.html', {'error_message': 'Acesso não autorizado para este utilizador.'})
+    
     componentes = []
 
     producao_header_id = request.POST.get('equipamento_id', None)
@@ -640,10 +675,11 @@ def registar_venda(request):
     return render(request, 'registar_equipamento.html', {'user_name': user_name, 'equipamento_ids': equipamento_ids, 'equipamentos': equipamentos})
 
 
-##################################################################################
 def home(request):
     
     user_name = request.session.get('username', 'Guest')
+    if user_name in ['aluno3_a', 'aluno3_b']:
+        return render(request, 'error_page.html', {'error_message': 'Acesso não autorizado para este utilizador.'})
     return render(request, 'homepage.html', {'user_name': user_name})
     
 def fazerregisto_equipamento(request): #registar equipamento (ainda nao pinta)
@@ -658,6 +694,9 @@ def fazerregisto_equipamento(request): #registar equipamento (ainda nao pinta)
     return render(request, 'registar_equipamento.html', {'form': form})
 
 def gerar_relatorio_excel(request):
+    user_name = request.session.get('username', 'Guest') # para o nome no menu lateral
+    if user_name in ['aluno3_b', 'aluno3_c']:
+        return render(request, 'error_page.html', {'error_message': 'Acesso não autorizado para este utilizador.'})
     # Obtém o mês e ano selecionados no formulário
     mes_ano_selecionado = request.GET.get('mesAno')
     print(f"Valor data: {mes_ano_selecionado}")
