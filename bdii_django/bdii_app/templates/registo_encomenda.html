@@ -402,13 +402,46 @@ form {
     a.click();
 }
 
+function guardarFatura() {
+    var encomendaId = document.getElementById("encomenda_id").value;
+    var nomeFornecedor = document.getElementById("nomeFornecedor").value;
+    var valorTotal = document.getElementById("valorTotal").value;
 
+    var data = {
+        encomenda_id: encomendaId,
+        nome_fornecedor: nomeFornecedor,
+        valor_total: valorTotal
+    };
 
+    // Include CSRF token in the headers
+    var csrfToken = document.getElementsByName("csrfmiddlewaretoken")[0].value;
 
-
-        function guardarFatura() {
-            
+    fetch('/registo_encomenda/guardar_fatura/' + encomendaId + '/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken // Include CSRF token
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        // Handle the response as needed
+        console.log(result);
+        if (result.success) {
+            // Display a success message
+            alert('Fatura registada com sucesso!');
+        } else {
+            // Display an error message
+            alert('A Fatura em questão já se encontra registada!');
         }
+    })
+    .catch(error => {
+        console.error('Error saving data:', error);
+    });
+}
+
+
     </script>
 </body>
 </html>

@@ -845,3 +845,30 @@ BEGIN
     WHERE email = email_cliente;
 END;
 $$ LANGUAGE plpgsql;
+
+
+-- Apagar a tabela FaturaCompras e criar esta
+CREATE TABLE FaturaCompras (
+    ID_fatura SERIAL PRIMARY KEY,
+    id_encomenda INT,
+    nome_fornecedor VARCHAR(255),
+    datahoraEmissao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    valor_total DECIMAL(10, 2),
+    FOREIGN KEY (id_encomenda) REFERENCES encomenda_componentesheader (id)
+);
+
+CREATE OR REPLACE FUNCTION inserir_fatura(
+    p_id_encomenda INT,
+    p_nome_fornecedor VARCHAR(255),
+    p_valor_total DECIMAL(10, 2)
+)
+RETURNS VOID AS $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM FaturaCompras WHERE id_encomenda = p_id_encomenda) THEN
+        INSERT INTO FaturaCompras (id_encomenda, nome_fornecedor, valor_total)
+        VALUES (p_id_encomenda, p_nome_fornecedor, p_valor_total);
+    ELSE
+        RAISE EXCEPTION 'A fatura com o mesmo id_encomenda já existe.';
+    END IF;
+END;
+$$ LANGUAGE plpgsql;

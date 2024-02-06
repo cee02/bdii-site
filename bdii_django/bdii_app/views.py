@@ -398,6 +398,32 @@ def fetch_encomenda_data(request, encomenda_id):
         print(f"An error occurred: {str(e)}")
         return JsonResponse({'error': 'Encomenda não encontrada'}, status=404)
 
+from django.db import connection
+from django.http import JsonResponse
+
+def guardar_fatura(request, encomenda_id):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            encomenda_id = data.get('encomenda_id')
+            nome_fornecedor = data.get('nome_fornecedor')
+            valor_total = data.get('valor_total')
+            print(encomenda_id)
+            print(nome_fornecedor)
+            print(valor_total)
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT inserir_fatura(%s, %s, %s)",
+                               [encomenda_id, nome_fornecedor, valor_total])
+                id_fatura = cursor.fetchone()[0]  # Retrieve the generated id_fatura
+                connection.commit()
+                print(f"Generated id_fatura: {id_fatura}")
+            return JsonResponse({'success': True})
+        except Exception as e:
+            print(f"An error occurred: {str(e)}")
+            return JsonResponse({'success': False, 'error': str(e)})
+
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
 
 
 def get_armazem_data(request):
@@ -496,6 +522,7 @@ def fetch_registo_venda(request, emailCliente):
     except Exception as e:
         logger.error(f"An error occurred in fetch_registo_venda: {str(e)}")
         return JsonResponse({'error': 'Erro desconhecido'}, status=500)
+    
 def fetch_venda_data(request, venda_id):
     try:
         with connection.cursor() as cursor:
@@ -691,7 +718,6 @@ def gerar_relatorio_excel(request):
         with open(excel_file_path, 'rb') as excel_file:
             response = HttpResponse(excel_file.read(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
             response['Content-Disposition'] = f'attachment; filename=relatorio_{mes}-{ano}.xlsx'
-
         return response
 
     except Exception as e:
