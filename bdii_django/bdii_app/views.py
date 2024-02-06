@@ -203,8 +203,8 @@ def insert_componentes_to_db(username, password, componentes_data):
 def importar_componentes(request):
     # Caminho para o arquivo JSON
     #json_file_path = 'D:\\Universidade\\BDII\\Projeto_BDII\\bdii-site\\bdii_django\\bdii_app\\componentes.json'
-    json_file_path = '\Projeto_BDII/bdii-site/bdii_django/bdii_app/componentes.json'
-    #json_file_path = 'C:\\Users\\Rui\\Desktop\\Stuff\\Uni\\3anox2\\BD2\\Trabalho Final\\BD2-Trabalho-Final\\bdii-site\\bdii_django\\bdii_app\\componentes.json'
+    #json_file_path = '\Projeto_BDII/bdii-site/bdii_django/bdii_app/componentes.json'
+    json_file_path = 'C:\\Users\\Rui\\Desktop\\Stuff\\Uni\\3anox2\\BD2\\Trabalho Final\\BD2-Trabalho-Final\\bdii-site\\bdii_django\\bdii_app\\componentes.json'
     #json_file_path = 'C:\\Users\\franc\\OneDrive\\Documentos\\GitHub\\bdii-site\\bdii_django\\bdii_app\\componentes.json'
     try:
         # Lê o conteúdo do arquivo JSON
@@ -421,6 +421,40 @@ def fetch_encomenda_data(request, encomenda_id):
         # Handle exceptions (e.g., database connection error, file not found, etc.)
         print(f"An error occurred: {str(e)}")
         return JsonResponse({'error': 'Encomenda não encontrada'}, status=404)
+    
+
+def fetch_guia_data(request, encomenda_id):
+    try:
+        with connections['default'].cursor() as cursor:
+            # Vai buscar o nome do fornecedor
+            cursor.execute("SELECT * FROM nomeFornecedorDadoIDenc(%s)", [int(encomenda_id)])
+            nomeFornecedor = cursor.fetchall()
+        
+            # Vai buscar a data da encomenda
+            cursor.execute("SELECT * FROM datahoraDadoIdEnc(%s)", [int(encomenda_id)])
+            dataHora = cursor.fetchall()
+
+            # Vai buscar os componentes que sairam recentemente
+            cursor.execute("SELECT * FROM calcular_valor_total_encomenda(%s)", [int(encomenda_id)])
+            valorTotal = cursor.fetchall()
+
+            # Vai buscar as informações dos componentes da encomenda
+            cursor.execute("SELECT * FROM obter_info_componentes_encomenda(%s)", [int(encomenda_id)])
+            componentes_info = cursor.fetchall()
+
+            dataGuia = {
+            'nomeFornecedor': nomeFornecedor,
+            'dataHora': dataHora,  # Formato para datetime-local
+            'valorTotal': valorTotal,
+            'componentes_info': componentes_info,
+            }
+        return JsonResponse(dataGuia)
+    
+    except Exception as e:
+        # Handle exceptions (e.g., database connection error, file not found, etc.)
+        print(f"An error occurred: {str(e)}")
+        return JsonResponse({'error': 'Encomenda não encontrada'}, status=404)
+
 
 def guardar_fatura(request, encomenda_id):
     user_name = request.session.get('username', 'Guest')
@@ -448,7 +482,28 @@ def guardar_fatura(request, encomenda_id):
 
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
+def guardar_guia(request, encomenda_id):
+    if request.method == 'POST':
+        try:
+            dataGuia = json.loads(request.body)
+            encomenda_id = dataGuia.get('encomenda_id_guia')
+            nome_fornecedor = dataGuia.get('nome_fornecedor_guia')
+            valor_total = dataGuia.get('valor_total_guia')
+            print(encomenda_id)
+            print(nome_fornecedor)
+            print(valor_total)
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT inserir_guia(%s, %s, %s)",
+                               [encomenda_id, nome_fornecedor, valor_total])
+                id_guia = cursor.fetchone()[0]  # Retrieve the generated id_fatura
+                connection.commit()
+                print(f"Generated id_fatura: {id_guia}")
+            return JsonResponse({'success': True})
+        except Exception as e:
+            print(f"An error occurred: {str(e)}")
+            return JsonResponse({'success': False, 'error': str(e)})
 
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
 def get_armazem_data(request):
     with connection.cursor() as cursor:
