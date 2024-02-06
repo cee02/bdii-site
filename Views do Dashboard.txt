@@ -827,3 +827,21 @@ BEGIN
 END;
 $$
 LANGUAGE plpgsql;
+
+--View para obter emailCliente
+
+CREATE OR REPLACE VIEW obter_emailCliente AS
+SELECT email
+FROM cliente;
+
+///////////////////////////////////////////////
+--Função obter
+CREATE OR REPLACE FUNCTION obter_cliente_por_email(email_cliente character varying)
+RETURNS TABLE (id integer, nome character varying, telefone character varying) AS $$
+BEGIN
+    RETURN QUERY 
+    SELECT id, nome, telefone
+    FROM cliente
+    WHERE email = email_cliente;
+END;
+$$ LANGUAGE plpgsql;
