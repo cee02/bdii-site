@@ -16,5 +16,6 @@ urlpatterns = [
     path('homepage/', views.home, name='home'),
     path('gerar_relatorio_excel/', views.gerar_relatorio_excel, name='gerar_relatorio_excel'),
     path('registo_encomenda/fetch_encomenda_data/<int:encomenda_id>/', views.fetch_encomenda_data, name='fetch_encomenda_data'),
+    path('registo_venda/fetch_registo_venda/<str:emailCliente>/',views.fetch_registo_venda, name = 'fetch_registo_venda'),
 ]
 

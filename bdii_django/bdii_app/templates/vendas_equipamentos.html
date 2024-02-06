@@ -6,6 +6,37 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <title>Registo de Vendas</title>
   <style>
+    form {
+            max-width: 600px;
+            margin: 0 auto;
+            margin-left: 160px;
+        }
+
+        label, input, select {
+            display: block;
+            margin-bottom: 10px;
+        }
+        /*-----------------------------------------------------------*/
+        .equipment-list {
+            margin-top: 10px;
+        }
+        /*-----------------------------------------------------------*/
+        .equipment-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #000000;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    
     body {
       font-family: Arial, sans-serif;
       margin: 0;
@@ -150,6 +181,74 @@
             width: 50px;
             border-radius: 50%;
         }
+
+        .user-profile img {
+            width: 50px;
+            border-radius: 50%;
+        }
+
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #000000;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #000000;
+        }
+
+
+        select[multiple] {
+        height: auto !important;
+        }
+
+         option:checked::before {
+        content: '\2193'; /* Código unicode para uma seta para baixo */
+        margin-right: 5px;
+        
+        }
+
+        .selected-options {
+            border: 1px solid #ccc;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
   </style>
 </head>
 <body>
@@ -170,77 +269,102 @@
 
           </ul>
       </div>
+      
+      <form method="post" action="{% url 'bdii_vendas_equipamentos' %}">
+        <hr>
+        {% csrf_token %}
+        <h2>Registo das Vendas</h2>
+        <label for="emailCliente">Email do Cliente:</label>
+        <select name="emailCliente" id ="emailCliente" required>
+            {% for email in emailCliente %}
+                <option value="{{ email.0 }}">{{ email.0 }}</option>
+            {% endfor %}
+        </select>
+        <button type="button" id="continuarButton" onclick="fetchRegistoVenda()">Continuar</button>
+        <br>
+        <div id="additionalFields" style="display:none;">
+          <!-- Additional fields go here -->
 
-  <div class="container">
-    <!-- Registo das Vendas -->
-    <div class="section">
-      <h2>Registo das Vendas</h2>
-      <div class="form-group">
-        <label for="id">ID:</label>
-        <select id="id" name="id">
-          <!-- Opções para o dropdown -->
-        </select>
+          <label for="idCliente">ID do Cliente:</label>
+          <input type="text" id="idCliente" name="idCliente" readonly>
+
+          <label for="nomeCliente">Nome do Cliente:</label>
+          <input type="text" id="nomeCliente" name="nomeCliente" readonly>
+
+          <label for="telefoneCliente">Telefone do Cliente:</label>
+          <input type="text" id="telefoneCliente" name="telefoneCliente" readonly>
+          
+          <label for="equipamentos">Equipamento(s):</label>
+        <div class="equipment-list"><!---->
+            <div class="equipment-item"><!---->
+                    {% for equipamento in equipamentos %}
+                        <option value="{{ equipamento.0 }}">{{ equipamento.1 }}</option>
+                    {% endfor %}
+                </select>
+                <input type="number" name="quantidade[]" placeholder="Quantidade" required min="1" required>
+                <button type="button" onclick="removerEquipamento(this)">Remover</button><button type="button" onclick="adicionarEquipamento()">Adicionar Equipamento</button>
+            </div>
+        </div>
+
+          
+          <label for="valorTotal">Valor Total:</label>
+          <input type="text" id="valorTotal" name="valorTotal" readonly>
+
+          <button type="submit" id="adicionarBtn" onclick="showSuccessAlert()">Adicionar Registo de Venda</button>
+
       </div>
-      <div class="form-group">
-        <label for="nomeCliente">Nome do Cliente:</label>
-        <input type="text" id="nomeCliente" name="nomeCliente">
-      </div>
-      <div class="form-group">
-        <label for="contacto">Contacto:</label>
-        <input type="text" id="contacto" name="contacto">
-      </div>
-      <div class="form-group">
-        <label for="componentes">Componentes:</label>
-        <input type="text" id="componentes" name="componentes">
-        <button type="button" onclick="removerComponente(this)">Remover</button><button type="button" onclick="adicionarComponente()">Adicionar Componente</button>
-        
-      </div>
-      <div class="form-group">
-        <label for="valor">Valor:</label>
-        <input type="text" id="valor" name="valor">
-      </div>
-      <div class="form-group">
-        <label for="dataVenda">Data de Venda:</label>
-        <input type="date" id="dataVenda" name="dataVenda">
-      </div>
-      <button>Guardar</button>
-    </div>
-    <hr>
+      <hr>
+    </form>
+   
+    
     <!-- Envio da Fatura ao Cliente -->
-    <div class="section">
-      <h2>Envio da Fatura ao Cliente</h2>
-      <div class="form-group">
-        <label for="idVenda">ID de Venda:</label>
-        <select id="idVenda" name="idVenda">
-          <!-- Opções para o dropdown -->
-        </select>
+    <form id="faturaForm">
+      <hr>
+      <h2>Envio da Fatura para o Cliente</h2>
+      <label for="venda">ID da Venda:</label>
+      <select name="venda_id" id="venda_id">
+          {% for venda in idvenda %}
+              <option value="{{ venda.0 }}">{{ venda.0 }}</option>
+          {% endfor %}
+      </select>
+  
+      <!-- Remova a chamada fetchVendaData() do evento onclick -->
+      <button type="button" id="continuarButton" onclick="continuar()">Continuar</button>
+  
+      <div id="additionalFields" style="display:none;">
+          <!-- Additional fields go here -->
+          <label for="emailCliente">Email do Cliente:</label>
+          <input type="text" id="Email" name="Email" readonly>
+
+          <label for="idCliente">ID do cliente:</label>
+          <input type="text" id="idCliente" name="idCliente" readonly>
+
+          <label for="nomeCliente">Nome do Cliente:</label>
+          <input type="text" id="nomeCliente" name="nomeCliente" readonly>
+
+          <label for="telefoneCliente">Telefone do Cliente:</label>
+          <input type="text" id="telefoneCliente" name="telefoneCliente" readonly>
+
+          <label for="endrecoCliente">Endreço do Cliente:</label>
+          <input type="text" id="endrecoCliente" name="endrecoCliente" readonly>
+
+          <label for="contribuinteCliente">Contribuinte do Cliente:</label>
+          <input type="text" id="contribuinteCliente" name="contribuinteCliente" readonly>
+          
+          <label for="dataHora">Data/Hora Emissão:</label>
+          <input type="datetime-local" id="dataHora" name="dataHora" readonly>
+          
+          <label for="valorTotal">Valor Total:</label>
+          <input type="text" id="valorTotal" name="valorTotal" readonly>
+
+          <ul id="equipamentosList"></ul>
+  
+          <button type="button" onclick="enviarFatura()">Enviar</button>
       </div>
-      <div class="form-group">
-        <label for="nomeClienteFatura">Nome do Cliente:</label>
-        <input type="text" id="nomeClienteFatura" name="nomeClienteFatura">
-      </div>
-      <div class="form-group">
-        <label for="dataHoraEmissao">Data/hora de Emissão:</label>
-        <input type="datetime-local" id="dataHoraEmissao" name="dataHoraEmissao">
-      </div>
-      <div class="form-group">
-        <label for="tipoEquipamento">Tipo de Equipamento:</label>
-        <input type="text" id="tipoEquipamento" name="tipoEquipamento">
-      </div>
-      <div class="form-group">
-        <label for="valorTotal">Valor Total:</label>
-        <input type="text" id="valorTotal" name="valorTotal">
-      </div>
-      <div class="form-group">
-        <label for="nif">NIF:</label>
-        <input type="text" id="nif" name="nif">
-      </div>
-      <div class="form-group">
-        <label for="quantidade">Quantidade:</label>
-        <input type="text" id="quantidade" name="quantidade">
-      </div>
-      <button>Enviar Fatura</button>
-    </div>
+      <hr>
+  </form>
+    
+  <div class="container">
     <hr>
     <!-- Histórico de Vendas -->
     <div class="section">
@@ -264,7 +388,139 @@
         <!-- Adicione mais itens conforme necessário -->
       </ul>
     </div>
+    <hr>
   </div>
+  <script>
+    function adicionarEquipamento() {
+            var equipamentosDiv = document.querySelector('.equipment-list');///////////////////////
+            var novoEquipamento = document.createElement('div');
+            novoEquipamento.className = 'equipment-item';//////////////////////////
+            novoEquipamento.innerHTML = `
+                <select name="equipamento[]" required>
+                    {% for equipamento in equipamentos %}
+                         <option value="{{ equipamento.0 }}">{{ equipamento.1 }}</option>
+                    {% endfor %}
+                </select>
+                <input type="number" name="quantidade[]" placeholder="Quantidade" required>
+                <button type="button" onclick="removerEquipamento(this)">Remover</button>
+            `;
+            equipamentosDiv.appendChild(novoEquipamento);
+        }
 
+        function removerEquipamento(button) {
+            var equipamentoDiv = button.parentNode;
+            equipamentoDiv.parentNode.removeChild(equipamentoDiv);
+        }
+
+        function showSuccessAlert() {
+            // Verificar se pelo menos uma quantidade foi inserida
+            var quantidades = document.getElementsByName("quantidade[]");
+            var quantidadePreenchida = false;
+
+            for (var i = 0; i < quantidades.length; i++) {
+                if (quantidades[i].value.trim() !== "") {
+                    quantidadePreenchida = true;
+                    break;
+                }
+            }
+
+            if (!quantidadePreenchida) {
+                alert('Requisitos em falta');
+                return false;
+            }
+
+            else if(quantidadePreenchida) {
+                alert('Venda feita com sucesso');
+            }
+        }
+
+     function continuar() {
+            fetchRegistoVenda();
+            document.getElementById("additionalFields").style.display = "block";
+            document.getElementById("continuarButton").style.display = "none";
+            document.getElementById("emailCliente").onchange = function() {fetchRegistoVenda();};
+        }
+
+
+        function fetchRegistoVenda() {
+        document.getElementById("additionalFields").style.display = "block";
+        var emailCliente = document.getElementById("emailCliente").value;
+
+        fetch('/registo_venda/fetch_registo_venda/' + emailCliente + '/')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro na requisição. Status: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Dados recebidos:', data); // Log received data for debugging
+
+                if (!data || !data.dadosCliente) {
+                    throw new Error('Dados do cliente não foram recebidos corretamente.');
+                }
+                // Update additional fields with data
+                document.getElementById("idCliente").value = data.dadosCliente[0][0];
+                document.getElementById("nomeCliente").value = data.dadosCliente[0][1];
+                document.getElementById("telefoneCliente").value = data.dadosCliente[0][2];
+                //document.getElementById("valorTotal").value = data.valorTotal[0][0];
+
+                // Show the additional fields
+                document.getElementById("additionalFields").style.display = "block";
+            })
+            .catch(error => console.error('Error fetching venda data:', error));
+}
+
+
+        function fetchVendaData() {
+            var vendaId = document.getElementById("venda_id").value;
+
+            fetch('/registo_venda/fetch_registo_venda/' + emailCliente + '/')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro na requisição. Status: ' + response.status);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (!data || !data.dadosCliente) {
+                throw new Error('Dados do cliente não foram recebidos corretamente.');
+            }
+                    // Update additional fields with data
+                    document.getElementById("emailCliente").value = data.emailCliente;
+                    document.getElementById("idCliente").value = data.idCliente;
+                    document.getElementById("nomeCliente").value = data.nomeCliente;
+                    document.getElementById("telefoneCliente").value = data.telefone;
+                    document.getElementById("endrecoCliente").value = data.endrecoCliente;
+                    document.getElementById("contribuinteCliente").value = data.contribuinteCliente;
+                    document.getElementById("dataHora").value = data.dataHora;
+                    document.getElementById("valorTotal").value = data.valorTotal;
+                    
+                    // Access the equipamentos_info array
+                    var equipamentosInfo = data.equipamentos_info;
+                    console.log('equipamentos Info:', equipamentosInfo);
+                    // Loop through equipamentos_info and update HTML elements
+                    var equipamentosList = document.getElementById("equipamentosList");
+                    equipamentosList.innerHTML = ""; // Clear previous content
+
+                    equipamentosInfo.forEach(equipamento => {
+                        var listItem = document.createElement("li");
+                        listItem.textContent = `Nome: ${equipamento[0]}, Quantidade: ${equipamento[1]}, Preço: ${equipamento[2]}`;
+                        equipamentosList.appendChild(listItem);
+                    });
+
+
+                    // Show the additional fields
+                    document.getElementById("additionalFields").style.display = "block";
+                })
+                .catch(error => {console.error('Error fetching venda data:', error), console.log('Data received:', data)});
+                document.getElementById("additionalFields").style.display = "block";
+        }
+
+
+        function guardarFatura() {
+
+        }
+  </script>
 </body>
 </html>

@@ -12,7 +12,9 @@ import os
 from django.conf import settings
 from django.contrib import messages
 from django.http import JsonResponse
+import logging
 
+logger = logging.getLogger(__name__)
 
 def error_page(request, error_message):
     return render(request, 'error_page.html', {'error_message': error_message})
@@ -456,11 +458,162 @@ def registar_equipamento(request):
 
     return render(request, 'registar_equipamento.html', {'user_name': user_name, 'componente_ids': componente_ids, 'componentes': componentes})
 
-
+##################################################################################
 def vendas_equipamentos(request):
-    user_name = request.session.get('username', 'Guest') # para o nome no menu lateral
-    return render(request, 'vendas_equipamentos.html', {'user_name': user_name})
+    try:
+        with connections['default'].cursor() as cursor:
+            cursor.execute("SELECT * FROM obter_emailCliente")  # Renomeie a view para evitar conflito de nomes
+            emailCliente = cursor.fetchall()
+            print('email',emailCliente)
 
+    except Exception as e:
+        # Handle exceptions (e.g., database connection error, file not found, etc.)
+        print(f"An error occurred: {str(e)}")
+     
+    user_name = request.session.get('username', 'Guest')
+    return render(request, 'vendas_equipamentos.html', {'user_name': user_name, 'emailCliente': emailCliente})
+
+
+def fetch_registo_venda(request, emailCliente):
+    try:
+        logger.debug("Starting fetch_registo_venda view function...")
+        
+        with connection.cursor() as cursor:
+            logger.debug(f"Executing SQL query to retrieve data for email: {emailCliente}")
+            cursor.execute("SELECT * FROM obter_cliente_por_email(%s)", (emailCliente,))
+            dadosCliente = cursor.fetchall()
+            logger.debug(f"Retrieved data for email {emailCliente}: {dadosCliente}")
+
+            
+
+            data = {
+                'dadosCliente': dadosCliente,
+            }
+            logger.debug("Data prepared for JSON response")
+
+        return JsonResponse(data)
+    
+    except Exception as e:
+        logger.error(f"An error occurred in fetch_registo_venda: {str(e)}")
+        return JsonResponse({'error': 'Erro desconhecido'}, status=500)
+def fetch_venda_data(request, venda_id):
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM emailClienteDadoIDenc(%s)", [int(venda_id)])
+            emailCliente = cursor.fetchall()
+            
+            # Vai buscar o id do cliente
+            cursor.execute("SELECT * FROM idClienteDadoIDenc(%s)", [int(venda_id)])
+            idCliente = cursor.fetchall()
+
+            # Vai buscar o nome do cliente
+            cursor.execute("SELECT * FROM nomeClienteDadoIDenc(%s)", [int(venda_id)])
+            nomeCliente = cursor.fetchall()
+
+            # Vai buscar o telefone do cliente
+            cursor.execute("SELECT * FROM telefoneClienteDadoIDenc(%s)", [int(venda_id)])
+            telefoneCliente = cursor.fetchall()
+
+            # Vai buscar o endreço do cliente
+            cursor.execute("SELECT * FROM endrecoClienteDadoIDenc(%s)", [int(venda_id)])
+            endrecoCliente = cursor.fetchall()
+
+            # Vai buscar o contribuinte do cliente
+            cursor.execute("SELECT * FROM contribuinteClienteDadoIDenc(%s)", [int(venda_id)])
+            contribuinteCliente = cursor.fetchall()
+        
+            # Vai buscar a data da venda
+            cursor.execute("SELECT * FROM datahoraDadoIdEnc(%s)", [int(venda_id)])
+            dataHora = cursor.fetchall()
+
+            # Vai buscar os equipamentos que foram vendidos ao cliente naquele dia
+            cursor.execute("SELECT * FROM calcular_valor_total_venda(%s)", [int(venda_id)])
+            valorTotal = cursor.fetchall()
+
+            # Vai buscar as informações dos equipamentos da venda
+            cursor.execute("SELECT * FROM obter_info_equipamentos_venda(%s)", [int(venda_id)])
+            equipamentos_info = cursor.fetchall()
+
+            data = {
+                'emailCliente': emailCliente,
+                'idCliente': idCliente,
+                'nomeCliente': nomeCliente,
+                'telefoneCliente': telefoneCliente,
+                'endrecoCliente': endrecoCliente,
+                'contribuinteCliente': contribuinteCliente,
+                'dataHora': dataHora,
+                'valorTotal': valorTotal,
+                'equipamentos_info': equipamentos_info,
+            }
+        return JsonResponse(data)
+
+    except DatabaseError as e:
+        return JsonResponse({'error': 'Venda não encontrada'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': 'Erro desconhecido'}, status=500)
+
+
+
+def get_armazem_data(request):
+    with connection.cursor() as cursor:
+        # Call the stored procedure
+        cursor.callproc('get_armazem_data', [])
+        armazem_data = cursor.fetchall()
+
+    context = {
+        'armazem_data': armazem_data,
+    }
+
+    return render(request, '.html', context)
+
+
+def registar_venda(request):
+    user_name = request.session.get('username', 'Guest')
+    componentes = []
+
+    producao_header_id = request.POST.get('equipamento_id', None)
+    tipo = request.POST.get('hiddenTipo', '')
+    descricao = request.POST.get('hiddenDescricao', '')
+    print('producao_header_id:', producao_header_id)
+    print('tipo:', tipo)
+    print('descricao:', descricao)
+
+    if producao_header_id:
+        # Check if producao_header_id already exists in EquipamentoArmazem
+        with connection.cursor() as cursor:
+            cursor.execute(
+                "SELECT COUNT(*) FROM vw_EquipamentoArmazem_Ids WHERE equipamentoID = %s",
+                [producao_header_id]
+            )
+            exists_in_view = cursor.fetchone()[0]
+
+            if exists_in_view  == 0:  # If not exists
+                # Proceed to fetch equipamentos and call stored procedure
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        "SELECT * FROM vw_cequipamentos_by_producao_header WHERE id_producao_header = %s",
+                        [producao_header_id]
+                    )
+                    columns = [col[0] for col in cursor.description]
+                    equipamentos = [dict(zip(columns, row)) for row in cursor.fetchall()]
+                    print('Equipamentos:', equipamentos)
+                    print('tipo:', tipo)
+                    print('descricao:', descricao)
+
+                    # Call stored procedure only if producao_header_id doesn't exist in EquipamentoArmazem
+                    cursor.execute("CALL InsertEquipamentoArmazemWithTotal(%s, %s, %s)",
+                                    [producao_header_id, tipo, descricao])
+
+    with connection.cursor() as cursor:
+        cursor.execute(
+            "SELECT id FROM vw_equipamentos_ProducaoHeader WHERE id NOT IN (SELECT equipamentoID FROM EquipamentoArmazem)"
+        )
+        equipamento_ids = [row[0] for row in cursor.fetchall()]
+
+    return render(request, 'registar_equipamento.html', {'user_name': user_name, 'equipamento_ids': equipamento_ids, 'equipamentos': equipamentos})
+
+
+##################################################################################
 def home(request):
     
     user_name = request.session.get('username', 'Guest')
@@ -576,3 +729,7 @@ def obter_encomendas():
         idencomenda = cursor.fetchall()
 
     return idencomenda
+
+
+
+#####################################################3
