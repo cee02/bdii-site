@@ -295,14 +295,15 @@
           <input type="text" id="telefoneCliente" name="telefoneCliente" readonly>
           
           <label for="equipamentos">Equipamento(s):</label>
-        <div class="equipment-list"><!---->
-            <div class="equipment-item"><!---->
+        <div class="equipamento-list">
+            <div class="equipamento-item">
+                <select name="equipamento[]" required>
                     {% for equipamento in equipamentos %}
-                        <option value="{{ equipamento.0 }}">{{ equipamento.0 }}</option>
+                        <option value="{{ equipamento.0 }}">{{ equipamento.1 }}</option>
                     {% endfor %}
                 </select>
-                <input type="number" name="quantidade[]" placeholder="Quantidade" required min="1" required>
-                <button type="button" onclick="removerEquipamento(this)">Remover</button><button type="button" onclick="adicionarEquipamento()">Adicionar Equipamento</button>
+                <input type="number" name="quantidade[]" placeholder="Quantidade" style="margin-left: 20px;" required min="1" required>
+                <button type="button1"  class="custom-button" style="margin-left: 20px; margin-bottom: 20px" onclick="removerComponente(this)">Remover</button>
             </div>
         </div>
 
