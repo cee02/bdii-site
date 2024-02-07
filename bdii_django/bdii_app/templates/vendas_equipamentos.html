@@ -247,32 +247,31 @@
           </ul>
       </div>
       
-      <form method="post" action="{% url 'bdii_vendas_equipamentos' %}" onsubmit="captureSelectedEmail()">
+      <form method="post" action="{% url 'bdii_vendas_equipamentos' %}" onsubmit="submitForm()">
         <hr>
         {% csrf_token %}
         <h2>Registo das Vendas</h2>
         <label for="emailCliente">Email do Cliente:</label>
-<select name="emailCliente" id="emailCliente" required>
-  <option value="" selected disabled>Escolha um Cliente</option>
-  {% for email in emailCliente %}
-    <option value="{{ email.0 }}">{{ email.0 }}</option>
-  {% endfor %}
-</select>
-<input type="hidden" id="selectedEmail" name="selectedEmail">
-
-    
+        <select name="emailCliente" id="emailCliente" required>
+          <option value="" selected disabled>Escolha um Cliente</option>
+          {% for email in emailCliente %}
+            <option value="{{ email.0 }}">{{ email.0 }}</option>
+          {% endfor %}
+        </select>
+        <input type="hidden" id="selectedEmail" name="selectedEmail">
+      
         <!-- Additional fields go here -->
         <label for="idCliente">ID do Cliente:</label>
         <input type="text" id="idCliente" name="idCliente" readonly>
-    
+      
         <label for="nomeCliente">Nome do Cliente:</label>
         <input type="text" id="nomeCliente" name="nomeCliente" readonly>
-    
+      
         <label for="telefoneCliente">Telefone do Cliente:</label>
         <input type="text" id="telefoneCliente" name="telefoneCliente" readonly>
-    
+      
         <hr>
-    
+      
         <!-- Equipamentos -->
         <label for="equipamentos">Equipamento(s):</label>
         <div id="equipamentosList">
@@ -288,13 +287,22 @@
             <p id="noEquipmentsMessage">Nenhum equipamento encontrado.</p>
           {% endif %}
         </div>
-    
+      
         <button type="submit" id="adicionarBtn">Adicionar Registo de Venda</button>
       </form>
       
-
-
       <script>
+        function submitForm() {
+          var selectedEmail = document.getElementById("emailCliente").value;
+          var idCliente = document.getElementById("idCliente").value;
+          var nomeCliente = document.getElementById("nomeCliente").value;
+          var telefoneCliente = document.getElementById("telefoneCliente").value;
+      
+          document.getElementById("selectedEmail").value = selectedEmail;
+          document.getElementById("idCliente").value = idCliente;
+          document.getElementById("nomeCliente").value = nomeCliente;
+          document.getElementById("telefoneCliente").value = telefoneCliente;
+        }
         document.addEventListener("DOMContentLoaded", function () {
     fetchRegistoVenda();
   });
