@@ -290,6 +290,31 @@
       
         <button type="submit" id="adicionarBtn">Adicionar Registo de Venda</button>
       </form>
+
+
+      <form id="faturaForm">
+        <hr>
+        <h2>Envio da Fatura para o Cliente</h2>
+        <label for="fatura">ID da Venda:</label>
+        <select name="fatura_id" id="fatura_id">
+            {% for venda in idvenda %}
+                <option value="{{ venda.0 }}">{{ venda.0 }}</option>
+            {% endfor %}
+        </select>
+    
+        <!-- Remova a chamada fetchVendaData() do evento onclick -->
+        <button type="button" id="continuarButton" onclick="continuar()">Continuar</button>
+    
+        <div id="additionalFields" style="display:none;">
+            <!-- Additional fields go here -->
+            <label for="emailCliente">Email do Cliente:</label>
+            <input type="text" id="Email" name="Email" readonly>
+  
+            <label for="idCliente">ID do cliente:</label>
+            <input type="text" id="idCliente" name="idCliente" readonly>
+  
+            <label for="nomeCliente">Nome do Cliente:</label>
+            <input type="text" id="nomeCliente" name="nomeCliente" readonly>
       
       <script>
         function submitForm() {

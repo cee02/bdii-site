@@ -922,24 +922,86 @@ CREATE TABLE PedidoCompraCliente (
 	UNIQUE (id, equipamentoID )
 );
 
----Executar primeir esta linha, depois o PedidoCompraCliente.
-INSERT INTO pedido_clienteHeader DEFAULT VALUES RETURNING id;
+-- Criar esta Tabela
+CREATE TABLE Vendas_Header (
+    VendaID SERIAL PRIMARY KEY
+)
 
+-- Criar tbm esta Tabela
+CREATE TABLE Vendas (
+    ID SERIAL PRIMARY KEY,
+    ClienteID INT,
+    EquipamentoID INT,
+    DescricaoEquipamento VARCHAR(255),
+    Quantidade INT,
+	VendaHeaderID INT,
+    ValorTotal DECIMAL(10, 2),
+    datahora TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (ClienteID) REFERENCES Cliente(ID),
+    FOREIGN KEY (EquipamentoID) REFERENCES EquipamentoArmazem(equipamentoID),
+    FOREIGN KEY (VendaHeaderID) REFERENCES Vendas_Header(VendaID),
+	UNIQUE (ID, EquipamentoID )
+);
+
+--Criar Função
+CREATE OR REPLACE FUNCTION insert_into_vendas(
+    p_ClienteID INT,
+    p_EquipamentoID INT,
+    p_DescricaoEquipamento VARCHAR(255),
+    p_Quantidade INT,
+    p_VendaHeaderID INT
+)
+RETURNS VOID AS $$
+DECLARE
+    v_ValorTotal DECIMAL(10, 2);
+    v_VendaHeaderID INT;
+BEGIN
+    -- Calculate the ValorTotal by fetching the value from EquipamentoArmazem
+    SELECT valor_total 
+    INTO v_ValorTotal
+    FROM EquipamentoArmazem
+    WHERE equipamentoid = p_EquipamentoID;
+
+    -- If p_VendaHeaderID is provided, use it; otherwise, get the latest VendaHeaderID
+    IF p_VendaHeaderID IS NOT NULL THEN
+        v_VendaHeaderID := p_VendaHeaderID;
+    ELSE
+        SELECT COALESCE(MAX(VendaHeaderID), 0) + 1
+        INTO v_VendaHeaderID
+        FROM Vendas;
+    END IF;
+
+    -- Insert data into Vendas table
+    INSERT INTO Vendas (ClienteID, EquipamentoID, DescricaoEquipamento, Quantidade, VendaHeaderID, ValorTotal)
+    VALUES (p_ClienteID, p_EquipamentoID, p_DescricaoEquipamento, p_Quantidade, v_VendaHeaderID, v_ValorTotal);
+END;
+$$ LANGUAGE plpgsql;
+
+-- Comandos para Limpar
+
+Delete from EquipamentoArmazem
+Delete from PedidoCompraCliente
+Delete from ComponentesFichaProducao 
+ALTER SEQUENCE producaoheader_id_seq RESTART WITH 1;
+
+--Usar estes comandos para guardar o pedido de compra, TENHAM em conta que é preciso ter equipamentos com OS IDS DE BAIXO!!
+--executar este comando
+ INSERT INTO pedido_clienteHeader DEFAULT VALUES RETURNING id;
+ -Depois executar este
 INSERT INTO PedidoCompraCliente (clienteID, equipamentoID, id_pedido_clienteHeader, enderecoEntrega, valor_total)
 VALUES 
-    (3, 37, (SELECT Id FROM pedido_clienteHeader ORDER BY Id DESC LIMIT 1), 'Endereço de Entrega', 100.00),
-    (3, 38, (SELECT Id FROM pedido_clienteHeader ORDER BY Id DESC LIMIT 1), 'Endereço de Entrega', 120.00);
-	
-    ----Depois executar esta proxima linha e depois o proximo PedidoCompraCliente
-	INSERT INTO pedido_clienteHeader DEFAULT VALUES RETURNING id;
-	
-	INSERT INTO PedidoCompraCliente (clienteID, equipamentoID, id_pedido_clienteHeader, enderecoEntrega, valor_total)
+    (2, 1, (SELECT Id FROM pedido_clienteHeader ORDER BY Id DESC LIMIT 1), 'Endereço de Entrega', 100.00),
+    (2, 2, (SELECT Id FROM pedido_clienteHeader ORDER BY Id DESC LIMIT 1), 'Endereço de Entrega', 120.00);
+
+--rodar este comando outra vez
+    INSERT INTO pedido_clienteHeader DEFAULT VALUES RETURNING id;
+    --Depois voltar a inserir uma nova linha
+INSERT INTO PedidoCompraCliente (clienteID, equipamentoID, id_pedido_clienteHeader, enderecoEntrega, valor_total)
 VALUES 
-    (2, 21, (SELECT Id FROM pedido_clienteHeader ORDER BY Id DESC LIMIT 1), 'Endereço de Entrega', 100.00),
-    (2, 23, (SELECT Id FROM pedido_clienteHeader ORDER BY Id DESC LIMIT 1), 'Endereço de Entrega', 120.00);
+    (3, 3, (SELECT Id FROM pedido_clienteHeader ORDER BY Id DESC LIMIT 1), 'Endereço de Entrega', 153.00),
+    (3, 4, (SELECT Id FROM pedido_clienteHeader ORDER BY Id DESC LIMIT 1), 'Endereço de Entrega', 120.00);
 
-
-    ------Criar Função
+------Criar Função
     CREATE OR REPLACE FUNCTION get_pedido_info(cliente_email VARCHAR(255))
 RETURNS TABLE (
     equipamento_descricao VARCHAR(255),

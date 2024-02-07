@@ -591,14 +591,23 @@ def vendas_equipamentos(request):
                 cliente_data = cursor.fetchall()
                 print(cliente_data)
 
+                
+                cursor.execute('INSERT INTO vendas_header  DEFAULT VALUES RETURNING VendaID')
+                VendaHeaderID = cursor.fetchone()[0]
+
                 for data in cliente_data:
                     cliente_id = cliente_info[0]  # Assuming the first column is ClienteID
                     equipamento_id = data[1]  # Assuming the first column is EquipamentoID
                     descricao = data[0]  # Assuming the second column is DescricaoEquipamento
                     quantidade = 1
-
+                    
                     # Explicit type casting for cliente_id and equipamento_id
-                    cursor.execute("SELECT insert_into_vendas(%s, %s, %s, %s)", [cliente_id, equipamento_id, descricao, quantidade])
+                    cursor.execute("SELECT insert_into_vendas(%s, %s, %s, %s, %s)", [cliente_id, equipamento_id, descricao, quantidade, VendaHeaderID])
+                    print(cliente_id)
+                    print(equipamento_id)
+                    print(descricao)
+                    print(quantidade)
+                    print(VendaHeaderID)
     except Exception as e:
         print(f"An error occurred: {str(e)}")
 
@@ -733,8 +742,6 @@ def registar_venda(request):
                 # Proceed to fetch equipamentos and call stored procedure
                 with connection.cursor() as cursor:
 
-                    cursor.execute('INSERT INTO vendas_header  DEFAULT VALUES RETURNING VendaID')
-                    VendaHeaderID = cursor.fetchone()[0]
                     
                     cursor.execute(
                         "SELECT * FROM vw_cequipamentos_by_producao_header WHERE id_producao_header = %s",
@@ -748,7 +755,7 @@ def registar_venda(request):
 
                     # Call stored procedure only if producao_header_id doesn't exist in EquipamentoArmazem
                     cursor.execute("CALL InsertEquipamentoArmazemWithTotal(%s, %s, %s, %s)",
-                                    [producao_header_id, tipo, descricao, VendaHeaderID])
+                                    [producao_header_id, tipo, descricao])
 
     with connection.cursor() as cursor:
         cursor.execute(
