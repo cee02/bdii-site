@@ -297,8 +297,13 @@ h3 {
                 </select>
                 <br><br>
     
-                <label for="tipo">Tipo:</label>
-            <input type="text" id="tipo" name="tipo">
+            <label for="tipo">Tipo:</label>
+            <select id="tipo" name="tipo">
+                <option value="" selected disabled>Selecione uma opção</option>
+                {% for tipo in tipos_equipamento %}
+                    <option value="{{ tipo }}">{{ tipo }}</option>
+                {% endfor %}
+            </select>
             <label for="descricao">Descrição:</label>
             <textarea id="descricao" name="descricao" rows="4"></textarea>
 
@@ -347,6 +352,8 @@ h3 {
             var descricao = document.getElementById('descricao').value;
             document.getElementById('hiddenTipo').value = tipo;
             document.getElementById('hiddenDescricao').value = descricao;
+            var tipoField = document.getElementById('tipo');
+
         }
     
         function submitForm() {

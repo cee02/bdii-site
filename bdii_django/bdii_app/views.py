@@ -203,8 +203,8 @@ def insert_componentes_to_db(username, password, componentes_data):
 def importar_componentes(request):
     # Caminho para o arquivo JSON
     #json_file_path = 'D:\\Universidade\\BDII\\Projeto_BDII\\bdii-site\\bdii_django\\bdii_app\\componentes.json'
-    #json_file_path = '\Projeto_BDII/bdii-site/bdii_django/bdii_app/componentes.json'
-    json_file_path = 'C:\\Users\\Rui\\Desktop\\Stuff\\Uni\\3anox2\\BD2\\Trabalho Final\\BD2-Trabalho-Final\\bdii-site\\bdii_django\\bdii_app\\componentes.json'
+    json_file_path = '\Projeto_BDII/bdii-site/bdii_django/bdii_app/componentes.json'
+    #json_file_path = 'C:\\Users\\Rui\\Desktop\\Stuff\\Uni\\3anox2\\BD2\\Trabalho Final\\BD2-Trabalho-Final\\bdii-site\\bdii_django\\bdii_app\\componentes.json'
     #json_file_path = 'C:\\Users\\franc\\OneDrive\\Documentos\\GitHub\\bdii-site\\bdii_django\\bdii_app\\componentes.json'
     try:
         # Lê o conteúdo do arquivo JSON
@@ -564,7 +564,11 @@ def registar_equipamento(request):
         )
         componente_ids = [row[0] for row in cursor.fetchall()]
 
-    return render(request, 'registar_equipamento.html', {'user_name': user_name, 'componente_ids': componente_ids, 'componentes': componentes})
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT tipo FROM vw_tipos_equipamento;")
+        tipos_equipamento = [row[0] for row in cursor.fetchall()]
+
+    return render(request, 'registar_equipamento.html', {'user_name': user_name, 'componente_ids': componente_ids, 'componentes': componentes, 'tipos_equipamento': tipos_equipamento})
 
 ##################################################################################
 def vendas_equipamentos(request):

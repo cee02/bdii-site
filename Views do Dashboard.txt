@@ -872,3 +872,19 @@ BEGIN
     END IF;
 END;
 $$ LANGUAGE plpgsql;
+-----------------------
+
+CREATE TABLE TipoEquipamento (
+    ID_tipo_equipamento SERIAL PRIMARY KEY,
+    tipo VARCHAR(255) NOT NULL
+);
+----------
+INSERT INTO TipoEquipamento (tipo) VALUES ('Portátil');
+INSERT INTO TipoEquipamento (tipo) VALUES ('Computador Fixo');
+INSERT INTO TipoEquipamento (tipo) VALUES ('Impressora');
+INSERT INTO TipoEquipamento (tipo) VALUES ('Rato');
+INSERT INTO TipoEquipamento (tipo) VALUES ('Cadeira Gaming');
+INSERT INTO TipoEquipamento (tipo) VALUES ('Webcam');
+-----------
+CREATE VIEW vw_tipos_equipamento AS
+SELECT * FROM TipoEquipamento;
