@@ -568,6 +568,7 @@ def registar_equipamento(request):
 
 ##################################################################################
 def vendas_equipamentos(request):
+    equipamentos = obter_equipamentos()
     try:
         with connections['default'].cursor() as cursor:
             cursor.execute("SELECT * FROM obter_emailCliente")  # Renomeie a view para evitar conflito de nomes
@@ -581,7 +582,7 @@ def vendas_equipamentos(request):
     user_name = request.session.get('username', 'Guest')
     if user_name in ['aluno3_c']:
         return render(request, 'error_page.html', {'error_message': 'Acesso não autorizado para este utilizador.'})
-    return render(request, 'vendas_equipamentos.html', {'user_name': user_name, 'emailCliente': emailCliente})
+    return render(request, 'vendas_equipamentos.html', {'user_name': user_name, 'emailCliente': emailCliente, 'equipamentos': equipamentos})
 
 
 def fetch_registo_venda(request, emailCliente):
@@ -850,6 +851,12 @@ def obter_encomendas():
 
     return idencomenda
 
+def obter_equipamentos():
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT id_equipamento, descricao FROM equipamento")
+        #cursor.execute("SELECT * FROM dados_equipamentos")
+        componentes = cursor.fetchall()
 
+    return componentes
 
 #####################################################3
