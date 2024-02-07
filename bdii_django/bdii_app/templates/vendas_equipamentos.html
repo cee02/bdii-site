@@ -252,232 +252,110 @@
         {% csrf_token %}
         <h2>Registo das Vendas</h2>
         <label for="emailCliente">Email do Cliente:</label>
-        <select name="emailCliente" id ="emailCliente" required>
-            {% for email in emailCliente %}
-                <option value="{{ email.0 }}">{{ email.0 }}</option>
+<select name="emailCliente" id="emailCliente" required>
+  <option value="" selected disabled>Escolha um Cliente</option>
+  {% for email in emailCliente %}
+    <option value="{{ email.0 }}">{{ email.0 }}</option>
+  {% endfor %}
+</select>
+<input type="hidden" id="selectedEmail" name="selectedEmail">
+
+    
+        <!-- Additional fields go here -->
+        <label for="idCliente">ID do Cliente:</label>
+        <input type="text" id="idCliente" name="idCliente" readonly>
+    
+        <label for="nomeCliente">Nome do Cliente:</label>
+        <input type="text" id="nomeCliente" name="nomeCliente" readonly>
+    
+        <label for="telefoneCliente">Telefone do Cliente:</label>
+        <input type="text" id="telefoneCliente" name="telefoneCliente" readonly>
+    
+        <hr>
+    
+        <!-- Equipamentos -->
+        <label for="equipamentos">Equipamento(s):</label>
+        <div id="equipamentosList">
+          {% if cliente_data %}
+            {% for data in cliente_data %}
+              <div>
+                <span>Descrição: {{ data.0 }}</span>  ||
+                <span>Quantidade: {{ data.1 }}</span>  ||
+                <span>Valor: {{ data.2 }}</span>
+              </div>
             {% endfor %}
-            <input type="hidden" id="selectedEmail" name="selectedEmail">
-        </select>
-        <button type="button" id="continuarButton" onclick="continuar()">Continuar</button>
-        <br>
-        <div id="additionalFields" style="display:none;">
-          <!-- Additional fields go here -->
-
-          <label for="idCliente">ID do Cliente:</label>
-          <input type="text" id="idCliente" name="idCliente" readonly>
-
-          <label for="nomeCliente">Nome do Cliente:</label>
-          <input type="text" id="nomeCliente" name="nomeCliente" readonly>
-
-          <label for="telefoneCliente">Telefone do Cliente:</label>
-          <input type="text" id="telefoneCliente" name="telefoneCliente" readonly>
-          
-          <label for="equipamentos">Equipamento(s):</label>
-<div class="equipamento-list">
-    {% for data in cliente_data %}
-        <div>
-            <span>Descrição: {{ data.0 }}</span>  ||
-            <span>Quantidade: {{ data.1 }}</span>  ||
-            <span>Valor: {{ data.2 }}</span>
+          {% else %}
+            <p id="noEquipmentsMessage">Nenhum equipamento encontrado.</p>
+          {% endif %}
         </div>
-    {% endfor %}
-</div>  
-        <button type="submit" id="adicionarBtn" onclick="showSuccessAlert()">Adicionar Registo de Venda</button>
-    </div>
-<hr>
-</form>
-   
     
-    <!-- Envio da Fatura ao Cliente -->
-    <form id="faturaForm">
-      <hr>
-      <h2>Envio da Fatura para o Cliente</h2>
-      <label for="venda">ID da Venda:</label>
-      <select name="venda_id" id="venda_id">
-          {% for venda in idvenda %}
-              <option value="{{ venda.0 }}">{{ venda.0 }}</option>
-          {% endfor %}
-      </select>
-  
-      <!-- Remova a chamada fetchVendaData() do evento onclick -->
-      <button type="button" id="continuarButton" onclick="continuar()">Continuar</button>
-  
-      <div id="additionalFields" style="display:none;">
-          <!-- Additional fields go here -->
-          <label for="emailCliente">Email do Cliente:</label>
-          <input type="text" id="Email" name="Email" readonly>
+        <button type="submit" id="adicionarBtn">Adicionar Registo de Venda</button>
+      </form>
+      
 
-          <label for="idCliente">ID do cliente:</label>
-          <input type="text" id="idCliente" name="idCliente" readonly>
 
-          <label for="nomeCliente">Nome do Cliente:</label>
-          <input type="text" id="nomeCliente" name="nomeCliente" readonly>
+      <script>
+        document.addEventListener("DOMContentLoaded", function () {
+    fetchRegistoVenda();
+  });
 
-          <label for="telefoneCliente">Telefone do Cliente:</label>
-          <input type="text" id="telefoneCliente" name="telefoneCliente" readonly>
+  function reloadPage() {
+    location.reload();
+  }
 
-          <label for="endrecoCliente">Endreço do Cliente:</label>
-          <input type="text" id="endrecoCliente" name="endrecoCliente" readonly>
+  function fetchRegistoVenda() {
+    var emailCliente = document.getElementById("emailCliente").value;
+    console.log('Fetching data for emailCliente:', emailCliente);
 
-          <label for="contribuinteCliente">Contribuinte do Cliente:</label>
-          <input type="text" id="contribuinteCliente" name="contribuinteCliente" readonly>
-          
-          <label for="dataHora">Data/Hora Emissão:</label>
-          <input type="datetime-local" id="dataHora" name="dataHora" readonly>
-          
-          <label for="valorTotal">Valor Total:</label>
-          <input type="text" id="valorTotal" name="valorTotal" readonly>
+    fetch('/registo_venda/fetch_registo_venda/' + emailCliente + '/')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Erro na requisição. Status: ' + response.status);
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log('Dados recebidos:', data);
 
-          <ul id="equipamentosList"></ul>
-  
-          <button type="button" onclick="enviarFatura()">Enviar</button>
-      </div>
-      <hr>
-  </form>
-    
-  <div class="container">
-    <hr>
-    <!-- Histórico de Vendas -->
-    <div class="section">
-      <h2>Histórico de Vendas</h2>
-      <div class="form-group">
-        <label for="ordenarLista">Ordenar Lista:</label>
-        <select id="ordenarLista" name="ordenarLista">
-          <!-- Opções para o dropdown (alfabética, etc.) -->
-        </select>
-      </div>
-      <ul class="history-list">
-        <!-- Lista de histórico -->
-        <li class="history-item">
-          <span class="eye-icon">&#128065;</span>
-          Item 1
-        </li>
-        <li class="history-item">
-          <span class="eye-icon">&#128065;</span>
-          Item 2
-        </li>
-        <!-- Adicione mais itens conforme necessário -->
-      </ul>
-    </div>
-    <hr>
-  </div>
-  <script>
-        function showSuccessAlert() {
-            // Verificar se pelo menos uma quantidade foi inserida
-            var quantidades = document.getElementsByName("quantidade[]");
-            var quantidadePreenchida = false;
-
-            for (var i = 0; i < quantidades.length; i++) {
-                if (quantidades[i].value.trim() !== "") {
-                    quantidadePreenchida = true;
-                    break;
-                }
-            }
-
-            if (!quantidadePreenchida) {
-                alert('Requisitos em falta');
-                return false;
-            }
-
-            else if(quantidadePreenchida) {
-                alert('Venda feita com sucesso');
-            }
+        if (!data || !data.dadosCliente) {
+          throw new Error('Dados do cliente não foram recebidos corretamente.');
         }
 
-     function continuar() {
-            fetchRegistoVenda();
-            document.getElementById("additionalFields").style.display = "block";
-            document.getElementById("continuarButton").style.display = "none";
-            document.getElementById("emailCliente").onchange = function() {fetchRegistoVenda();};
-        }
+document.getElementById("idCliente").value = data.dadosCliente[0][0];
+document.getElementById("nomeCliente").value = data.dadosCliente[0][1];
+document.getElementById("telefoneCliente").value = data.dadosCliente[0][2];
 
+var equipamentosList = document.getElementById("equipamentosList");
+var noEquipmentsMessage = document.getElementById("noEquipmentsMessage");
 
-        function fetchRegistoVenda() {
-        document.getElementById("additionalFields").style.display = "block";
-        var emailCliente = document.getElementById("emailCliente").value;
-
-        fetch('/registo_venda/fetch_registo_venda/' + emailCliente + '/')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Erro na requisição. Status: ' + response.status);
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Dados recebidos:', data); // Log received data for debugging
-
-                if (!data || !data.dadosCliente) {
-                    throw new Error('Dados do cliente não foram recebidos corretamente.');
-                }
-                // Update additional fields with data
-                document.getElementById("idCliente").value = data.dadosCliente[0][0];
-                document.getElementById("nomeCliente").value = data.dadosCliente[0][1];
-                document.getElementById("telefoneCliente").value = data.dadosCliente[0][2];
-                //document.getElementById("valorTotal").value = data.valorTotal[0][0];
-
-                // Show the additional fields
-                document.getElementById("additionalFields").style.display = "block";
-            })
-            .catch(error => console.error('Error fetching venda data:', error));
+if (equipamentosList && noEquipmentsMessage) {
+  if (Array.isArray(data.equipamentos_info) && data.equipamentos_info.length > 0) {
+    equipamentosList.innerHTML = "";
+    data.equipamentos_info.forEach(equipamento => {
+      var listItem = document.createElement("div");
+      listItem.innerHTML = `Descrição: ${equipamento[0]}, Quantidade: ${equipamento[1]}, Valor: ${equipamento[2]}`;
+      equipamentosList.appendChild(listItem);
+    });
+    // Hide the noEquipmentsMessage if there are equipments
+  
+  } else {
+    // Display message if no equipment is found
+    equipamentosList.innerHTML = "";
+    noEquipmentsMessage.style.display = "block";
+  }
 }
 
+// Show the additional fields
+document.getElementById("additionalFields").style.display = "block";
 
-        function fetchVendaData() {
-            var vendaId = document.getElementById("venda_id").value;
+      })
+      .catch(error => console.error('Error fetching venda data:', error));
+  }
 
-            fetch('/registo_venda/fetch_registo_venda/' + emailCliente + '/')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Erro na requisição. Status: ' + response.status);
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (!data || !data.dadosCliente) {
-                throw new Error('Dados do cliente não foram recebidos corretamente.');
-            }
-                    // Update additional fields with data
-                    document.getElementById("emailCliente").value = data.emailCliente;
-                    document.getElementById("idCliente").value = data.idCliente;
-                    document.getElementById("nomeCliente").value = data.nomeCliente;
-                    document.getElementById("telefoneCliente").value = data.telefone;
-                    document.getElementById("endrecoCliente").value = data.endrecoCliente;
-                    document.getElementById("contribuinteCliente").value = data.contribuinteCliente;
-                    document.getElementById("dataHora").value = data.dataHora;
-                    document.getElementById("valorTotal").value = data.valorTotal;
-                    
-                    // Access the equipamentos_info array
-                    var equipamentosInfo = data.equipamentos_info;
-                    console.log('equipamentos Info:', equipamentosInfo);
-                    // Loop through equipamentos_info and update HTML elements
-                    var equipamentosList = document.getElementById("equipamentosList");
-                    equipamentosList.innerHTML = ""; // Clear previous content
-
-                    equipamentosInfo.forEach(equipamento => {
-                        var listItem = document.createElement("li");
-                        listItem.textContent = `Nome: ${equipamento[0]}, Quantidade: ${equipamento[1]}, Preço: ${equipamento[2]}`;
-                        equipamentosList.appendChild(listItem);
-                    });
-
-
-                    // Show the additional fields
-                    document.getElementById("additionalFields").style.display = "block";
-                })
-                .catch(error => {console.error('Error fetching venda data:', error), console.log('Data received:', data)});
-                document.getElementById("additionalFields").style.display = "block";
-        }
-
-        function captureSelectedEmail() {
-    var selectedEmail = document.getElementById("emailCliente").value;
-    document.getElementById("selectedEmail").value = selectedEmail;
-    return true; 
-}
-
-
-
-        function guardarFatura() {
-
-        }
-  </script>
-</body>
-</html>
+  // Add an event listener for the change event on the emailCliente dropdown
+  document.getElementById("emailCliente").addEventListener("change", function () {
+    fetchRegistoVenda();
+  });
+</script>
+      </body>
+      </html>
