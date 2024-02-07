@@ -572,22 +572,31 @@ def registar_equipamento(request):
 
 ##################################################################################
 def vendas_equipamentos(request):
-    equipamentos = obter_equipamentos()
-    try:
-        with connections['default'].cursor() as cursor:
-            cursor.execute("SELECT * FROM obter_emailCliente")  # Renomeie a view para evitar conflito de nomes
-            emailCliente = cursor.fetchall()
-            print('email',emailCliente)
+    cliente_data = []
 
+    try:
+        selected_email = request.POST.get('selectedEmail', None)
+
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM obter_emailCliente")  
+            emailCliente = cursor.fetchall()
+
+            if selected_email:
+                cursor.execute("SELECT * FROM obter_cliente_por_email(%s)", [selected_email])
+                cliente_info = cursor.fetchone()
+                print(cliente_info)
+
+                cursor.execute("SELECT * FROM get_pedido_info(%s)", [selected_email])
+                cliente_data = cursor.fetchall()
+                print(cliente_data)
     except Exception as e:
-        # Handle exceptions (e.g., database connection error, file not found, etc.)
         print(f"An error occurred: {str(e)}")
-     
+
     user_name = request.session.get('username', 'Guest')
     if user_name in ['aluno3_c']:
         return render(request, 'error_page.html', {'error_message': 'Acesso não autorizado para este utilizador.'})
-    return render(request, 'vendas_equipamentos.html', {'user_name': user_name, 'emailCliente': emailCliente, 'equipamentos': equipamentos})
 
+    return render(request, 'vendas_equipamentos.html', {'user_name': user_name, 'emailCliente': emailCliente, 'cliente_data': cliente_data})
 
 def fetch_registo_venda(request, emailCliente):
     user_name = request.session.get('username', 'Guest')

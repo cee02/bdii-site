@@ -888,3 +888,77 @@ INSERT INTO TipoEquipamento (tipo) VALUES ('Webcam');
 -----------
 CREATE VIEW vw_tipos_equipamento AS
 SELECT * FROM TipoEquipamento;
+
+-------------Modificar esta função
+CREATE OR REPLACE FUNCTION obter_cliente_por_email(email_cliente character varying)
+RETURNS TABLE (cliente_id integer, cliente_nome character varying, cliente_telefone character varying) AS $$
+BEGIN
+    RETURN QUERY 
+    SELECT id AS cliente_id, nome AS cliente_nome, telefone AS cliente_telefone
+    FROM cliente
+    WHERE email = email_cliente;
+END;
+$$ LANGUAGE plpgsql
+
+-- Usar este comando
+ALTER TABLE EquipamentoArmazem ADD PRIMARY KEY (equipamentoID);
+----
+
+CREATE TABLE pedido_clienteHeader  (
+    Id SERIAL PRIMARY KEY
+);
+-----
+CREATE TABLE PedidoCompraCliente (
+    ID SERIAL PRIMARY KEY,
+    clienteID INT,
+    equipamentoID INT,
+    datahora TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    id_pedido_clienteHeader INT,
+    enderecoEntrega VARCHAR(255),
+    valor_total DECIMAL(10, 2),
+    FOREIGN KEY (clienteID) REFERENCES Cliente(ID),
+    FOREIGN KEY (equipamentoID) REFERENCES EquipamentoArmazem(equipamentoID),
+    FOREIGN KEY (id_pedido_clienteHeader) REFERENCES pedido_clienteHeader(Id),
+	UNIQUE (id, equipamentoID )
+);
+
+---Executar primeir esta linha, depois o PedidoCompraCliente.
+INSERT INTO pedido_clienteHeader DEFAULT VALUES RETURNING id;
+
+INSERT INTO PedidoCompraCliente (clienteID, equipamentoID, id_pedido_clienteHeader, enderecoEntrega, valor_total)
+VALUES 
+    (3, 37, (SELECT Id FROM pedido_clienteHeader ORDER BY Id DESC LIMIT 1), 'Endereço de Entrega', 100.00),
+    (3, 38, (SELECT Id FROM pedido_clienteHeader ORDER BY Id DESC LIMIT 1), 'Endereço de Entrega', 120.00);
+	
+    ----Depois executar esta proxima linha e depois o proximo PedidoCompraCliente
+	INSERT INTO pedido_clienteHeader DEFAULT VALUES RETURNING id;
+	
+	INSERT INTO PedidoCompraCliente (clienteID, equipamentoID, id_pedido_clienteHeader, enderecoEntrega, valor_total)
+VALUES 
+    (2, 21, (SELECT Id FROM pedido_clienteHeader ORDER BY Id DESC LIMIT 1), 'Endereço de Entrega', 100.00),
+    (2, 23, (SELECT Id FROM pedido_clienteHeader ORDER BY Id DESC LIMIT 1), 'Endereço de Entrega', 120.00);
+
+
+    ------Criar Função
+    CREATE OR REPLACE FUNCTION get_pedido_info(cliente_email VARCHAR(255))
+RETURNS TABLE (
+    equipamento_descricao VARCHAR(255),
+    equipamento_quantidade INT,
+    valor_total DECIMAL(10, 2)
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        ea.descricao AS equipamento_descricao,
+        ea.quantidade AS equipamento_quantidade,
+        pc.valor_total
+    FROM
+        PedidoCompraCliente pc
+    JOIN
+        EquipamentoArmazem ea ON pc.equipamentoID = ea.equipamentoID
+    JOIN
+        Cliente c ON pc.clienteID = c.ID
+    WHERE
+        c.email = cliente_email;
+END;
+$$ LANGUAGE plpgsql;
