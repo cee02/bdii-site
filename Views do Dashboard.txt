@@ -1024,3 +1024,31 @@ BEGIN
         c.email = cliente_email;
 END;
 $$ LANGUAGE plpgsql;
+
+-------- Modificar esta função (podem apagar a que têm e adicionar esta), para mostrar a lista de componentes em stock corretamente na Produção
+CREATE OR REPLACE FUNCTION get_componentes_data_function()
+RETURNS TABLE (
+    componenteID INT,
+    nome VARCHAR(255),
+    descricao TEXT,
+    preco DECIMAL(10, 2),
+    quantidade INT
+)
+AS $$
+BEGIN
+    RETURN QUERY 
+        SELECT 
+            ca.componenteID,
+            c.nome,
+            c.descricao,
+            c.preco,
+            ca.quantidade
+        FROM 
+            ComponenteArmazem ca
+        JOIN 
+            Componentes c ON ca.componenteID = c.ID
+        WHERE 
+            ca.quantidade > 0;
+END;
+$$ LANGUAGE plpgsql;
+
