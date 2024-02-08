@@ -252,7 +252,7 @@
         {% csrf_token %}
         <h2>Registo das Vendas</h2>
         <label for="emailCliente">Email do Cliente:</label>
-        <select name="emailCliente" id="emailCliente" required>
+        <select name="emailCliente" id="emailCliente" required onchange = "fetchRegistoVenda()">
           <option value="" selected disabled>Escolha um Cliente</option>
           {% for email in emailCliente %}
             <option value="{{ email.0 }}">{{ email.0 }}</option>
@@ -273,20 +273,8 @@
         <hr>
       
         <!-- Equipamentos -->
-        <label for="equipamentos">Equipamento(s):</label>
-        <div id="equipamentosList">
-          {% if cliente_data %}
-            {% for data in cliente_data %}
-              <div>
-                <span>Descrição: {{ data.0 }}</span>  ||
-                <span>Quantidade: {{ data.1 }}</span>  ||
-                <span>Valor: {{ data.2 }}</span>
-              </div>
-            {% endfor %}
-          {% else %}
-            <p id="noEquipmentsMessage">Nenhum equipamento encontrado.</p>
-          {% endif %}
-        </div>
+        <a>Equipamento(s):</a>
+        <ul id="equipamentosList"></ul>
       
         <button type="submit" id="adicionarBtn">Adicionar Registo de Venda</button>
       </form>
@@ -328,13 +316,7 @@
           document.getElementById("nomeCliente").value = nomeCliente;
           document.getElementById("telefoneCliente").value = telefoneCliente;
         }
-        document.addEventListener("DOMContentLoaded", function () {
-    fetchRegistoVenda();
-  });
 
-  function reloadPage() {
-    location.reload();
-  }
 
   function fetchRegistoVenda() {
     var emailCliente = document.getElementById("emailCliente").value;
@@ -354,41 +336,30 @@
           throw new Error('Dados do cliente não foram recebidos corretamente.');
         }
 
-document.getElementById("idCliente").value = data.dadosCliente[0][0];
-document.getElementById("nomeCliente").value = data.dadosCliente[0][1];
-document.getElementById("telefoneCliente").value = data.dadosCliente[0][2];
+    document.getElementById("idCliente").value = data.dadosCliente[0][0];
+    document.getElementById("nomeCliente").value = data.dadosCliente[0][1];
+    document.getElementById("telefoneCliente").value = data.dadosCliente[0][2];
 
-var equipamentosList = document.getElementById("equipamentosList");
-var noEquipmentsMessage = document.getElementById("noEquipmentsMessage");
+    var equipamentosList = document.getElementById("equipamentosList");
+    var noEquipmentsMessage = document.getElementById("noEquipmentsMessage");
+    var equipamentosInfo = data.dadosequipamento;
 
-if (equipamentosList && noEquipmentsMessage) {
-  if (Array.isArray(data.equipamentos_info) && data.equipamentos_info.length > 0) {
-    equipamentosList.innerHTML = "";
-    data.equipamentos_info.forEach(equipamento => {
-      var listItem = document.createElement("div");
-      listItem.innerHTML = `Descrição: ${equipamento[0]}, Quantidade: ${equipamento[1]}, Valor: ${equipamento[2]}`;
+    var equipamentosList = document.getElementById("equipamentosList");
+    equipamentosList.innerHTML = ""; // Clear previous content
+
+    equipamentosInfo.forEach(equipamento => {
+      var listItem = document.createElement("li");
+      listItem.textContent = `Descrição: ${equipamento[0]}, Quantidade: ${equipamento[1]}, Valor: ${equipamento[2]}`;
       equipamentosList.appendChild(listItem);
     });
-    // Hide the noEquipmentsMessage if there are equipments
   
-  } else {
-    // Display message if no equipment is found
-    equipamentosList.innerHTML = "";
-    noEquipmentsMessage.style.display = "block";
-  }
-}
+    // Show the additional fields
+    document.getElementById("additionalFields").style.display = "block";
 
-// Show the additional fields
-document.getElementById("additionalFields").style.display = "block";
-
-      })
-      .catch(error => console.error('Error fetching venda data:', error));
+          })
+          .catch(error => console.error('Error fetching venda data:', error));
   }
 
-  // Add an event listener for the change event on the emailCliente dropdown
-  document.getElementById("emailCliente").addEventListener("change", function () {
-    fetchRegistoVenda();
-  });
 </script>
-      </body>
-      </html>
+</body>
+</html>

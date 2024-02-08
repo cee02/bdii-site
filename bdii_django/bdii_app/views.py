@@ -617,6 +617,7 @@ def vendas_equipamentos(request):
 
     return render(request, 'vendas_equipamentos.html', {'user_name': user_name, 'emailCliente': emailCliente, 'cliente_data': cliente_data})
 
+
 def fetch_registo_venda(request, emailCliente):
     user_name = request.session.get('username', 'Guest')
     if user_name in ['aluno3_c']:
@@ -628,12 +629,12 @@ def fetch_registo_venda(request, emailCliente):
             logger.debug(f"Executing SQL query to retrieve data for email: {emailCliente}")
             cursor.execute("SELECT * FROM obter_cliente_por_email(%s)", (emailCliente,))
             dadosCliente = cursor.fetchall()
+            cursor.execute("SELECT * FROM get_pedido_info(%s)", (emailCliente,))
+            dadosequipamento = cursor.fetchall()
             logger.debug(f"Retrieved data for email {emailCliente}: {dadosCliente}")
 
-            
-
             data = {
-                'dadosCliente': dadosCliente,
+                'dadosCliente': dadosCliente, 'dadosequipamento': dadosequipamento,
             }
             logger.debug("Data prepared for JSON response")
 
@@ -643,63 +644,6 @@ def fetch_registo_venda(request, emailCliente):
         logger.error(f"An error occurred in fetch_registo_venda: {str(e)}")
         return JsonResponse({'error': 'Erro desconhecido'}, status=500)
     
-def fetch_venda_data(request, venda_id):
-    try:
-        with connection.cursor() as cursor:
-            cursor.execute("SELECT * FROM emailClienteDadoIDenc(%s)", [int(venda_id)])
-            emailCliente = cursor.fetchall()
-            
-            # Vai buscar o id do cliente
-            cursor.execute("SELECT * FROM idClienteDadoIDenc(%s)", [int(venda_id)])
-            idCliente = cursor.fetchall()
-
-            # Vai buscar o nome do cliente
-            cursor.execute("SELECT * FROM nomeClienteDadoIDenc(%s)", [int(venda_id)])
-            nomeCliente = cursor.fetchall()
-
-            # Vai buscar o telefone do cliente
-            cursor.execute("SELECT * FROM telefoneClienteDadoIDenc(%s)", [int(venda_id)])
-            telefoneCliente = cursor.fetchall()
-
-            # Vai buscar o endreço do cliente
-            cursor.execute("SELECT * FROM endrecoClienteDadoIDenc(%s)", [int(venda_id)])
-            endrecoCliente = cursor.fetchall()
-
-            # Vai buscar o contribuinte do cliente
-            cursor.execute("SELECT * FROM contribuinteClienteDadoIDenc(%s)", [int(venda_id)])
-            contribuinteCliente = cursor.fetchall()
-        
-            # Vai buscar a data da venda
-            cursor.execute("SELECT * FROM datahoraDadoIdEnc(%s)", [int(venda_id)])
-            dataHora = cursor.fetchall()
-
-            # Vai buscar os equipamentos que foram vendidos ao cliente naquele dia
-            cursor.execute("SELECT * FROM calcular_valor_total_venda(%s)", [int(venda_id)])
-            valorTotal = cursor.fetchall()
-
-            # Vai buscar as informações dos equipamentos da venda
-            cursor.execute("SELECT * FROM obter_info_equipamentos_venda(%s)", [int(venda_id)])
-            equipamentos_info = cursor.fetchall()
-
-            data = {
-                'emailCliente': emailCliente,
-                'idCliente': idCliente,
-                'nomeCliente': nomeCliente,
-                'telefoneCliente': telefoneCliente,
-                'endrecoCliente': endrecoCliente,
-                'contribuinteCliente': contribuinteCliente,
-                'dataHora': dataHora,
-                'valorTotal': valorTotal,
-                'equipamentos_info': equipamentos_info,
-            }
-        return JsonResponse(data)
-
-    except DatabaseError as e:
-        return JsonResponse({'error': 'Venda não encontrada'}, status=404)
-    except Exception as e:
-        return JsonResponse({'error': 'Erro desconhecido'}, status=500)
-
-
 
 def get_armazem_data(request):
     with connection.cursor() as cursor:
