@@ -203,9 +203,9 @@ def insert_componentes_to_db(username, password, componentes_data):
 def importar_componentes(request):
     # Caminho para o arquivo JSON
     #json_file_path = 'D:\\Universidade\\BDII\\Projeto_BDII\\bdii-site\\bdii_django\\bdii_app\\componentes.json'
-    #json_file_path = '\Projeto_BDII/bdii-site/bdii_django/bdii_app/componentes.json'
+    json_file_path = '\Projeto_BDII/bdii-site/bdii_django/bdii_app/componentes.json'
     #json_file_path = 'C:\\Users\\Rui\\Desktop\\Stuff\\Uni\\3anox2\\BD2\\Trabalho Final\\BD2-Trabalho-Final\\bdii-site\\bdii_django\\bdii_app\\componentes.json'
-    json_file_path = 'C:\\Users\\franc\\OneDrive\\Documentos\\GitHub\\bdii-site\\bdii_django\\bdii_app\\componentes.json'
+    #json_file_path = 'C:\\Users\\franc\\OneDrive\\Documentos\\GitHub\\bdii-site\\bdii_django\\bdii_app\\componentes.json'
     try:
         # Lê o conteúdo do arquivo JSON
         with open(json_file_path, 'r') as file:
@@ -574,7 +574,6 @@ def registar_equipamento(request):
 def vendas_equipamentos(request):
     cliente_data = []
     emailCliente = []
-    equipamentos = obter_equipamentos()
 
     try:
         selected_email = request.POST.get('selectedEmail', None)
@@ -616,7 +615,7 @@ def vendas_equipamentos(request):
     if user_name in ['aluno3_c']:
         return render(request, 'error_page.html', {'error_message': 'Acesso não autorizado para este utilizador.'})
 
-    return render(request, 'vendas_equipamentos.html', {'user_name': user_name, 'emailCliente': emailCliente, 'cliente_data': cliente_data,  'equipamentos': equipamentos})
+    return render(request, 'vendas_equipamentos.html', {'user_name': user_name, 'emailCliente': emailCliente, 'cliente_data': cliente_data})
 
 def fetch_registo_venda(request, emailCliente):
     user_name = request.session.get('username', 'Guest')

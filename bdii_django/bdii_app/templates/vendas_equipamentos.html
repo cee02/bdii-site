@@ -6,165 +6,227 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <title>Registo de Vendas</title>
   <style>
-
-
     form {
-                max-width: 600px;
-                margin: 0 auto;
-                margin-left: 160px;
-            }
-    
-            label, input, select {
-                display: block;
-                margin-bottom: 10px;
-            }
-    
-            .component-list {
-                margin-top: 10px;
-            }
-    
-            .component-item {
-                display: flex;
-                justify-content: space-between;
-                margin-bottom: 5px;
-            }
-           
-    
-    .sidebar {
-                height: 100%;
-                width: 90px;
-                position: fixed;
-                top: 0;
-                left: 0;
-                background-color: #184060;
-                overflow-x: hidden;
-                padding-top: 20px;
-                transition: 0.5s;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-            }
-    
-            .sidebar:hover {
-                width: 250px;
-            }
-    
-            .menu {
-                list-style: none;
-                padding: 0;
-                margin: 0;
-            }
-    
-            .menu-text {
-                display: none;
-            }
-    
-            .menu a {
-                text-decoration: none;
-                color: white;
-                padding: 27px;
-                display: flex;
-                align-items: center;
-                transition: 0.3s;
-            }
-    
-            .menu i {
-                margin-right: 10px;
-                display: inline;
-            }
-    
-            .menu a:hover {
-                background-color: rgba(57, 91, 141, 0.973);
-            }
-    
-            .sidebar:hover .menu-text {
-                display: inline;
-            }
-    
-            .user-profile {
-                text-align: center;
-                color: #e8e8e8;
-                padding-bottom: 20px;
-            }
-    
-            .user-profile img {
-                width: 50px;
-                border-radius: 50%;
-            }
-    
-    
-            body {
-                font-family: Arial, sans-serif;
-                background-color: #f4f4f4;
-                margin: 0;
-                padding: 0;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 100vh;
-            }
-    
-            form {
-                background-color: #fff;
-                padding: 20px;
-                border-radius: 8px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            }
-    
-            label {
-                display: block;
-                margin-bottom: 8px;
-            }
-    
-            input, select {
-                width: 100%;
-                padding: 8px;
-                margin-bottom: 16px;
-                box-sizing: border-box;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-            }
-    
-            button {
-                background-color: #3498db;
-                color: #fff;
-                padding: 10px 15px;
-                border: none;
-                border-radius: 4px;
-                cursor: pointer;
-            }
-    
-            button:hover {
-                background-color: #1f6797;
-            }
-            .custom-button {
-                margin-top: 10px;
-                padding: 10px;
-                background-color: #e81616;
-                color: white;
-                border: none;
-                border-radius: 4px;
-                cursor: pointer;
+            max-width: 600px;
+            margin: 0 auto;
+            margin-left: 160px;
         }
-        .custom-button:hover {
-                background-color: #c92626;
-            }
-            select[multiple] {
-            height: auto !important;
-            }
+
+        label, input, select {
+            display: block;
+            margin-bottom: 10px;
+        }
+        /*-----------------------------------------------------------*/
+        .equipment-list {
+            margin-top: 10px;
+        }
+        /*-----------------------------------------------------------*/
+        .equipment-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
     
-             option:checked::before {
-            content: '\2193'; /* Código unicode para uma seta para baixo */
-            margin-right: 5px;
-            
-            }
-    
-            .selected-options {
-                border: 1px solid #ccc;
-                padding: 5px;
-                margin-bottom: 10px;
-            }
-        </style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .section {
+      margin-bottom: 20px;
+    }
+
+    .section h2 {
+      color: #333;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #555;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button:hover {
+      background-color: #03548b;
+    }
+
+    .history-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .history-item {
+      background-color: #f9f9f9;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+    }
+
+    .history-item:hover {
+      background-color: #eaeaea;
+    }
+
+    .eye-icon {
+      margin-right: 10px;
+      cursor: pointer;
+    }
+
+
+/* Side bar */
+
+.sidebar {
+            height: 100%;
+            width: 90px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #184060;
+            overflow-x: hidden;
+            padding-top: 20px;
+            transition: 0.5s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .sidebar:hover {
+            width: 250px;
+        }
+
+        .menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .menu-text {
+            display: none; /* Hide text content by default */
+        }
+
+        .menu a {
+            text-decoration: none;
+            color: white;
+            padding: 27px;
+            display: flex;
+            align-items: center;
+            transition: 0.3s;
+        }
+
+        .menu i {
+            margin-right: 10px; /* Add some space between icon and text */
+            display: inline; /* Show icons */
+        }
+
+        .menu a:hover {
+            background-color: rgba(57, 91, 141, 0.973);
+        }
+
+        .sidebar:hover .menu-text {
+            display: inline; /* Show text content on sidebar hover */
+        }
+
+        .user-profile {
+            text-align: center;
+            color: #e8e8e8;
+            padding-bottom: 20px;
+        }
+
+        .user-profile img {
+            width: 50px;
+            border-radius: 50%;
+        }
+
+        .user-profile img {
+            width: 50px;
+            border-radius: 50%;
+        }
+
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        select[multiple] {
+        height: auto !important;
+        }
+
+         option:checked::before {
+        content: '\2193'; /* Código unicode para uma seta para baixo */
+        margin-right: 5px;
+        
+        }
+
+        .selected-options {
+            border: 1px solid #ccc;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+  </style>
 </head>
 <body>
 
@@ -185,267 +247,148 @@
           </ul>
       </div>
       
-      
-<form method="post" action="{% url 'bdii_vendas_equipamentos' %}">
-  <hr>
-  {% csrf_token %}
-  <h2>Registo das Vendas de Cliente</h2>
-  <label for="emailCliente">Email do Cliente:</label>
-  <select name="emailCliente" id ="emailCliente" required>
-      {% for email in emailCliente %}
-          <option value="{{ email.0 }}">{{ email.0 }}</option>
-      {% endfor %}
-  </select>
-  <button type="button" id="continuarButton" onclick="continuar()">Continuar</button>
-  <br>
-  <div id="additionalFields" style="display:none;">
-    <!-- Additional fields go here -->
-
-    <label for="idCliente">ID do Cliente:</label>
-    <input type="text" id="idCliente" name="idCliente" readonly>
-
-    <label for="nomeCliente">Nome do Cliente:</label>
-    <input type="text" id="nomeCliente" name="nomeCliente" readonly>
-
-    <label for="telefoneCliente">Telefone do Cliente:</label>
-    <input type="text" id="telefoneCliente" name="telefoneCliente" readonly>
-    
-    <label for="equipamentos">Equipamento(s):</label>
-    <div>
-    <div class="equipamento-list">
-      <div class="equipamento-item">
-        <select name="equipamento[]" required>
-            {% for equipamento in equipamentos %}
-                <option value="{{ equipamento.0 }}">{{ equipamento.1 }}</option>
-            {% endfor %}
-        </select>
-        <input type="number" name="quantidade[]" placeholder="Quantidade" style="margin-left: 0px;" required min="1">
-        <button type="button1" class="custom-button" style="margin-left: 20px; margin-bottom: 20px;" onclick="removerEquipamento(this)">Remover</button>
-    </div>
-    
-            
-              
-            </div>
-            <button type="button" style="margin-bottom: 20px; margin-top: -20px" onclick="adicionarEquipamento()">Adicionar Equipamento</button>
-        </div>
-  
+      <form method="post" action="{% url 'bdii_vendas_equipamentos' %}" onsubmit="submitForm()">
         <hr>
-        
-    <button type="submit" id="adicionarBtn" onclick="showSuccessAlert()">Adicionar Registo de Venda</button>
-    </div>
-    
-    <hr>
-  </form>
-
-   <!-- Envio da Fatura ao Cliente -->
-   <form id="faturaForm">
-    <hr>
-    <h2>Envio da Fatura para o Cliente</h2>
-    <label for="venda">ID da Venda:</label>
-    <select name="venda_id" id="venda_id">
-        {% for venda in idvenda %}
-            <option value="{{ venda.0 }}">{{ venda.0 }}</option>
-        {% endfor %}
-    </select>
-
-    <!-- Remova a chamada fetchVendaData() do evento onclick -->
-    <button type="button" id="continuarButton" onclick="continuar()">Continuar</button>
-
-    <div id="additionalFields" style="display:none;">
-        <!-- Additional fields go here -->
+        {% csrf_token %}
+        <h2>Registo das Vendas</h2>
         <label for="emailCliente">Email do Cliente:</label>
-        <input type="text" id="Email" name="Email" readonly>
-
-        <label for="idCliente">ID do cliente:</label>
+        <select name="emailCliente" id="emailCliente" required>
+          <option value="" selected disabled>Escolha um Cliente</option>
+          {% for email in emailCliente %}
+            <option value="{{ email.0 }}">{{ email.0 }}</option>
+          {% endfor %}
+        </select>
+        <input type="hidden" id="selectedEmail" name="selectedEmail">
+      
+        <!-- Additional fields go here -->
+        <label for="idCliente">ID do Cliente:</label>
         <input type="text" id="idCliente" name="idCliente" readonly>
-
+      
         <label for="nomeCliente">Nome do Cliente:</label>
         <input type="text" id="nomeCliente" name="nomeCliente" readonly>
-
+      
         <label for="telefoneCliente">Telefone do Cliente:</label>
         <input type="text" id="telefoneCliente" name="telefoneCliente" readonly>
+      
+        <hr>
+      
+        <!-- Equipamentos -->
+        <label for="equipamentos">Equipamento(s):</label>
+        <div id="equipamentosList">
+          {% if cliente_data %}
+            {% for data in cliente_data %}
+              <div>
+                <span>Descrição: {{ data.0 }}</span>  ||
+                <span>Quantidade: {{ data.1 }}</span>  ||
+                <span>Valor: {{ data.2 }}</span>
+              </div>
+            {% endfor %}
+          {% else %}
+            <p id="noEquipmentsMessage">Nenhum equipamento encontrado.</p>
+          {% endif %}
+        </div>
+      
+        <button type="submit" id="adicionarBtn">Adicionar Registo de Venda</button>
+      </form>
 
-        <label for="endrecoCliente">Endreço do Cliente:</label>
-        <input type="text" id="endrecoCliente" name="endrecoCliente" readonly>
 
-        <label for="contribuinteCliente">Contribuinte do Cliente:</label>
-        <input type="text" id="contribuinteCliente" name="contribuinteCliente" readonly>
-        
-        <label for="dataHora">Data/Hora Emissão:</label>
-        <input type="datetime-local" id="dataHora" name="dataHora" readonly>
-        
-        <label for="valorTotal">Valor Total:</label>
-        <input type="text" id="valorTotal" name="valorTotal" readonly>
-
-        <ul id="equipamentosList"></ul>
-
-        <button type="button" onclick="enviarFatura()">Enviar</button>
-    </div>
-    <hr>
-</form>
-  
-<from id="historiacoForm" >
-
-  <hr>
-  <!-- Histórico de Vendas -->
-  <div class="section">
-    <h2>Histórico de Vendas</h2>
-    <div class="form-group">
-      <label for="ordenarLista">Ordenar Lista:</label>
-      <select id="ordenarLista" name="ordenarLista">
-         <!-- Opções para o dropdown (alfabética, etc.) -->
+      <form id="faturaForm">
+        <hr>
+        <h2>Envio da Fatura para o Cliente</h2>
+        <label for="fatura">ID da Venda:</label>
+        <select name="fatura_id" id="fatura_id">
+            {% for venda in idvenda %}
+                <option value="{{ venda.0 }}">{{ venda.0 }}</option>
+            {% endfor %}
         </select>
-      </div>
-      <ul class="history-list">
-        <!-- Lista de histórico -->
-        <li class="history-item">
-          <span class="eye-icon">&#128065;</span>
-          Item 1
-        </li>
-        <li class="history-item">
-          <span class="eye-icon">&#128065;</span>
-          Item 2
-        </li>
-        <!-- Adicione mais itens conforme necessário -->
-      </ul>
-    </div>
-    <hr>
+    
+        <!-- Remova a chamada fetchVendaData() do evento onclick -->
+        <button type="button" id="continuarButton" onclick="continuar()">Continuar</button>
+    
+        <div id="additionalFields" style="display:none;">
+            <!-- Additional fields go here -->
+            <label for="emailCliente">Email do Cliente:</label>
+            <input type="text" id="Email" name="Email" readonly>
+  
+            <label for="idCliente">ID do cliente:</label>
+            <input type="text" id="idCliente" name="idCliente" readonly>
+  
+            <label for="nomeCliente">Nome do Cliente:</label>
+            <input type="text" id="nomeCliente" name="nomeCliente" readonly>
+      
+      <script>
+        function submitForm() {
+          var selectedEmail = document.getElementById("emailCliente").value;
+          var idCliente = document.getElementById("idCliente").value;
+          var nomeCliente = document.getElementById("nomeCliente").value;
+          var telefoneCliente = document.getElementById("telefoneCliente").value;
+      
+          document.getElementById("selectedEmail").value = selectedEmail;
+          document.getElementById("idCliente").value = idCliente;
+          document.getElementById("nomeCliente").value = nomeCliente;
+          document.getElementById("telefoneCliente").value = telefoneCliente;
+        }
+        document.addEventListener("DOMContentLoaded", function () {
+    fetchRegistoVenda();
+  });
 
-</from>
+  function reloadPage() {
+    location.reload();
+  }
 
+  function fetchRegistoVenda() {
+    var emailCliente = document.getElementById("emailCliente").value;
+    console.log('Fetching data for emailCliente:', emailCliente);
 
-  <script>
-    function adicionarEquipamento() {
-      var equipamentosDiv = document.querySelector('.equipamento-list');
-      var novoEquipamento = document.createElement('div');
-      novoEquipamento.className = 'equipamentos-item';
-      novoEquipamento.innerHTML = `
-                <select name="equipamento[]" required>
-                    {% for equipamento in equipamentos %}
-                         <option value="{{ equipamento.0 }}">{{ equipamento.1 }}</option>
-                    {% endfor %}
-                </select>
-                <input type="number" name="quantidade[]" style="margin-left: 20px;" placeholder="Quantidade" required>
-                <button type="button1"  class="custom-button" style="margin-left: 20px; margin-bottom: 20px" onclick="removerEquipamento(this)">Remover</button>
-            `;
-            equipamentosDiv.appendChild(novoEquipamento);
+    fetch('/registo_venda/fetch_registo_venda/' + emailCliente + '/')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Erro na requisição. Status: ' + response.status);
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log('Dados recebidos:', data);
+
+        if (!data || !data.dadosCliente) {
+          throw new Error('Dados do cliente não foram recebidos corretamente.');
         }
 
+document.getElementById("idCliente").value = data.dadosCliente[0][0];
+document.getElementById("nomeCliente").value = data.dadosCliente[0][1];
+document.getElementById("telefoneCliente").value = data.dadosCliente[0][2];
 
-        function removerEquipamento(button) {
-          var equipamentosDiv = button.parentNode;
-            equipamentosDiv.parentNode.removeChild(equipamentosDiv);
-        }
+var equipamentosList = document.getElementById("equipamentosList");
+var noEquipmentsMessage = document.getElementById("noEquipmentsMessage");
 
-        function showSuccessAlert() {
-            // Verificar se pelo menos uma quantidade foi inserida
-            var quantidades = document.getElementsByName("quantidade[]");
-            var quantidadePreenchida = false;
-
-            for (var i = 0; i < quantidades.length; i++) {
-                if (quantidades[i].value.trim() !== "") {
-                    quantidadePreenchida = true;
-                    break;
-                }
-            }
-
-            if (!quantidadePreenchida) {
-                alert('Requisitos em falta');
-                return false;
-            }
-
-            else if(quantidadePreenchida) {
-                alert('Venda feita com sucesso');
-            }
-        }
-
-     function continuar() {
-            fetchRegistoVenda();
-            document.getElementById("additionalFields").style.display = "block";
-            document.getElementById("continuarButton").style.display = "none";
-            document.getElementById("emailCliente").onchange = function() {fetchRegistoVenda();};
-        }
-
-
-        function fetchRegistoVenda() {
-        document.getElementById("additionalFields").style.display = "block";
-        var emailCliente = document.getElementById("emailCliente").value;
-
-        fetch('/registo_venda/fetch_registo_venda/' + emailCliente + '/')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Erro na requisição. Status: ' + response.status);
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Dados recebidos:', data); // Log received data for debugging
-
-                if (!data || !data.dadosCliente) {
-                    throw new Error('Dados do cliente não foram recebidos corretamente.');
-                }
-                // Update additional fields with data
-                document.getElementById("idCliente").value = data.dadosCliente[0][0];
-                document.getElementById("nomeCliente").value = data.dadosCliente[0][1];
-                document.getElementById("telefoneCliente").value = data.dadosCliente[0][2];
-                //document.getElementById("valorTotal").value = data.valorTotal[0][0];
-
-                // Show the additional fields
-                document.getElementById("additionalFields").style.display = "block";
-            })
-            .catch(error => console.error('Error fetching venda data:', error));
+if (equipamentosList && noEquipmentsMessage) {
+  if (Array.isArray(data.equipamentos_info) && data.equipamentos_info.length > 0) {
+    equipamentosList.innerHTML = "";
+    data.equipamentos_info.forEach(equipamento => {
+      var listItem = document.createElement("div");
+      listItem.innerHTML = `Descrição: ${equipamento[0]}, Quantidade: ${equipamento[1]}, Valor: ${equipamento[2]}`;
+      equipamentosList.appendChild(listItem);
+    });
+    // Hide the noEquipmentsMessage if there are equipments
+  
+  } else {
+    // Display message if no equipment is found
+    equipamentosList.innerHTML = "";
+    noEquipmentsMessage.style.display = "block";
+  }
 }
 
+// Show the additional fields
+document.getElementById("additionalFields").style.display = "block";
 
-        function fetchVendaData() {
-            var vendaId = document.getElementById("venda_id").value;
+      })
+      .catch(error => console.error('Error fetching venda data:', error));
+  }
 
-            fetch('/registo_venda/fetch_registo_venda/' + emailCliente + '/')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Erro na requisição. Status: ' + response.status);
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (!data || !data.dadosCliente) {
-                throw new Error('Dados do cliente não foram recebidos corretamente.');
-            }
-                    // Update additional fields with data
-                    document.getElementById("emailCliente").value = data.emailCliente;
-                    document.getElementById("idCliente").value = data.idCliente;
-                    document.getElementById("nomeCliente").value = data.nomeCliente;
-                    document.getElementById("telefoneCliente").value = data.telefone;
-                    document.getElementById("endrecoCliente").value = data.endrecoCliente;
-                    document.getElementById("contribuinteCliente").value = data.contribuinteCliente;
-                    document.getElementById("dataHora").value = data.dataHora;
-                    document.getElementById("valorTotal").value = data.valorTotal;
-                    
-                    // Access the equipamentos_info array
-                    var equipamentosInfo = data.equipamentos_info;
-                    console.log('equipamentos Info:', equipamentosInfo);
-                    // Loop through equipamentos_info and update HTML elements
-                    var equipamentosList = document.getElementById("equipamentosList");
-                    equipamentosList.innerHTML = ""; // Clear previous content
-
-                    equipamentosInfo.forEach(equipamento => {
-                        var listItem = document.createElement("li");
-                        listItem.textContent = `Nome: ${equipamento[0]}, Quantidade: ${equipamento[1]}, Preço: ${equipamento[2]}`;
-                        equipamentosList.appendChild(listItem);
-                    });
-
-
-                    // Show the additional fields
-                    document.getElementById("additionalFields").style.display = "block";
-                })
-                .catch(error => {console.error('Error fetching venda data:', error), console.log('Data received:', data)});
-                document.getElementById("additionalFields").style.display = "block";
-        }
-
-
-        function guardarFatura() {
-
-        }
-  </script>
-</body>
- </html>
+  // Add an event listener for the change event on the emailCliente dropdown
+  document.getElementById("emailCliente").addEventListener("change", function () {
+    fetchRegistoVenda();
+  });
+</script>
+      </body>
+      </html>
