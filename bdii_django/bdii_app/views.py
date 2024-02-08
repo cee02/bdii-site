@@ -486,18 +486,18 @@ def guardar_guia(request, encomenda_id):
     if request.method == 'POST':
         try:
             dataGuia = json.loads(request.body)
-            encomenda_id = dataGuia.get('encomenda_id_guia')
-            nome_fornecedor = dataGuia.get('nome_fornecedor_guia')
-            valor_total = dataGuia.get('valor_total_guia')
+            encomendaid = dataGuia.get('encomenda_id')
+            nomefornecedor = dataGuia.get('nome_fornecedor')
+            valortotal = dataGuia.get('valor_total')
             print(encomenda_id)
-            print(nome_fornecedor)
-            print(valor_total)
+            print(nomefornecedor)
+            print(valortotal)
             with connection.cursor() as cursor:
-                cursor.execute("SELECT inserir_guia(%s, %s, %s)",
-                               [encomenda_id, nome_fornecedor, valor_total])
-                id_guia = cursor.fetchone()[0]  # Retrieve the generated id_fatura
+                cursor.execute("SELECT insert_into_guia_remessa_compra(%s, %s, %s)",
+                               [encomendaid, nomefornecedor, valortotal])
+                id_guia = cursor.fetchone()[0] 
                 connection.commit()
-                print(f"Generated id_fatura: {id_guia}")
+                print(f"Generated id_guia: {id_guia}")
             return JsonResponse({'success': True})
         except Exception as e:
             print(f"An error occurred: {str(e)}")

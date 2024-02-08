@@ -484,22 +484,22 @@ function guardarFatura() {
 }
 
 function guardarGuia() {
-    var encomendaIdGuia = document.getElementById("encomenda_id_Guia").value;
+    var encomendaIdGuia = document.getElementById("encomenda_id_guia").value;
     var nomeFornecedorGuia = document.getElementById("nomeFornecedorGuia").value;
     var valorTotalGuia = document.getElementById("valorTotalGuia").value;
 
     var dataGuia = {
-        encomenda_id: encomendaId,
-        nome_fornecedor: nomeFornecedor,
-        valor_total: valorTotal
+        encomenda_id: encomendaIdGuia,  
+        nome_fornecedor: nomeFornecedorGuia, 
+        valor_total: valorTotalGuia
     };
 
     // Include CSRF token in the headers
     var csrfToken = document.getElementsByName("csrfmiddlewaretoken")[0].value;
 
-    fetch('/registo_encomenda/guardar_guia/' + encomendaId + '/', {
+    fetch('/registo_encomenda/guardar_guia/' + encomendaIdGuia + '/', {
         method: 'POST',
-        headers: {  
+        headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': csrfToken // Include CSRF token
         },
@@ -514,13 +514,14 @@ function guardarGuia() {
             alert('Guia registada com sucesso!');
         } else {
             // Display an error message
-            alert('A Guia em questão já se encontra registada!');
+            alert('Erro no registo da guia!');
         }
     })
     .catch(error => {
         console.error('Error saving data:', error);
     });
 }
+
 
 
 

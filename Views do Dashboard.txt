@@ -1052,3 +1052,58 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+
+--- Ter esta tabela
+CREATE TABLE GuiaRemessaCompra (
+    Id_remessa SERIAL PRIMARY KEY,
+	Id_encomenda INT,
+    nome_fornecedor VARCHAR(255),
+    valor_total DECIMAL(10, 2),
+    FOREIGN KEY (nome_fornecedor) REFERENCES Fornecedor(nome),
+	FOREIGN KEY (id_encomenda) REFERENCES encomenda_componentesheader (id)
+);
+
+---Criar esta função para inserir a guia na tabela
+CREATE OR REPLACE FUNCTION insert_into_guia_remessa_compra(
+    p_Id_encomenda INT,
+    p_nome_fornecedor VARCHAR(255),
+    p_valor_total DECIMAL(10, 2)
+)
+RETURNS VOID AS
+$$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM GuiaRemessaCompra WHERE Id_encomenda = p_Id_encomenda) THEN
+        INSERT INTO GuiaRemessaCompra (Id_encomenda, nome_fornecedor, valor_total)
+        VALUES (p_Id_encomenda, p_nome_fornecedor, p_valor_total);
+    ELSE
+ 
+        RAISE NOTICE 'Guia with Id_encomenda % already exists. No insertion performed.', p_Id_encomenda;
+      
+    END IF;
+END;
+$$
+LANGUAGE plpgsql;
+
+----- Isto é o trigger para modificar a quantidade na tabela ComponentesArmazem baseado no ID
+CREATE OR REPLACE FUNCTION update_componente_quantidade_trigger()
+RETURNS TRIGGER AS
+$$
+BEGIN
+    IF EXISTS (SELECT 1 FROM GuiaRemessaCompra WHERE Id_encomenda = NEW.id_encomenda) THEN
+        UPDATE componentearmazem AS ca
+        SET quantidade = quantidade + pc.quantidadeComponente
+        FROM PedidoDeCompra AS pc
+        WHERE ca.componenteID = pc.componenteID
+          AND pc.id_Encomenda_componentesHeader = NEW.id_encomenda;
+    END IF;
+
+    RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
+
+-- Cria o trigger
+CREATE TRIGGER guia_remessa_trigger
+AFTER INSERT ON GuiaRemessaCompra
+FOR EACH ROW
+EXECUTE FUNCTION update_componente_quantidade_trigger();
