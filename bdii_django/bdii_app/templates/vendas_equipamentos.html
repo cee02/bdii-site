@@ -341,11 +341,12 @@
   
             <label for="moradaClienteGuia">Morada do Cliente:</label>
             <input type="text" id="moradaClienteGuia" name="moradaClienteGuia" readonly>
-
+            
             <a>Equipamento(s):</a>
             <ul id="equipamentosListGuia"></ul>
-    
-        <button type="button" onclick="guardarGuia()">Guardar</button>
+        
+            <button type="button" onclick="guardarGuia()">Guardar</button>
+        </div>
     </form>
 
   <script>
@@ -504,7 +505,7 @@
                     
                     // Access the componentes_info array
                     var equipamentosGuiaInfo = data.equipamentos_info;
-                    var equipamentosGuiaList = document.getElementById("equipamentosGuiaList");
+                    var equipamentosGuiaList = document.getElementById("equipamentosListGuia");
                     equipamentosGuiaList.innerHTML = ""; // Clear previous content
 
                     equipamentosGuiaInfo.forEach(equipamento => {
@@ -513,7 +514,7 @@
                         equipamentosGuiaList.appendChild(listItem);
                     });
 
-
+                
                     // Show the additional fields
                     document.getElementById("additionalFieldsGuia").style.display = "block";
                 })
