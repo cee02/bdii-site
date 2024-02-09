@@ -590,6 +590,9 @@ def vendas_equipamentos(request):
             cursor.execute("SELECT * FROM venda_header_ids")  
             vendasId = cursor.fetchall()
 
+            cursor.execute("SELECT * FROM venda_guia_id")  
+            vendasGuiaId = cursor.fetchall()
+
             if selected_email:
                 cursor.execute("SELECT * FROM obter_cliente_por_email(%s)", [selected_email])
                 cliente_info = cursor.fetchone()
@@ -623,7 +626,7 @@ def vendas_equipamentos(request):
     if user_name in ['aluno3_c']:
         return render(request, 'error_page.html', {'error_message': 'Acesso não autorizado para este utilizador.'})
 
-    return render(request, 'vendas_equipamentos.html', {'user_name': user_name, 'emailCliente': emailCliente, 'cliente_data': cliente_data, 'vendasId': vendasId})
+    return render(request, 'vendas_equipamentos.html', {'user_name': user_name, 'emailCliente': emailCliente, 'cliente_data': cliente_data, 'vendasId': vendasId, 'vendasGuiaId': vendasGuiaId})
 
 
 def fetch_registo_venda(request, emailCliente):
@@ -700,6 +703,32 @@ def guardar_fatura_cliente(request, venda_id):
             with connection.cursor() as cursor:
                 cursor.execute("SELECT inserir_fatura_venda(%s, %s, %s)",
                                [venda_id, nomeCliente, valor_total])
+                id_fatura = cursor.fetchone()[0]  # Retrieve the generated id_fatura
+                connection.commit()
+                print(f"Generated id_fatura: {id_fatura}")
+            return JsonResponse({'success': True})
+        except Exception as e:
+            print(f"An error occurred: {str(e)}")
+            return JsonResponse({'success': False, 'error': str(e)})
+
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+def guardar_guia_fatura(request, venda_id):
+    user_name = request.session.get('username', 'Guest')
+    if user_name in ['aluno3_c']:
+        return render(request, 'error_page.html', {'error_message': 'Acesso não autorizado para este utilizador.'})
+    if request.method == 'POST':
+        try:
+            dataGuia = json.loads(request.body)
+            #venda_id = dataGuia.get('vendaIdGuia')
+            nome_cliente = dataGuia.get('nomeClienteGuia')
+            valor_total = dataGuia.get('valorTotalGuia')
+            print(venda_id)
+            print(nome_cliente)
+            print(valor_total)
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT inserir_guia_cliente(%s, %s, %s)",
+                               [venda_id, nome_cliente, valor_total])
                 id_fatura = cursor.fetchone()[0]  # Retrieve the generated id_fatura
                 connection.commit()
                 print(f"Generated id_fatura: {id_fatura}")

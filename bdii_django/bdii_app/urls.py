@@ -24,5 +24,6 @@ urlpatterns = [
     path('vendas_equipamentos/fetch_registo_venda/<str:emailCliente>/',views.fetch_registo_venda, name = 'fetch_registo_venda'),
     path('vendas_equipamentos/fetch_fatura_venda_data/<int:venda_id>/',views.fetch_fatura_venda_data, name = 'fetch_fatura_venda_data'),
     path('vendas_equipamentos/guardar_fatura_cliente/<int:venda_id>/',views.guardar_fatura_cliente, name = 'guardar_fatura_cliente'),
+    path('vendas_equipamentos/guardar_guia_fatura/<int:venda_id>/',views.guardar_guia_fatura, name = 'guardar_guia_fatura'),
 ]
 

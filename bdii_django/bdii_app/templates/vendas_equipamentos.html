@@ -301,15 +301,16 @@
             <label for="emailClienteFatura">Email do Cliente:</label>
             <input type="text" id="emailClienteFatura" name="emailClienteFatura" readonly>
   
-            <label for="moradaCliente">:Morada do Cliente:</label>
+            <label for="moradaCliente">Morada do Cliente:</label>
             <input type="text" id="moradaCliente" name="moradaCliente" readonly>
 
             <label for="dataHora">Data/Hora Pedido:</label>
             <input type="datetime-local" id="dataHora" name="dataHora" readonly>
 
-            <label for="valorTotal">Valor Total:</label>
+            <label for="valorTotal">Valor Total(€):</label>
             <input type="text" id="valorTotal" name="valorTotal" readonly>
 
+            <a>Equipamento(s):</a>
             <a>Equipamento(s):</a>
             <ul id="equipamentosFaturaList"></ul>
 
@@ -321,7 +322,7 @@
         <h2>Registo da Guia de Remessa da Venda</h2>
         <label for="venda">ID da Venda:</label>
         <select name="venda_id" id="venda_id_guia">
-            {% for venda in idencomenda %}
+            {% for venda in vendasGuiaId %}
                 <option value="{{ venda.0 }}">{{ venda.0 }}</option>
             {% endfor %}
         </select>
@@ -330,16 +331,19 @@
     
         <div id="additionalFieldsGuia" style="display:none;">
             <!-- Additional fields go here -->
-            <label for="nomeFornecedor">Nome do Fornecedor:</label>
-            <input type="text" id="nomeFornecedorGuia" name="nomeFornecedor" readonly>
+            <label for="nomeClienteGuia">Nome do Cliente:</label>
+            <input type="text" id="nomeClienteGuia" name="nomeClienteGuia" readonly>
             
-            <label for="dataHora">Data/Hora Emissão da Guia:</label>
-            <input type="datetime-local" id="dataHoraGuia" name="dataHora" readonly>
-            
-            <label for="valorTotal">Valor Total:</label>
-            <input type="text" id="valorTotalGuia" name="valorTotal" readonly>
+            <label for="valorTotalGuia">Valor Total(€):</label>
+            <input type="text" id="valorTotalGuia" name="valorTotalGuia" readonly>
 
-        <ul id="componentesListGuia"></ul>
+            <label for="emailClienteGuia">Email do Cliente:</label>
+            <input type="text" id="emailClienteGuia" name="emailClienteGuia" readonly>
+  
+            <label for="moradaClienteGuia">Morada do Cliente:</label>
+            <input type="text" id="moradaClienteGuia" name="moradaClienteGuia" readonly>
+
+        <ul id="equipamentosListGuia"></ul>
     
         <button type="button" onclick="guardarGuia()">Guardar</button>
     </form>
@@ -486,53 +490,52 @@
         }
         //está por fazer
         function fetchGuiaData() {
-            var encomendaIdGuia = document.getElementById("encomenda_id_guia").value;
+            var venda_id = document.getElementById("venda_id_guia").value;
 
-            fetch('/registo_encomenda/fetch_guia_data/' + encomendaIdGuia + '/')
+            fetch('/vendas_equipamentos/fetch_fatura_venda_data/' + venda_id + '/')
                 .then(response => response.json())
-                .then(dataGuia => {
+                .then(data => {
+                    console.log('Dados recebidos:', data);
                     // Update additional fields with data
-                    document.getElementById("nomeFornecedorGuia").value = dataGuia.nomeFornecedor;
-                    document.getElementById("dataHoraGuia").value = dataGuia.dataHora;
-                    document.getElementById("valorTotalGuia").value = dataGuia.valorTotal;
+                    document.getElementById("nomeClienteGuia").value = data.dadosCliente[0][0]; // Primeiro elemento do primeiro array
+                    document.getElementById("emailClienteGuia").value = data.dadosCliente[0][1]; // Segundo elemento do primeiro array
+                    document.getElementById("moradaClienteGuia").value = data.dadosCliente[0][2]; // Terceiro elemento do primeiro array
+                    document.getElementById("valorTotalGuia").value = data.valorTotal;
                     
                     // Access the componentes_info array
-                    var componentesInfo = dataGuia.componentes_info;
-                    console.log('Componentes Info:', componentesInfo);
-                    // Loop through componentes_info and update HTML elements
-                    var componentesListGuia = document.getElementById("componentesListGuia");
-                    componentesListGuia.innerHTML = ""; // Clear previous content
+                    var equipamentosGuiaInfo = data.equipamentos_info;
+                    var equipamentosGuiaList = document.getElementById("equipamentosGuiaList");
+                    equipamentosGuiaList.innerHTML = ""; // Clear previous content
 
-                    componentesInfo.forEach(componente => {
+                    equipamentosGuiaInfo.forEach(equipamento => {
                         var listItem = document.createElement("li");
-                        listItem.textContent = `Nome: ${componente[0]}, Quantidade: ${componente[1]}, Preço: ${componente[2]}`;
-                        componentesListGuia.appendChild(listItem);
+                        listItem.textContent = `Descrição: ${equipamento[0]}, Quantidade: ${equipamento[1]}, Preço: ${equipamento[2]}`;
+                        equipamentosGuiaList.appendChild(listItem);
                     });
 
 
                     // Show the additional fields
                     document.getElementById("additionalFieldsGuia").style.display = "block";
                 })
-                .catch(error => {console.error('Error fetching encomenda data:', error), console.log('Data received:', dataGuia)});
+                .catch(error => {console.error('Error fetching venda data:', error), console.log('Data received:', data)});
                 document.getElementById("additionalFieldsGuia").style.display = "block";
         }
 
         //está por fazer
         function guardarGuia() {
-            var encomendaIdGuia = document.getElementById("encomenda_id_guia").value;
-            var nomeFornecedorGuia = document.getElementById("nomeFornecedorGuia").value;
+            var vendaIdGuia = document.getElementById("venda_id_guia").value;
+            var nomeClienteGuia = document.getElementById("nomeClienteGuia").value;
             var valorTotalGuia = document.getElementById("valorTotalGuia").value;
 
             var dataGuia = {
-                encomenda_id: encomendaIdGuia,  
-                nome_fornecedor: nomeFornecedorGuia, 
-                valor_total: valorTotalGuia
+                nomeClienteGuia: nomeClienteGuia, 
+                valorTotalGuia: valorTotalGuia
             };
 
             // Include CSRF token in the headers
             var csrfToken = document.getElementsByName("csrfmiddlewaretoken")[0].value;
 
-            fetch('/registo_encomenda/guardar_guia/' + encomendaIdGuia + '/', {
+            fetch('/vendas_equipamentos/guardar_guia_fatura/' + vendaIdGuia + '/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -1165,3 +1165,35 @@ BEGIN
     END IF;
 END;
 $$ LANGUAGE plpgsql;
+----------
+CREATE OR REPLACE VIEW venda_guia_id AS
+SELECT DISTINCT id_venda
+FROM faturavendas;
+
+----------Esta tabela foi alterada-----------
+CREATE TABLE guiaremessacomprascliente
+(
+    id_remessa SERIAL PRIMARY KEY,
+    id_venda integer,
+    nome_cliente character varying(255),
+    valor_total integer
+)
+
+-----------
+CREATE OR REPLACE FUNCTION inserir_guia_cliente(
+    p_id_venda INT,
+    p_nome_cliente VARCHAR(255),
+    p_valor_total DECIMAL(10,2)
+)
+RETURNS VOID AS
+$$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM guiaremessacomprascliente WHERE id_venda = p_id_venda) THEN
+        INSERT INTO guiaremessacomprascliente (id_venda, nome_cliente, valor_total)
+        VALUES (p_id_venda, p_nome_cliente, p_valor_total);
+    ELSE
+        RAISE EXCEPTION 'A guia com o mesmo id_venda já existe.';
+    END IF;
+END;
+$$
+LANGUAGE plpgsql;
