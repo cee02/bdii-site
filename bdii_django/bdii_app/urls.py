@@ -21,6 +21,7 @@ urlpatterns = [
     path('registo_encomenda/guardar_fatura/<int:encomenda_id>/', views.guardar_fatura, name='guardar_fatura'),
     path('registo_encomenda/fetch_guia_data/<int:encomenda_id>/', views.fetch_guia_data, name='fetch_guia_data'),
     path('registo_encomenda/guardar_guia/<int:encomenda_id>/', views.guardar_guia, name='guardar_guia'),
+    path('registar_equipamento/fetch_registo_componentes/<int:producao_header_id>/', views.fetch_registo_componentes, name='fetch_registo_componentes'),
 
 ]
 

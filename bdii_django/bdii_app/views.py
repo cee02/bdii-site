@@ -538,7 +538,7 @@ def registar_equipamento(request):
             cursor.execute(
                 "SELECT COUNT(*) FROM vw_EquipamentoArmazem_Ids WHERE equipamentoID = %s",
                 [producao_header_id]
-            )
+                )
             exists_in_view = cursor.fetchone()[0]
 
             if exists_in_view  == 0:  # If not exists
@@ -546,8 +546,7 @@ def registar_equipamento(request):
                 with connection.cursor() as cursor:
                     cursor.execute(
                         "SELECT * FROM vw_componentes_by_producao_header WHERE id_producao_header = %s",
-                        [producao_header_id]
-                    )
+                        [producao_header_id])
                     columns = [col[0] for col in cursor.description]
                     componentes = [dict(zip(columns, row)) for row in cursor.fetchall()]
                     print('Componentes:', componentes)
@@ -569,6 +568,24 @@ def registar_equipamento(request):
         tipos_equipamento = [row[0] for row in cursor.fetchall()]
 
     return render(request, 'registar_equipamento.html', {'user_name': user_name, 'componente_ids': componente_ids, 'componentes': componentes, 'tipos_equipamento': tipos_equipamento})
+
+def fetch_registo_componentes(request, producao_header_id):
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM vw_componentes_by_producao_header WHERE id_producao_header = %s", [producao_header_id]) 
+            columns = [col[0] for col in cursor.description]
+            componentes = [dict(zip(columns, row)) for row in cursor.fetchall()]
+
+            data = {
+                'componentes': componentes,
+            }
+
+        return JsonResponse(data)
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+    
 
 ##################################################################################
 def vendas_equipamentos(request):
