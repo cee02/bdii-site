@@ -1222,7 +1222,7 @@ LANGUAGE plpgsql;
 CREATE TRIGGER after_inserir_guia_cliente_trigger
 AFTER INSERT ON guiaremessacomprascliente
 FOR EACH ROW
-EXECUTE FUNCTION update_componente_quantidade_trigger();
+EXECUTE FUNCTION update_equipamento_quantidade();
 
 --------Views para registo_encomenda
 CREATE OR REPLACE VIEW id_encomenda AS
@@ -1234,3 +1234,24 @@ CREATE OR REPLACE VIEW id_encomenda_guia AS
 SELECT DISTINCT id_encomenda
 FROM faturacompras
 WHERE id_encomenda NOT IN (SELECT id_encomenda FROM guiaremessacompra);
+
+---------------
+CREATE OR REPLACE FUNCTION obter_idvendaheader_por_cliente(id_cliente INT)
+RETURNS SETOF INT AS
+$$
+DECLARE
+    idvendaheader INT;
+BEGIN
+    FOR idvendaheader IN
+        SELECT DISTINCT v.VendaHeaderID
+        FROM vendas v
+        INNER JOIN guiaremessacomprascliente g ON v.VendaHeaderID = g.id_venda
+        WHERE v.ClienteID = id_cliente
+    LOOP
+        RETURN NEXT idvendaheader;
+    END LOOP;
+
+    RETURN;
+END;
+$$
+LANGUAGE plpgsql;

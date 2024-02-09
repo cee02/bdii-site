@@ -280,39 +280,79 @@
     <p><strong>Email:</strong> <span id="clientEmail"></span></p>
     <p><strong>Contribuinte:</strong> <span id="clienteContribuinte"></span></p>
 
-    <h3>Encomendas do Cliente</h3>
-    <ul id="clientOrders" class="client-orders">
-        {% comment %} Exemplo de como você pode exibir as encomendas do cliente {% endcomment %}
-        {% for order in client_orders %}
-            <li>{{ order.id }} - {{ order.product }} - {{ order.quantity }}</li>
-        {% endfor %}
+    <p><strong>Encomendas do Cliente:</strong></p>
+    <ul id="clientesList">
+        <!-- Aqui você vai preencher dinamicamente com os idvendaheader e os equipamentos -->
     </ul>
 
     <button onclick="hideDetails()">Fechar</button>
   </div>
 
 <script>
-function showDetails(button) {
+  function showDetails(button) {
     const listItem = button.closest('.client-item');
     const clientDetails = document.getElementById('clientDetails');
-    // Retrieve client details from the dataset
+
     const clientNome = listItem.dataset.nome;
     const clientEndereco = listItem.dataset.endereco;
     const clientTelefone = listItem.dataset.telefone;
     const clientEmail = listItem.dataset.email;
     const clienteContribuinte = listItem.dataset.contribuinte;
-    // Preencher os detalhes do cliente
+
     document.getElementById('clientName').innerText = clientNome;
     document.getElementById('clientEndereco').innerText = clientEndereco;
     document.getElementById('clientTelefone').innerText = clientTelefone;
     document.getElementById('clientEmail').innerText = clientEmail;
     document.getElementById('clienteContribuinte').innerText = clienteContribuinte;
+
+    var client_id = listItem.dataset.id;
+
+    fetch('/gestao_clientes/fetch_encomendas_cliente/' + client_id + '/')
+        .then(response => response.json())
+        .then(data => {
+            console.log('idvendaheader_list:', data.idvendaheader_list);
+            console.log('componentes_info_dict:', data.componentes_info_dict);
+
+            var idvendaheaderList = data.idvendaheader_list;
+            var clientesList = document.getElementById("clientesList");
+            clientesList.innerHTML = ""; // Limpar conteúdo anterior
+
+            idvendaheaderList.forEach(idvendaheader => {
+                var idvendaheaderItem = document.createElement("li");
+                idvendaheaderItem.textContent = `Número da Venda: ${idvendaheader}`;
+                clientesList.appendChild(idvendaheaderItem);
+
+                var componentes_info_list = data.componentes_info_dict[idvendaheader];
+
+                if (componentes_info_list && componentes_info_list.length > 0) {
+                    var componentesList = document.createElement("ul");
+
+                    componentes_info_list.forEach(componente => {
+                        var componenteItem = document.createElement("li");
+                        componenteItem.textContent = `Descrição: ${componente[0]}, Quantidade: ${componente[1]}, Preço: ${componente[2]}`;
+                        componentesList.appendChild(componenteItem);
+                    });
+
+                    idvendaheaderItem.appendChild(componentesList);
+                } else {
+                    var noComponentesItem = document.createElement("li");
+                    noComponentesItem.textContent = "Nenhum componente associado a esta venda.";
+                    idvendaheaderItem.appendChild(noComponentesItem);
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Erro ao buscar os dados:', error);
+        });
+
     // Set the position to the right of the client list
     const clientListRect = listItem.getBoundingClientRect();
-    clientDetails.style.left = `${clientListRect.right + 10}px`; // Adjust the value as needed
+    clientDetails.style.left = `${clientListRect.right + 10}px`; // Ajustar o valor conforme necessário
     // Exibir a seção de detalhes do cliente
     clientDetails.style.display = 'block';
 }
+
+
 
   function hideDetails() {
     // Ocultar a seção de detalhes do cliente

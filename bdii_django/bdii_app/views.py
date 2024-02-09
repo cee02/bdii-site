@@ -62,8 +62,6 @@ def gestao_clientes(request):
     # Obter conexão com o banco de dados
     username = request.session.get('username')
     password = request.session.get('password')
-    print(username)
-    print(password)
     connection = get_database_connection(username, password)
     
     user_name = request.session.get('username', 'Guest') # para o nome no menu lateral
@@ -77,11 +75,7 @@ def gestao_clientes(request):
 
             # Chamar a procedure usando SELECT
             cursor.execute('SELECT * FROM get_cliente_data_function()')
-
-            # Recuperar os resultados da procedure
             results = cursor.fetchall()
-            print(results)
-            # Fechar o cursor
             cursor.close()
 
             # Fechar a conexão
@@ -96,6 +90,40 @@ def gestao_clientes(request):
         # Lidar com o caso em que a conexão com o banco de dados falha
         return render(request, 'error_page.html', {'error_message': 'Failed to connect to the database'})
     
+def fetch_encomendas_cliente(request, client_id):
+    user_name = request.session.get('username', 'Guest')
+    if user_name in ['aluno3_c']:
+        return render(request, 'error_page.html', {'error_message': 'Acesso não autorizado para este utilizador.'})
+    try:
+        with connections['default'].cursor() as cursor:
+            # Busca os idvendaheader do cliente
+            cursor.execute("SELECT * FROM obter_idvendaheader_por_cliente(%s)", [int(client_id)])
+            idvendaheader_list = cursor.fetchall()
+
+            # Dicionário para armazenar as informações dos componentes por idvendaheader
+            componentes_info_dict = {}
+
+            # Para cada idvendaheader na lista
+            for idvendaheader_tuple in idvendaheader_list:
+                idvendaheader = idvendaheader_tuple[0]  # Acessa o valor dentro da tupla
+                # Busca as informações dos componentes da encomenda
+                cursor.execute("SELECT * FROM obter_info_equipamentos_venda(%s)", [int(idvendaheader)])
+                componentes_info = cursor.fetchall()
+                
+                # Associa as informações dos componentes ao idvendaheader correspondente
+                componentes_info_dict[idvendaheader] = componentes_info
+
+            data = {
+                'idvendaheader_list': idvendaheader_list,
+                'componentes_info_dict': componentes_info_dict
+            }
+        return JsonResponse(data)
+    
+    except Exception as e:
+        # Trata exceções (por exemplo, erro de conexão com o banco de dados, arquivo não encontrado, etc.)
+        print(f"Ocorreu um erro: {str(e)}")
+        return JsonResponse({'error': 'Encomenda não encontrada'}, status=404)
+
 
 def producao_equipamentos(request):
     # Obter conexão com o banco de dados

@@ -12,6 +12,8 @@ urlpatterns = [
     path('registar_equipamento/', views.registar_equipamento, name='bdii_registar_equipamento'),
     path('vendas_equipamentos/', views.vendas_equipamentos, name='bdii_vendas_equipamentos'),
     path('gestao_clientes/', views.gestao_clientes, name='bdii_gestao_clientes'),
+    path('gestao_clientes/fetch_encomendas_cliente/<int:client_id>/',views.fetch_encomendas_cliente, name = 'fetch_encomendas_cliente'),
+
     path('delete-cliente/<int:cliente_id>/', views.delete_cliente, name='delete_cliente'),
     path('homepage/', views.home, name='home'),
     path('gerar_relatorio_excel/', views.gerar_relatorio_excel, name='gerar_relatorio_excel'),
