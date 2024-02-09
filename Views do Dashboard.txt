@@ -1153,3 +1153,15 @@ BEGIN
     WHERE v.VendaHeaderID = venda_header_id;
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION inserir_fatura_venda(p_id_venda INTEGER, p_nome_cliente VARCHAR(255), p_valor_total NUMERIC(10,2))
+RETURNS VOID AS $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM faturavendas WHERE id_venda = p_id_venda) THEN
+        INSERT INTO faturavendas (id_venda, nome_cliente, datahoraemissao, valor_total)
+        VALUES (p_id_venda, p_nome_cliente, CURRENT_TIMESTAMP, p_valor_total);
+    ELSE
+        RAISE EXCEPTION 'A fatura com o mesmo id_venda já existe.';
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
