@@ -1271,3 +1271,27 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+---------------
+CREATE OR REPLACE FUNCTION update_equipamento_quantidade()
+RETURNS TRIGGER AS
+$$
+BEGIN
+    IF EXISTS (SELECT 1 FROM guiaremessacomprascliente WHERE id_venda = NEW.id_venda) THEN
+        UPDATE EquipamentoArmazem AS ea
+        SET quantidade = ea.quantidade - vd.quantidade,
+            data_saida = CURRENT_DATE
+        FROM Vendas AS vd
+        WHERE ea.equipamentoID = vd.equipamentoID 
+          AND vd.vendaheaderid = NEW.id_venda;
+    END IF;
+
+    RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
+
+CREATE TRIGGER after_inserir_guia_cliente_trigger
+AFTER INSERT ON guiaremessacomprascliente
+FOR EACH ROW
+EXECUTE FUNCTION update_equipamento_quantidade();
+
