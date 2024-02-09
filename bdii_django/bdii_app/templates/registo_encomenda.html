@@ -247,7 +247,7 @@ form {
         <h2>Registo da Guia de Remessa da Encomenda</h2>
         <label for="encomenda">ID de Encomenda:</label>
         <select name="encomenda_id" id="encomenda_id_guia">
-            {% for encomenda in idencomenda %}
+            {% for encomenda in idencomendaguia %}
                 <option value="{{ encomenda.0 }}">{{ encomenda.0 }}</option>
             {% endfor %}
         </select>

@@ -1134,10 +1134,11 @@ BEGIN
     RETURN valor_total;
 END;
 $$ LANGUAGE plpgsql;
--------------
+-------------Esta view foi alterada
 CREATE OR REPLACE VIEW venda_header_ids AS
 SELECT DISTINCT VendaHeaderID
-FROM vendas;
+FROM vendas
+WHERE VendaHeaderID NOT IN (SELECT id_venda FROM faturavendas);
 ------------
 CREATE OR REPLACE FUNCTION obter_info_equipamentos_venda(venda_header_id INT)
 RETURNS TABLE (
@@ -1165,10 +1166,11 @@ BEGIN
     END IF;
 END;
 $$ LANGUAGE plpgsql;
-----------
-CREATE OR REPLACE VIEW venda_guia_id AS
-SELECT DISTINCT id_venda
-FROM faturavendas;
+----------Esta view foi alterada
+CREATE OR REPLACE VIEW venda_header_ids AS
+SELECT DISTINCT VendaHeaderID
+FROM vendas
+WHERE VendaHeaderID NOT IN (SELECT id_venda FROM guiaremessacomprascliente);
 
 ----------Esta tabela foi alterada-----------
 CREATE TABLE guiaremessacomprascliente
@@ -1197,3 +1199,38 @@ BEGIN
 END;
 $$
 LANGUAGE plpgsql;
+
+-----------
+CREATE OR REPLACE FUNCTION update_equipamento_quantidade()
+RETURNS TRIGGER AS
+$$
+BEGIN
+    IF EXISTS (SELECT 1 FROM guiaremessacomprascliente WHERE id_venda = NEW.id_venda) THEN
+        UPDATE EquipamentoArmazem AS ea
+        SET quantidade = quantidade - pc.quantidade,
+            data_saida = CURRENT_DATE
+        FROM PedidoCompraCliente AS pc
+        WHERE ea.equipamentoID = pc.equipamentoID
+          AND pc.id_pedido_clienteHeader = NEW.id_venda;
+    END IF;
+
+    RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
+
+CREATE TRIGGER after_inserir_guia_cliente_trigger
+AFTER INSERT ON guiaremessacomprascliente
+FOR EACH ROW
+EXECUTE FUNCTION update_componente_quantidade_trigger();
+
+--------Views para registo_encomenda
+CREATE OR REPLACE VIEW id_encomenda AS
+SELECT DISTINCT id_encomenda_componentesheader
+FROM pedidodecompra
+WHERE id_encomenda_componentesheader NOT IN (SELECT id_encomenda FROM faturacompras);
+
+CREATE OR REPLACE VIEW id_encomenda_guia AS
+SELECT DISTINCT id_encomenda
+FROM faturacompras
+WHERE id_encomenda NOT IN (SELECT id_encomenda FROM guiaremessacompra);

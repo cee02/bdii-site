@@ -354,6 +354,7 @@ def registo_encomenda(request):
     fornecedores = obter_fornecedores()
     componentes = obter_componentes()
     idencomenda = obter_encomendas()
+    idencomendaguia = obter_encomenda_guia()
 
     if request.method == 'POST':
         componentes_list = request.POST.getlist('componente[]')
@@ -385,7 +386,7 @@ def registo_encomenda(request):
     if user_name in ['aluno3_c']:
         return render(request, 'error_page.html', {'error_message': 'Acesso não autorizado para este utilizador.'})
 
-    return render(request, 'registo_encomenda.html', {'user_name': user_name, 'fornecedores': fornecedores, 'componentes': componentes, 'idencomenda': idencomenda})
+    return render(request, 'registo_encomenda.html', {'user_name': user_name, 'fornecedores': fornecedores, 'componentes': componentes, 'idencomenda': idencomenda, 'idencomendaguia': idencomendaguia})
 
 def fetch_encomenda_data(request, encomenda_id):
     user_name = request.session.get('username', 'Guest')
@@ -910,6 +911,14 @@ def obter_encomendas():
         idencomenda = cursor.fetchall()
 
     return idencomenda
+
+def obter_encomenda_guia():
+    with connection.cursor() as cursor:
+        #cursor.execute("SELECT id,  FROM encomenda")
+        cursor.execute("SELECT * FROM id_encomenda_guia")
+        idencomendaguia = cursor.fetchall()
+
+    return idencomendaguia
 
 def obter_equipamentos():
     with connection.cursor() as cursor:
