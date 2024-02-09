@@ -295,11 +295,11 @@
     
         <div id="additionalFieldsFatura" style="display:none;">
             <!-- Additional fields go here -->
-            <label for="nomeCliente">Nome do Cliente:</label>
-            <input type="text" id="nomeCliente" name="nomeCliente" readonly>
+            <label for="nomeClienteFatura">Nome do Cliente:</label>
+            <input type="text" id="nomeClienteFatura" name="nomeClienteFatura" readonly>
 
-            <label for="emailCliente">Email do Cliente:</label>
-            <input type="text" id="Email" name="Email" readonly>
+            <label for="emailClienteFatura">Email do Cliente:</label>
+            <input type="text" id="emailClienteFatura" name="emailClienteFatura" readonly>
   
             <label for="moradaCliente">:Morada do Cliente:</label>
             <input type="text" id="moradaCliente" name="moradaCliente" readonly>
@@ -310,10 +310,10 @@
             <label for="valorTotal">Valor Total:</label>
             <input type="text" id="valorTotal" name="valorTotal" readonly>
 
+            <a>Equipamento(s):</a>
             <ul id="equipamentosFaturaList"></ul>
 
-            <button type="button" onclick="guardarFaturaVenda()">Guardar</button>
-  
+            <button type="button" onclick="guardar_fatura_cliente()">Guardar</button>
         </div>
       
   <script>
@@ -340,7 +340,7 @@
             var emailCliente = document.getElementById("emailCliente").value;
             console.log('Fetching data for emailCliente:', emailCliente);
 
-            fetch('/registo_venda/fetch_registo_venda/' + emailCliente + '/')
+            fetch('/vendas_equipamentos/fetch_registo_venda/' + emailCliente + '/')
               .then(response => {
                 if (!response.ok) {
                   throw new Error('Erro na requisição. Status: ' + response.status);
@@ -381,18 +381,19 @@
         function fetch_fatura_venda_data() {
             var venda_id = document.getElementById("fatura_id").value;
 
-            fetch('/registo_venda/fetch_registo_venda_data/' + venda_id + '/')
+            fetch('/vendas_equipamentos/fetch_fatura_venda_data/' + venda_id + '/')
                 .then(response => response.json())
                 .then(data => {
+                    console.log('Dados recebidos:', data);
                     // Update additional fields with data
-                    document.getElementById("nomeCliente").value = data.dadosCliente[0];
-                    document.getElementById("emailCliente").value = data.dadosCliente[1];
-                    document.getElementById("moradaCliente").value = data.dadosCliente[2];
-                    document.getElementById("dataHora").value = data.dadosCliente[3];
+                    document.getElementById("nomeClienteFatura").value = data.dadosCliente[0][0]; // Primeiro elemento do primeiro array
+                    document.getElementById("emailClienteFatura").value = data.dadosCliente[0][1]; // Segundo elemento do primeiro array
+                    document.getElementById("moradaCliente").value = data.dadosCliente[0][2]; // Terceiro elemento do primeiro array
+                    document.getElementById("dataHora").value = data.dadosCliente[0][3];
                     document.getElementById("valorTotal").value = data.valorTotal;
                     
                     // Access the componentes_info array
-                   /* var equipamentosFaturaInfo = data.equipamentos_info;
+                    var equipamentosFaturaInfo = data.equipamentos_info;
                     var equipamentosFaturaList = document.getElementById("equipamentosFaturaList");
                     equipamentosFaturaList.innerHTML = ""; // Clear previous content
 
@@ -400,7 +401,7 @@
                         var listItem = document.createElement("li");
                         listItem.textContent = `Descrição: ${equipamento[0]}, Quantidade: ${equipamento[1]}, Preço: ${equipamento[2]}`;
                         equipamentosFaturaList.appendChild(listItem);
-                    });*/
+                    });
 
 
                     // Show the additional fields
@@ -411,21 +412,21 @@
         }
 
         //isto está por fazer
-        function guardarFaturaVenda() {
-            var encomendaId = document.getElementById("encomenda_id").value;
-            var nomeFornecedor = document.getElementById("nomeFornecedor").value;
-            var valorTotal = document.getElementById("valorTotal").value;
+        function guardar_fatura_cliente() {
+            var venda_id = document.getElementById("fatura_id").value;
+            var nomeCliente = document.getElementById("nomeClienteFatura").value;
+            var valor_total = document.getElementById("valorTotal").value;
 
             var data = {
-                encomenda_id: encomendaId,
-                nome_fornecedor: nomeFornecedor,
-                valor_total: valorTotal
+                venda_id: venda_id,
+                nomeCliente: nomeCliente,
+                valor_total: valor_total
             };
 
             // Include CSRF token in the headers
             var csrfToken = document.getElementsByName("csrfmiddlewaretoken")[0].value;
 
-            fetch('/registo_encomenda/guardar_fatura/' + encomendaId + '/', {
+            fetch('/vendas_equipamentos/guardar_fatura_cliente/' + venda_id + '/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -505,18 +505,6 @@ def guardar_guia(request, encomenda_id):
 
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
-def get_armazem_data(request):
-    with connection.cursor() as cursor:
-        # Call the stored procedure
-        cursor.callproc('get_armazem_data', [])
-        armazem_data = cursor.fetchall()
-
-    context = {
-        'armazem_data': armazem_data,
-    }
-
-    return render(request, '.html', context)
-
 
 def registar_equipamento(request):
     user_name = request.session.get('username', 'Guest')
@@ -665,6 +653,7 @@ def fetch_registo_venda(request, emailCliente):
         return JsonResponse({'error': 'Erro desconhecido'}, status=500)
     
 def fetch_fatura_venda_data(request, venda_id):
+    venda_id = int(venda_id)
     user_name = request.session.get('username', 'Guest')
     if user_name in ['aluno3_c']:
         return render(request, 'error_page.html', {'error_message': 'Acesso não autorizado para este utilizador.'})
@@ -680,13 +669,13 @@ def fetch_fatura_venda_data(request, venda_id):
             valorTotal = cursor.fetchall()
 
             # Vai buscar as informações dos componentes da encomenda
-            #cursor.execute("SELECT * FROM obter_info_equipamentos_encomenda(%s)", [int(venda_id)])
-            #equipamentos_info = cursor.fetchall()
+            cursor.execute("SELECT * FROM obter_info_equipamentos_venda(%s)", [int(venda_id)])
+            equipamentos_info = cursor.fetchall()
 
             data = {
             'dadosCliente': dadosCliente,
             'valorTotal': valorTotal,
-            #'equipamentos_info': equipamentos_info,
+            'equipamentos_info': equipamentos_info,
             }
         return JsonResponse(data)
     
@@ -694,20 +683,32 @@ def fetch_fatura_venda_data(request, venda_id):
         # Handle exceptions (e.g., database connection error, file not found, etc.)
         print(f"An error occurred: {str(e)}")
         return JsonResponse({'error': 'Venda não encontrada'}, status=404)
-    
 
-def get_armazem_data(request):
-    with connection.cursor() as cursor:
-        # Call the stored procedure
-        cursor.callproc('get_armazem_data', [])
-        armazem_data = cursor.fetchall()
+def guardar_fatura_cliente(request, venda_id):
+    user_name = request.session.get('username', 'Guest')
+    if user_name in ['aluno3_c']:
+        return render(request, 'error_page.html', {'error_message': 'Acesso não autorizado para este utilizador.'})
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            venda_id = data.get('venda_id')
+            nomeCliente = data.get('nomeCliente')
+            valor_total = data.get('valor_total')
+            print(venda_id)
+            print(nomeCliente)
+            print(valor_total)
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT inserir_fatura_venda(%s, %s, %s)",
+                               [venda_id, nomeCliente, valor_total])
+                id_fatura = cursor.fetchone()[0]  # Retrieve the generated id_fatura
+                connection.commit()
+                print(f"Generated id_fatura: {id_fatura}")
+            return JsonResponse({'success': True})
+        except Exception as e:
+            print(f"An error occurred: {str(e)}")
+            return JsonResponse({'success': False, 'error': str(e)})
 
-    context = {
-        'armazem_data': armazem_data,
-    }
-
-    return render(request, '.html', context)
-
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
 def registar_venda(request):
     user_name = request.session.get('username', 'Guest')
@@ -888,5 +889,17 @@ def obter_equipamentos():
         componentes = cursor.fetchall()
 
     return componentes
+
+def get_armazem_data(request):
+    with connection.cursor() as cursor:
+        # Call the stored procedure
+        cursor.callproc('get_armazem_data', [])
+        armazem_data = cursor.fetchall()
+
+    context = {
+        'armazem_data': armazem_data,
+    }
+
+    return render(request, '.html', context)
 
 #####################################################3
