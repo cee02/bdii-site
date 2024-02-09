@@ -581,6 +581,9 @@ def vendas_equipamentos(request):
         with connection.cursor() as cursor:
             cursor.execute("SELECT * FROM obter_emailCliente")  
             emailCliente = cursor.fetchall()
+            
+            cursor.execute("SELECT * FROM venda_header_ids")  
+            vendasId = cursor.fetchall()
 
             if selected_email:
                 cursor.execute("SELECT * FROM obter_cliente_por_email(%s)", [selected_email])
@@ -615,7 +618,7 @@ def vendas_equipamentos(request):
     if user_name in ['aluno3_c']:
         return render(request, 'error_page.html', {'error_message': 'Acesso não autorizado para este utilizador.'})
 
-    return render(request, 'vendas_equipamentos.html', {'user_name': user_name, 'emailCliente': emailCliente, 'cliente_data': cliente_data})
+    return render(request, 'vendas_equipamentos.html', {'user_name': user_name, 'emailCliente': emailCliente, 'cliente_data': cliente_data, 'vendasId': vendasId})
 
 
 def fetch_registo_venda(request, emailCliente):
@@ -643,6 +646,37 @@ def fetch_registo_venda(request, emailCliente):
     except Exception as e:
         logger.error(f"An error occurred in fetch_registo_venda: {str(e)}")
         return JsonResponse({'error': 'Erro desconhecido'}, status=500)
+    
+def fetch_fatura_venda_data(request, venda_id):
+    user_name = request.session.get('username', 'Guest')
+    if user_name in ['aluno3_c']:
+        return render(request, 'error_page.html', {'error_message': 'Acesso não autorizado para este utilizador.'})
+    try:
+        with connections['default'].cursor() as cursor:
+            # Vai buscar o nome do fornecedor
+            cursor.execute("SELECT * FROM dadosClienteIDvenda(%s)", [int(venda_id)])
+            dadosCliente = cursor.fetchall()
+            #nome email morada data/hora
+
+            # Vai buscar os componentes que sairam recentemente
+            cursor.execute("SELECT * FROM calcular_valor_total_venda(%s)", [int(venda_id)])
+            valorTotal = cursor.fetchall()
+
+            # Vai buscar as informações dos componentes da encomenda
+            #cursor.execute("SELECT * FROM obter_info_equipamentos_encomenda(%s)", [int(venda_id)])
+            #equipamentos_info = cursor.fetchall()
+
+            data = {
+            'dadosCliente': dadosCliente,
+            'valorTotal': valorTotal,
+            #'equipamentos_info': equipamentos_info,
+            }
+        return JsonResponse(data)
+    
+    except Exception as e:
+        # Handle exceptions (e.g., database connection error, file not found, etc.)
+        print(f"An error occurred: {str(e)}")
+        return JsonResponse({'error': 'Venda não encontrada'}, status=404)
     
 
 def get_armazem_data(request):

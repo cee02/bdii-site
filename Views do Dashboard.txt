@@ -1102,3 +1102,39 @@ CREATE TRIGGER guia_remessa_trigger
 AFTER INSERT ON GuiaRemessaCompra
 FOR EACH ROW
 EXECUTE FUNCTION update_componente_quantidade_trigger();
+
+
+----------faturavenda---------
+CREATE TABLE faturavendas
+(
+    id_fatura integer,
+    id_encomenda integer,
+    nome_fornecedor character varying(255),
+    datahoraemissao timestamp,
+    valor_total numeric(10,2)
+)
+
+CREATE OR REPLACE FUNCTION calcular_valor_total_venda(venda_header_id INT)
+RETURNS DECIMAL(10, 2) AS $$
+DECLARE
+    valor_total DECIMAL(10, 2) := 0;
+    venda_info RECORD;
+BEGIN
+    -- Criar um cursor para as vendas associadas ao VendaHeaderID
+    FOR venda_info IN
+        SELECT v.quantidade, e.valor_unitario
+        FROM vendas v
+        INNER JOIN equipamento e ON v.equipamentoid = e.id_equipamento
+        WHERE v.VendaHeaderID = venda_header_id
+    LOOP
+        -- Somar o preço total da venda ao valor_total
+        valor_total := valor_total + (venda_info.quantidade * venda_info.valor_unitario);
+    END LOOP;
+
+    RETURN valor_total;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE VIEW venda_header_ids AS
+SELECT DISTINCT VendaHeaderID
+FROM vendas;

@@ -261,6 +261,7 @@
         <input type="hidden" id="selectedEmail" name="selectedEmail">
       
         <!-- Additional fields go here -->
+        <div id="additionalFields" style="display:none;"></div>
         <label for="idCliente">ID do Cliente:</label>
         <input type="text" id="idCliente" name="idCliente" readonly>
       
@@ -271,11 +272,11 @@
         <input type="text" id="telefoneCliente" name="telefoneCliente" readonly>
       
         <hr>
-      
         <!-- Equipamentos -->
         <a>Equipamento(s):</a>
         <ul id="equipamentosList"></ul>
-      
+        </div>
+
         <button type="submit" id="adicionarBtn">Adicionar Registo de Venda</button>
       </form>
 
@@ -285,81 +286,169 @@
         <h2>Envio da Fatura para o Cliente</h2>
         <label for="fatura">ID da Venda:</label>
         <select name="fatura_id" id="fatura_id">
-            {% for venda in idvenda %}
+            {% for venda in vendasId %}
                 <option value="{{ venda.0 }}">{{ venda.0 }}</option>
             {% endfor %}
         </select>
     
-        <!-- Remova a chamada fetchVendaData() do evento onclick -->
         <button type="button" id="continuarButton" onclick="continuar()">Continuar</button>
     
-        <div id="additionalFields" style="display:none;">
+        <div id="additionalFieldsFatura" style="display:none;">
             <!-- Additional fields go here -->
+            <label for="nomeCliente">Nome do Cliente:</label>
+            <input type="text" id="nomeCliente" name="nomeCliente" readonly>
+
             <label for="emailCliente">Email do Cliente:</label>
             <input type="text" id="Email" name="Email" readonly>
   
-            <label for="idCliente">ID do cliente:</label>
-            <input type="text" id="idCliente" name="idCliente" readonly>
+            <label for="moradaCliente">:Morada do Cliente:</label>
+            <input type="text" id="moradaCliente" name="moradaCliente" readonly>
+
+            <label for="dataHora">Data/Hora Pedido:</label>
+            <input type="datetime-local" id="dataHora" name="dataHora" readonly>
+
+            <label for="valorTotal">Valor Total:</label>
+            <input type="text" id="valorTotal" name="valorTotal" readonly>
+
+            <ul id="equipamentosFaturaList"></ul>
+
+            <button type="button" onclick="guardarFaturaVenda()">Guardar</button>
   
-            <label for="nomeCliente">Nome do Cliente:</label>
-            <input type="text" id="nomeCliente" name="nomeCliente" readonly>
+        </div>
       
-      <script>
+  <script>
         function submitForm() {
-          var selectedEmail = document.getElementById("emailCliente").value;
-          var idCliente = document.getElementById("idCliente").value;
-          var nomeCliente = document.getElementById("nomeCliente").value;
-          var telefoneCliente = document.getElementById("telefoneCliente").value;
+            var selectedEmail = document.getElementById("emailCliente").value;
+            var idCliente = document.getElementById("idCliente").value;
+            var nomeCliente = document.getElementById("nomeCliente").value;
+            var telefoneCliente = document.getElementById("telefoneCliente").value;
+        
+            document.getElementById("selectedEmail").value = selectedEmail;
+            document.getElementById("idCliente").value = idCliente;
+            document.getElementById("nomeCliente").value = nomeCliente;
+            document.getElementById("telefoneCliente").value = telefoneCliente;
+        }
       
-          document.getElementById("selectedEmail").value = selectedEmail;
-          document.getElementById("idCliente").value = idCliente;
-          document.getElementById("nomeCliente").value = nomeCliente;
-          document.getElementById("telefoneCliente").value = telefoneCliente;
+        function continuar() {
+          fetch_fatura_venda_data();
+            document.getElementById("additionalFieldsFatura").style.display = "block";
+            document.getElementById("continuarButton").style.display = "none";
+            document.getElementById("fatura_id").onchange = function() {fetch_fatura_venda_data();};
         }
 
+        function fetchRegistoVenda() {
+            var emailCliente = document.getElementById("emailCliente").value;
+            console.log('Fetching data for emailCliente:', emailCliente);
 
-  function fetchRegistoVenda() {
-    var emailCliente = document.getElementById("emailCliente").value;
-    console.log('Fetching data for emailCliente:', emailCliente);
+            fetch('/registo_venda/fetch_registo_venda/' + emailCliente + '/')
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('Erro na requisição. Status: ' + response.status);
+                }
+                return response.json();
+              })
+              .then(data => {
+                console.log('Dados recebidos:', data);
 
-    fetch('/registo_venda/fetch_registo_venda/' + emailCliente + '/')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Erro na requisição. Status: ' + response.status);
+                if (!data || !data.dadosCliente) {
+                  throw new Error('Dados do cliente não foram recebidos corretamente.');
+                }
+
+            document.getElementById("idCliente").value = data.dadosCliente[0][0];
+            document.getElementById("nomeCliente").value = data.dadosCliente[0][1];
+            document.getElementById("telefoneCliente").value = data.dadosCliente[0][2];
+
+            var equipamentosList = document.getElementById("equipamentosList");
+            var noEquipmentsMessage = document.getElementById("noEquipmentsMessage");
+            var equipamentosInfo = data.dadosequipamento;
+
+            var equipamentosList = document.getElementById("equipamentosList");
+            equipamentosList.innerHTML = ""; // Clear previous content
+
+            equipamentosInfo.forEach(equipamento => {
+              var listItem = document.createElement("li");
+              listItem.textContent = `Descrição: ${equipamento[0]}, Quantidade: ${equipamento[1]}, Valor: ${equipamento[2]}`;
+              equipamentosList.appendChild(listItem);
+            });
+          
+            // Show the additional fields
+            document.getElementById("additionalFields").style.display = "block";
+
+                  })
+                  .catch(error => console.error('Error fetching venda data:', error));
         }
-        return response.json();
-      })
-      .then(data => {
-        console.log('Dados recebidos:', data);
+        
+        function fetch_fatura_venda_data() {
+            var venda_id = document.getElementById("fatura_id").value;
 
-        if (!data || !data.dadosCliente) {
-          throw new Error('Dados do cliente não foram recebidos corretamente.');
+            fetch('/registo_venda/fetch_registo_venda_data/' + venda_id + '/')
+                .then(response => response.json())
+                .then(data => {
+                    // Update additional fields with data
+                    document.getElementById("nomeCliente").value = data.dadosCliente[0];
+                    document.getElementById("emailCliente").value = data.dadosCliente[1];
+                    document.getElementById("moradaCliente").value = data.dadosCliente[2];
+                    document.getElementById("dataHora").value = data.dadosCliente[3];
+                    document.getElementById("valorTotal").value = data.valorTotal;
+                    
+                    // Access the componentes_info array
+                   /* var equipamentosFaturaInfo = data.equipamentos_info;
+                    var equipamentosFaturaList = document.getElementById("equipamentosFaturaList");
+                    equipamentosFaturaList.innerHTML = ""; // Clear previous content
+
+                    equipamentosFaturaInfo.forEach(equipamento => {
+                        var listItem = document.createElement("li");
+                        listItem.textContent = `Descrição: ${equipamento[0]}, Quantidade: ${equipamento[1]}, Preço: ${equipamento[2]}`;
+                        equipamentosFaturaList.appendChild(listItem);
+                    });*/
+
+
+                    // Show the additional fields
+                    document.getElementById("additionalFields").style.display = "block";
+                })
+                .catch(error => {console.error('Error fetching venda data:', error), console.log('Data received:', data)});
+                document.getElementById("additionalFields").style.display = "block";
         }
 
-    document.getElementById("idCliente").value = data.dadosCliente[0][0];
-    document.getElementById("nomeCliente").value = data.dadosCliente[0][1];
-    document.getElementById("telefoneCliente").value = data.dadosCliente[0][2];
+        //isto está por fazer
+        function guardarFaturaVenda() {
+            var encomendaId = document.getElementById("encomenda_id").value;
+            var nomeFornecedor = document.getElementById("nomeFornecedor").value;
+            var valorTotal = document.getElementById("valorTotal").value;
 
-    var equipamentosList = document.getElementById("equipamentosList");
-    var noEquipmentsMessage = document.getElementById("noEquipmentsMessage");
-    var equipamentosInfo = data.dadosequipamento;
+            var data = {
+                encomenda_id: encomendaId,
+                nome_fornecedor: nomeFornecedor,
+                valor_total: valorTotal
+            };
 
-    var equipamentosList = document.getElementById("equipamentosList");
-    equipamentosList.innerHTML = ""; // Clear previous content
+            // Include CSRF token in the headers
+            var csrfToken = document.getElementsByName("csrfmiddlewaretoken")[0].value;
 
-    equipamentosInfo.forEach(equipamento => {
-      var listItem = document.createElement("li");
-      listItem.textContent = `Descrição: ${equipamento[0]}, Quantidade: ${equipamento[1]}, Valor: ${equipamento[2]}`;
-      equipamentosList.appendChild(listItem);
-    });
-  
-    // Show the additional fields
-    document.getElementById("additionalFields").style.display = "block";
-
-          })
-          .catch(error => console.error('Error fetching venda data:', error));
-  }
-
-</script>
+            fetch('/registo_encomenda/guardar_fatura/' + encomendaId + '/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken // Include CSRF token
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                // Handle the response as needed
+                console.log(result);
+                if (result.success) {
+                    // Display a success message
+                    alert('Fatura registada com sucesso!');
+                } else {
+                    // Display an error message
+                    alert('A Fatura em questão já se encontra registada!');
+                }
+            })
+            .catch(error => {
+                console.error('Error saving data:', error);
+            });
+        }
+  </script>
 </body>
 </html>
