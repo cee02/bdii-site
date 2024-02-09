@@ -1255,3 +1255,19 @@ BEGIN
 END;
 $$
 LANGUAGE plpgsql;
+
+-------Esta funcao estava mal, substituir por esta
+CREATE OR REPLACE FUNCTION obter_info_equipamentos_venda(venda_header_id INT)
+RETURNS TABLE (
+    descricao_equipamento VARCHAR(255),
+    quantidade INT,
+    preco NUMERIC(10, 2)
+) AS $$
+BEGIN
+    RETURN QUERY 
+    SELECT v.descricaoequipamento, v.quantidade, v.valortotal
+    FROM vendas v
+    WHERE v.VendaHeaderID = venda_header_id;
+END;
+$$ LANGUAGE plpgsql;
+
